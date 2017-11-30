@@ -1,0 +1,6 @@
+read_verilog -sv top.sv
+proc
+opt
+alumacc
+share -aggressive
+synth_ice40 -top top -blif top.blif

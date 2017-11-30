@@ -1,0 +1,7 @@
+.*
+*~
+*.asc
+*.bin
+*.blif
+!.git*
+!.mailmap
