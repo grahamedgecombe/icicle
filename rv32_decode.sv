@@ -32,6 +32,8 @@ module rv32_decode (
     logic [31:0] imm_u = {sign,       instr_in[30:20], instr_in[19:12], 12'b0};
     logic [31:0] imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:1], 1'b0};
 
+    logic [31:0] shamt = {27'b0, rs2};
+
     rv32_regs regs (
         .clk(clk),
         .rs1_in(rs1),
@@ -170,17 +172,17 @@ module rv32_decode (
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLL, RV32_FUNCT7_ZERO}: begin
                 /* SLLI */
                 valid <= 1;
-                imm_out <= imm_i;
+                imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_ZERO}: begin
                 /* SRLI */
                 valid <= 1;
-                imm_out <= imm_i;
+                imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_OP_SRA}: begin
                 /* SRAI */
                 valid <= 1;
-                imm_out <= imm_i;
+                imm_out <= shamt;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ZERO}: begin
                 /* ADD */
