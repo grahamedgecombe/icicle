@@ -1,4 +1,4 @@
-read_verilog -sv top.sv
+read_verilog -noautowire -sv top.sv
 proc
 opt
 alumacc

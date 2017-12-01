@@ -2,20 +2,20 @@
 `include "rv32_regs.sv"
 
 module rv32_decode (
-    input logic clk,
+    input clk,
 
     /* data in */
-    input logic [31:0] pc_in,
-    input logic [31:0] instr_in,
+    input [31:0] pc_in,
+    input [31:0] instr_in,
 
     /* control out */
-    output logic valid,
+    output valid,
 
     /* data out */
-    output logic [31:0] pc_out,
-    output logic [31:0] rs1_value_out,
-    output logic [31:0] rs2_value_out,
-    output logic [31:0] imm_out
+    output [31:0] pc_out,
+    output [31:0] rs1_value_out,
+    output [31:0] rs2_value_out,
+    output [31:0] imm_out
 );
     logic [6:0] funct7 = instr_in[31:25];
     logic [4:0] rs2    = instr_in[24:20];

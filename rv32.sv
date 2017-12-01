@@ -2,7 +2,7 @@
 `include "rv32_fetch.sv"
 
 module rv32 (
-    input logic clk
+    input clk
 );
     rv32_fetch fetch (
         .clk(clk),

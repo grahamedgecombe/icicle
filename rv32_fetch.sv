@@ -1,9 +1,9 @@
 module rv32_fetch (
-    input logic clk,
+    input clk,
 
     /* data out */
-    output logic [31:0] pc_out,
-    output logic [31:0] instr_out
+    output [31:0] pc_out,
+    output [31:0] instr_out
 );
     logic [31:0] instr_mem [255:0];
     logic [31:0] pc;
