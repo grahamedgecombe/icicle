@@ -9,7 +9,7 @@ module rv32_decode (
     input [31:0] instr_in,
 
     /* control out */
-    output valid,
+    output valid_out,
     output [3:0] alu_op_out,
     output alu_sub_sra_out,
     output alu_src1_out,
@@ -53,7 +53,7 @@ module rv32_decode (
     always_ff @(posedge clk) begin
         pc_out <= pc_in;
 
-        valid <= 0;
+        valid_out <= 0;
         alu_op_out <= 4'bx;
         alu_sub_sra_out <= 1'bx;
         alu_src1_out <= 1'bx;
@@ -63,178 +63,178 @@ module rv32_decode (
         casez ({opcode, funct3, funct7})
             {RV32_OPCODE_LUI, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
                 /* LUI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_u;
             end
             {RV32_OPCODE_AUIPC, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
                 /* AUIPC */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_u;
             end
             {RV32_OPCODE_JAL, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
                 /* JAL */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_j;
             end
             {RV32_OPCODE_JALR, RV32_FUNCT3_ZERO, RV32_FUNCT7_ANY}: begin
                 /* JALR */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BEQ, RV32_FUNCT7_ANY}: begin
                 /* BEQ */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BNE, RV32_FUNCT7_ANY}: begin
                 /* BNE */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BLT, RV32_FUNCT7_ANY}: begin
                 /* BLT */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BGE, RV32_FUNCT7_ANY}: begin
                 /* BGE */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BLTU, RV32_FUNCT7_ANY}: begin
                 /* BLTU */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BGEU, RV32_FUNCT7_ANY}: begin
                 /* BGEU */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_b;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LB, RV32_FUNCT7_ANY}: begin
                 /* LB */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LH, RV32_FUNCT7_ANY}: begin
                 /* LH */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LW, RV32_FUNCT7_ANY}: begin
                 /* LW */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LBU, RV32_FUNCT7_ANY}: begin
                 /* LBU */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LHU, RV32_FUNCT7_ANY}: begin
                 /* LHU */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SB, RV32_FUNCT7_ANY}: begin
                 /* SB */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SH, RV32_FUNCT7_ANY}: begin
                 /* SH */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SW, RV32_FUNCT7_ANY}: begin
                 /* SW */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ANY}: begin
                 /* ADDI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLT, RV32_FUNCT7_ANY}: begin
                 /* SLTI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLTU, RV32_FUNCT7_ANY}: begin
                 /* SLTIU */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_XOR, RV32_FUNCT7_ANY}: begin
                 /* XORI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_OR, RV32_FUNCT7_ANY}: begin
                 /* ORI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_AND, RV32_FUNCT7_ANY}: begin
                 /* ANDI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLL, RV32_FUNCT7_ZERO}: begin
                 /* SLLI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_ZERO}: begin
                 /* SRLI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_OP_SRA}: begin
                 /* SRAI */
-                valid <= 1;
+                valid_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ZERO}: begin
                 /* ADD */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_OP_SUB}: begin
                 /* SUB */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLL, RV32_FUNCT7_ZERO}: begin
                 /* SLL */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLT, RV32_FUNCT7_ZERO}: begin
                 /* SLT */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLTU, RV32_FUNCT7_ZERO}: begin
                 /* SLTU */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_XOR, RV32_FUNCT7_ZERO}: begin
                 /* XOR */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_ZERO}: begin
                 /* SRL */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_OP_SRA}: begin
                 /* SRA */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_OR, RV32_FUNCT7_ZERO}: begin
                 /* OR */
-                valid <= 1;
+                valid_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_AND, RV32_FUNCT7_ZERO}: begin
                 /* AND */
-                valid <= 1;
+                valid_out <= 1;
             end
         endcase
     end
