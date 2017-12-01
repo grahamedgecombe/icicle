@@ -46,6 +46,7 @@ module rv32_alu (
             RV32_ALU_OP_SRL_SRA: result_out <= srl_sra;
             RV32_ALU_OP_SLT:     result_out <= {31'b0, lt};
             RV32_ALU_OP_SLTU:    result_out <= {31'b0, ltu};
+            RV32_ALU_OP_SRC1P4:  result_out <= src1 + 4;
             RV32_ALU_OP_SRC2:    result_out <= src2;
             default:             result_out <= 32'bx;
         endcase

@@ -81,11 +81,15 @@ module rv32_decode (
             {RV32_OPCODE_JAL, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
                 /* JAL */
                 valid_out <= 1;
+                alu_op_out <= RV32_ALU_OP_SRC1P4;
+                alu_src1_out <= RV32_ALU_SRC1_PC;
                 imm_out <= imm_j;
             end
             {RV32_OPCODE_JALR, RV32_FUNCT3_ZERO, RV32_FUNCT7_ANY}: begin
                 /* JALR */
                 valid_out <= 1;
+                alu_op_out <= RV32_ALU_OP_SRC1P4;
+                alu_src1_out <= RV32_ALU_SRC1_PC;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BEQ, RV32_FUNCT7_ANY}: begin
