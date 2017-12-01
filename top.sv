@@ -1,7 +1,7 @@
 `include "rv32.sv"
 
 module top (
-    input logic clk
+    input clk
 );
     rv32 rv32 (
         .clk(clk)
