@@ -1,3 +1,6 @@
+`ifndef RV32
+`define RV32
+
 `include "rv32_decode.sv"
 `include "rv32_execute.sv"
 `include "rv32_fetch.sv"
@@ -71,3 +74,5 @@ module rv32 (
     /* execute -> mem data */
     logic [31:0] execute_result;
 endmodule
+
+`endif

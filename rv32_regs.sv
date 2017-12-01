@@ -1,3 +1,6 @@
+`ifndef RV32_REGS
+`define RV32_REGS
+
 module rv32_regs (
     input clk,
 
@@ -24,3 +27,5 @@ module rv32_regs (
             regs[rd_in] <= rd_value_in;
     end
 endmodule
+
+`endif

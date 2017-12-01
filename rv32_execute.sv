@@ -1,3 +1,6 @@
+`ifndef RV32_EXECUTE
+`define RV32_EXECUTE
+
 `include "rv32_alu.sv"
 
 module rv32_execute (
@@ -37,3 +40,5 @@ module rv32_execute (
         .result_out(result_out)
     );
 endmodule
+
+`endif

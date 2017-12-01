@@ -1,3 +1,6 @@
+`ifndef RV32_FETCH
+`define RV32_FETCH
+
 module rv32_fetch (
     input clk,
 
@@ -14,3 +17,5 @@ module rv32_fetch (
         pc_out <= pc;
     end
 endmodule
+
+`endif

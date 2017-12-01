@@ -1,3 +1,6 @@
+`ifndef RV32_DECODE
+`define RV32_DECODE
+
 `include "rv32_alu_ops.sv"
 `include "rv32_opcodes.sv"
 `include "rv32_regs.sv"
@@ -374,3 +377,5 @@ module rv32_decode (
         endcase
     end
 endmodule
+
+`endif

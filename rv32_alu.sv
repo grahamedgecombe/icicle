@@ -1,3 +1,6 @@
+`ifndef RV32_ALU
+`define RV32_ALU
+
 `include "rv32_alu_ops.sv"
 
 module rv32_alu (
@@ -52,3 +55,5 @@ module rv32_alu (
         endcase
     end
 endmodule
+
+`endif

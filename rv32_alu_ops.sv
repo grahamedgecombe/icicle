@@ -1,3 +1,6 @@
+`ifndef RV32_ALU_OPS
+`define RV32_ALU_OPS
+
 localparam RV32_ALU_OP_ADD_SUB = 4'b0000;
 localparam RV32_ALU_OP_XOR     = 4'b0001;
 localparam RV32_ALU_OP_OR      = 4'b0010;
@@ -14,3 +17,5 @@ localparam RV32_ALU_SRC1_PC  = 1'b1;
 
 localparam RV32_ALU_SRC2_REG = 1'b0;
 localparam RV32_ALU_SRC2_IMM = 1'b1;
+
+`endif

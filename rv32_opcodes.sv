@@ -1,3 +1,6 @@
+`ifndef RV32_OPCODES
+`define RV32_OPCODES
+
 localparam RV32_OPCODE_LOAD     = 7'b0000011;
 localparam RV32_OPCODE_MISC_MEM = 7'b0001111;
 localparam RV32_OPCODE_OP_IMM   = 7'b0010011;
@@ -44,3 +47,5 @@ localparam RV32_FUNCT7_ZERO = 7'b0000000;
 
 localparam RV32_FUNCT7_OP_SRA = 7'b0100000;
 localparam RV32_FUNCT7_OP_SUB = 7'b0100000;
+
+`endif
