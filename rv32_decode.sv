@@ -10,6 +10,10 @@ module rv32_decode (
 
     /* control out */
     output valid,
+    output [3:0] alu_op_out,
+    output alu_sub_sra_out,
+    output alu_src1_out,
+    output alu_src2_out,
 
     /* data out */
     output [31:0] pc_out,
@@ -36,8 +40,12 @@ module rv32_decode (
 
     rv32_regs regs (
         .clk(clk),
+
+        /* control in */
         .rs1_in(rs1),
         .rs2_in(rs2),
+
+        /* data out */
         .rs1_value_out(rs1_value_out),
         .rs2_value_out(rs2_value_out)
     );
@@ -46,6 +54,10 @@ module rv32_decode (
         pc_out <= pc_in;
 
         valid <= 0;
+        alu_op_out <= 4'bx;
+        alu_sub_sra_out <= 1'bx;
+        alu_src1_out <= 1'bx;
+        alu_src2_out <= 1'bx;
         imm_out <= 32'bx;
 
         casez ({opcode, funct3, funct7})
