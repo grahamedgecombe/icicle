@@ -50,8 +50,7 @@ module rv32_mem (
         rd_writeback_out <= rd_writeback_in;
         result_out <= result_in;
 
-        if (read_en_in)
-            read_value_out <= data_mem[result_in[31:2]];
+        read_value_out <= data_mem[result_in[31:2]];
 
         if (write_en_in)
             data_mem[result_in[31:2]] <= rs2_value_in;
