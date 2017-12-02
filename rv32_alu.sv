@@ -21,8 +21,8 @@ module rv32_alu (
     /* data out */
     output [31:0] result_out
 );
-    logic [31:0] src1 = src1_in ? rs1_value_in : pc_in;
-    logic [31:0] src2 = src2_in ? rs2_value_in : imm_in;
+    logic [31:0] src1 = src1_in ? pc_in : rs1_value_in;
+    logic [31:0] src2 = src2_in ? imm_in : rs2_value_in;
 
     logic src1_sign = src1[31];
     logic src2_sign = src2[31];
