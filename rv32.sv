@@ -5,6 +5,7 @@
 `include "rv32_execute.sv"
 `include "rv32_fetch.sv"
 `include "rv32_mem.sv"
+`include "rv32_writeback.sv"
 
 module rv32 (
     input clk
@@ -24,9 +25,14 @@ module rv32 (
     rv32_decode decode (
         .clk(clk),
 
+        /* control in */
+        .rd_in(writeback_rd),
+        .rd_writeback_in(writeback_rd_writeback),
+
         /* data in */
         .pc_in(fetch_pc),
         .instr_in(fetch_instr),
+        .rd_value_in(writeback_rd_value),
 
         /* control out */
         .alu_op_out(decode_alu_op),
@@ -35,6 +41,8 @@ module rv32 (
         .alu_src2_out(decode_alu_src2),
         .mem_read_en_out(decode_mem_read_en),
         .mem_write_en_out(decode_mem_write_en),
+        .rd_out(decode_rd),
+        .rd_writeback_out(decode_rd_writeback),
 
         /* data out */
         .pc_out(decode_pc),
@@ -50,6 +58,8 @@ module rv32 (
     logic decode_alu_src2;
     logic decode_mem_read_en;
     logic decode_mem_write_en;
+    logic [4:0] decode_rd;
+    logic decode_rd_writeback;
 
     /* decode -> execute data */
     logic [31:0] decode_pc;
@@ -67,6 +77,8 @@ module rv32 (
         .alu_src2_in(decode_alu_src2),
         .mem_read_en_in(decode_mem_read_en),
         .mem_write_en_in(decode_mem_write_en),
+        .rd_in(decode_rd),
+        .rd_writeback_in(decode_rd_writeback),
 
         /* data in */
         .pc_in(decode_pc),
@@ -77,6 +89,8 @@ module rv32 (
         /* control out */
         .mem_read_en_out(execute_mem_read_en),
         .mem_write_en_out(execute_mem_write_en),
+        .rd_out(execute_rd),
+        .rd_writeback_out(execute_rd_writeback),
 
         /* data out */
         .result_out(execute_result),
@@ -86,6 +100,8 @@ module rv32 (
     /* execute -> mem control */
     logic execute_mem_read_en;
     logic execute_mem_write_en;
+    logic [4:0] execute_rd;
+    logic execute_rd_writeback;
 
     /* execute -> mem data */
     logic [31:0] execute_result;
@@ -97,11 +113,58 @@ module rv32 (
         /* control in */
         .read_en_in(execute_mem_read_en),
         .write_en_in(execute_mem_write_en),
+        .rd_in(execute_rd),
+        .rd_writeback_in(execute_rd_writeback),
 
         /* data in */
         .result_in(execute_result),
-        .rs2_value_in(execute_rs2_value)
+        .rs2_value_in(execute_rs2_value),
+
+        /* control out */
+        .read_en_out(mem_read_en),
+        .rd_out(mem_rd),
+        .rd_writeback_out(mem_rd_writeback),
+
+        /* data out */
+        .result_out(mem_result),
+        .read_value_out(mem_read_value)
     );
+
+    /* mem -> writeback control */
+    logic mem_read_en;
+    logic [4:0] mem_rd;
+    logic mem_rd_writeback;
+
+    /* mem -> writeback data */
+    logic [31:0] mem_result;
+    logic [31:0] mem_read_value;
+
+    rv32_writeback writeback (
+        .clk(clk),
+
+        /* control in */
+        .mem_read_en_in(mem_read_en),
+        .rd_in(mem_rd),
+        .rd_writeback_in(mem_rd_writeback),
+
+        /* data in */
+        .result_in(mem_result),
+        .mem_read_value_in(mem_read_value),
+
+        /* control out */
+        .rd_out(writeback_rd),
+        .rd_writeback_out(writeback_rd_writeback),
+
+        /* data out */
+        .rd_value_out(writeback_rd_value)
+    );
+
+    /* writeback -> decode control */
+    logic [4:0] writeback_rd;
+    logic writeback_rd_writeback;
+
+    /* writeback -> decode data */
+    logic [31:0] writeback_rd_value;
 endmodule
 
 `endif

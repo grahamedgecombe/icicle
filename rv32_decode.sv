@@ -8,9 +8,14 @@
 module rv32_decode (
     input clk,
 
+    /* control in */
+    input [4:0] rd_in,
+    input rd_writeback_in,
+
     /* data in */
     input [31:0] pc_in,
     input [31:0] instr_in,
+    input [31:0] rd_value_in,
 
     /* control out */
     output valid_out,
@@ -20,6 +25,8 @@ module rv32_decode (
     output alu_src2_out,
     output mem_read_en_out,
     output mem_write_en_out,
+    output [4:0] rd_out,
+    output rd_writeback_out,
 
     /* data out */
     output [31:0] pc_out,
@@ -50,6 +57,11 @@ module rv32_decode (
         /* control in */
         .rs1_in(rs1),
         .rs2_in(rs2),
+        .rd_in(rd_in),
+        .rd_writeback_in(rd_writeback_in),
+
+        /* data in */
+        .rd_value_in(rd_value_in),
 
         /* data out */
         .rs1_value_out(rs1_value_out),
@@ -57,6 +69,7 @@ module rv32_decode (
     );
 
     always_ff @(posedge clk) begin
+        rd_out <= rd;
         pc_out <= pc_in;
 
         valid_out <= 0;
@@ -64,6 +77,7 @@ module rv32_decode (
         alu_sub_sra_out <= 1'bx;
         alu_src1_out <= 1'bx;
         alu_src2_out <= 1'bx;
+        rd_writeback_out <= 0;
         mem_read_en_out <= 0;
         mem_write_en_out <= 0;
         imm_out <= 32'bx;
@@ -74,6 +88,7 @@ module rv32_decode (
                 valid_out <= 1;
                 alu_op_out <= RV32_ALU_OP_SRC2;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_u;
             end
             {RV32_OPCODE_AUIPC, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
@@ -83,6 +98,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 0;
                 alu_src1_out <= RV32_ALU_SRC1_PC;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_u;
             end
             {RV32_OPCODE_JAL, RV32_FUNCT3_ANY, RV32_FUNCT7_ANY}: begin
@@ -90,6 +106,7 @@ module rv32_decode (
                 valid_out <= 1;
                 alu_op_out <= RV32_ALU_OP_SRC1P4;
                 alu_src1_out <= RV32_ALU_SRC1_PC;
+                rd_writeback_out <= 1;
                 imm_out <= imm_j;
             end
             {RV32_OPCODE_JALR, RV32_FUNCT3_ZERO, RV32_FUNCT7_ANY}: begin
@@ -97,6 +114,7 @@ module rv32_decode (
                 valid_out <= 1;
                 alu_op_out <= RV32_ALU_OP_SRC1P4;
                 alu_src1_out <= RV32_ALU_SRC1_PC;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_BRANCH, RV32_FUNCT3_BRANCH_BEQ, RV32_FUNCT7_ANY}: begin
@@ -161,6 +179,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LH, RV32_FUNCT7_ANY}: begin
@@ -171,6 +190,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LW, RV32_FUNCT7_ANY}: begin
@@ -181,6 +201,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LBU, RV32_FUNCT7_ANY}: begin
@@ -191,6 +212,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_LOAD, RV32_FUNCT3_LOAD_LHU, RV32_FUNCT7_ANY}: begin
@@ -201,6 +223,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SB, RV32_FUNCT7_ANY}: begin
@@ -240,6 +263,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 0;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLT, RV32_FUNCT7_ANY}: begin
@@ -249,6 +273,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLTU, RV32_FUNCT7_ANY}: begin
@@ -258,6 +283,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_XOR, RV32_FUNCT7_ANY}: begin
@@ -266,6 +292,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_XOR;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_OR, RV32_FUNCT7_ANY}: begin
@@ -274,6 +301,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_OR;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_AND, RV32_FUNCT7_ANY}: begin
@@ -282,6 +310,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_AND;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SLL, RV32_FUNCT7_ZERO}: begin
@@ -290,6 +319,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_SLL;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_ZERO}: begin
@@ -299,6 +329,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 0;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_OP_SRA}: begin
@@ -308,6 +339,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
+                rd_writeback_out <= 1;
                 imm_out <= shamt;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ZERO}: begin
@@ -317,6 +349,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 0;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_OP_SUB}: begin
                 /* SUB */
@@ -325,6 +358,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLL, RV32_FUNCT7_ZERO}: begin
                 /* SLL */
@@ -332,6 +366,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_SLL;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLT, RV32_FUNCT7_ZERO}: begin
                 /* SLT */
@@ -340,6 +375,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SLTU, RV32_FUNCT7_ZERO}: begin
                 /* SLTU */
@@ -348,6 +384,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_XOR, RV32_FUNCT7_ZERO}: begin
                 /* XOR */
@@ -355,6 +392,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_XOR;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_ZERO}: begin
                 /* SRL */
@@ -363,6 +401,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 0;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_SRL_SRA, RV32_FUNCT7_OP_SRA}: begin
                 /* SRA */
@@ -371,6 +410,7 @@ module rv32_decode (
                 alu_sub_sra_out <= 1;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_OR, RV32_FUNCT7_ZERO}: begin
                 /* OR */
@@ -378,6 +418,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_OR;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
             {RV32_OPCODE_OP, RV32_FUNCT3_OP_AND, RV32_FUNCT7_ZERO}: begin
                 /* AND */
@@ -385,6 +426,7 @@ module rv32_decode (
                 alu_op_out <= RV32_ALU_OP_AND;
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_REG;
+                rd_writeback_out <= 1;
             end
         endcase
     end

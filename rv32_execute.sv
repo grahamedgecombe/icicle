@@ -13,6 +13,8 @@ module rv32_execute (
     input alu_src2_in,
     input mem_read_en_in,
     input mem_write_en_in,
+    input [4:0] rd_in,
+    input rd_writeback_in,
 
     /* data in */
     input [31:0] pc_in,
@@ -23,6 +25,8 @@ module rv32_execute (
     /* control out */
     output mem_read_en_out,
     output mem_write_en_out,
+    output [4:0] rd_out,
+    output rd_writeback_out,
 
     /* data out */
     output [31:0] result_out,
@@ -50,6 +54,8 @@ module rv32_execute (
     always @(posedge clk) begin
         mem_read_en_out <= mem_read_en_in;
         mem_write_en_out <= mem_write_en_in;
+        rd_out <= rd_in;
+        rd_writeback_out <= rd_writeback_in;
         rs2_value_out <= rs2_value_in;
     end
 endmodule
