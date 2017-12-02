@@ -221,7 +221,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_write_en_out <= 1;
-               imm_out <= imm_s;
+                imm_out <= imm_s;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SW, RV32_FUNCT7_ANY}: begin
                 /* SW */
@@ -231,7 +231,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_write_en_out <= 1;
-               imm_out <= imm_s;
+                imm_out <= imm_s;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ANY}: begin
                 /* ADDI */
