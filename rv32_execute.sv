@@ -71,7 +71,7 @@ module rv32_execute (
         .pc_out(branch_pc_out)
     );
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         mem_read_en_out <= mem_read_en_in;
         mem_write_en_out <= mem_write_en_in;
         branch_op_out <= branch_op_in;

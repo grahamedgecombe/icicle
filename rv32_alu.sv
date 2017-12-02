@@ -39,7 +39,7 @@ module rv32_alu (
     logic lt  = sign != ovf;
     logic ltu = carry;
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         case (op_in)
             RV32_ALU_OP_ADD_SUB: result_out <= add_sub[31:0];
             RV32_ALU_OP_XOR:     result_out <= src1 ^ src2;

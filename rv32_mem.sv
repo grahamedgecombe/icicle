@@ -44,7 +44,7 @@ module rv32_mem (
 
     assign branch_pc_out = branch_pc_in;
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         read_en_out <= read_en_in;
         rd_out <= rd_in;
         rd_writeback_out <= rd_writeback_in;
