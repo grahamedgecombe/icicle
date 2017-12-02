@@ -19,6 +19,9 @@ module rv32_fetch (
 
     logic [31:0] pc = branch_taken_in ? branch_pc_in : next_pc;
 
+    initial
+        $readmemh("progmem_syn.hex", instr_mem);
+
     always_ff @(posedge clk) begin
         instr_out <= instr_mem[pc[31:2]];
         next_pc <= pc + 4;

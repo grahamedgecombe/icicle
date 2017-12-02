@@ -3,5 +3,7 @@
 *.asc
 *.bin
 *.blif
+*.hex
+*.o
 !.git*
 !.mailmap
