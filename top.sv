@@ -1,3 +1,4 @@
+`include "clk_div.sv"
 `include "rv32.sv"
 
 module top (
@@ -33,8 +34,17 @@ module top (
         .D_OUT_0({flash_io1_out, flash_io0_out})
     );
 
+    logic clk_slow;
+
+    clk_div #(
+        .LOG_DIVISOR(18)
+    ) clk_div (
+        .clk_in(clk),
+        .clk_out(clk_slow)
+    );
+
     rv32 rv32 (
-        .clk(clk),
+        .clk(clk_slow),
         .leds(leds)
     );
 endmodule
