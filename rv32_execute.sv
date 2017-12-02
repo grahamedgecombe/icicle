@@ -2,6 +2,7 @@
 `define RV32_EXECUTE
 
 `include "rv32_alu.sv"
+`include "rv32_branch.sv"
 
 module rv32_execute (
     input clk,
@@ -13,6 +14,8 @@ module rv32_execute (
     input alu_src2_in,
     input mem_read_en_in,
     input mem_write_en_in,
+    input [1:0] branch_op_in,
+    input branch_pc_src_in,
     input [4:0] rd_in,
     input rd_writeback_in,
 
@@ -25,12 +28,14 @@ module rv32_execute (
     /* control out */
     output mem_read_en_out,
     output mem_write_en_out,
+    output [1:0] branch_op_out,
     output [4:0] rd_out,
     output rd_writeback_out,
 
     /* data out */
     output [31:0] result_out,
-    output [31:0] rs2_value_out
+    output [31:0] rs2_value_out,
+    output [31:0] branch_pc_out
 );
     rv32_alu alu (
         .clk(clk),
@@ -51,9 +56,25 @@ module rv32_execute (
         .result_out(result_out)
     );
 
+    rv32_branch_pc_mux branch_pc_mux (
+        .clk(clk),
+
+        /* control in */
+        .pc_src_in(branch_pc_src_in),
+
+        /* data in */
+        .pc_in(pc_in),
+        .rs1_value_in(rs1_value_in),
+        .imm_in(imm_in),
+
+        /* data out */
+        .pc_out(branch_pc_out)
+    );
+
     always @(posedge clk) begin
         mem_read_en_out <= mem_read_en_in;
         mem_write_en_out <= mem_write_en_in;
+        branch_op_out <= branch_op_in;
         rd_out <= rd_in;
         rd_writeback_out <= rd_writeback_in;
         rs2_value_out <= rs2_value_in;
