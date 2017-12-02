@@ -8,8 +8,14 @@
 `include "rv32_writeback.sv"
 
 module rv32 (
-    input clk
+    input clk,
+    output [7:0] leds
 );
+    always_ff @(posedge clk) begin
+        if (writeback_rd_writeback && writeback_rd == 31)
+            leds <= writeback_rd_value[7:0];
+    end
+
     rv32_fetch fetch (
         .clk(clk),
 

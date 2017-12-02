@@ -34,6 +34,7 @@ module top (
     );
 
     rv32 rv32 (
-        .clk(clk)
+        .clk(clk),
+        .leds(leds)
     );
 endmodule
