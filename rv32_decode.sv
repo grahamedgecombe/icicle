@@ -449,6 +449,14 @@ module rv32_decode (
                 alu_src2_out <= RV32_ALU_SRC2_REG;
                 rd_writeback_out <= 1;
             end
+            {RV32_OPCODE_MISC_MEM, RV32_FUNCT3_MISC_MEM_FENCE, RV32_FUNCT7_ANY}: begin
+                /* FENCE */
+                valid_out <= 1;
+            end
+            {RV32_OPCODE_MISC_MEM, RV32_FUNCT3_MISC_MEM_FENCE_I, RV32_FUNCT7_ANY}: begin
+                /* FENCE.I */
+                valid_out <= 1;
+            end
         endcase
     end
 endmodule

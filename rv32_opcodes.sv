@@ -42,6 +42,9 @@ localparam RV32_FUNCT3_OP_SRL_SRA = 3'b101;
 localparam RV32_FUNCT3_OP_OR      = 3'b110;
 localparam RV32_FUNCT3_OP_AND     = 3'b111;
 
+localparam RV32_FUNCT3_MISC_MEM_FENCE   = 3'b000;
+localparam RV32_FUNCT3_MISC_MEM_FENCE_I = 3'b001;
+
 localparam RV32_FUNCT7_ANY  = 7'b???????;
 localparam RV32_FUNCT7_ZERO = 7'b0000000;
 
