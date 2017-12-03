@@ -53,6 +53,8 @@ module rv32 (
         .alu_src2_out(decode_alu_src2),
         .mem_read_en_out(decode_mem_read_en),
         .mem_write_en_out(decode_mem_write_en),
+        .mem_width_out(decode_mem_width),
+        .mem_zero_extend_out(decode_mem_zero_extend),
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
         .rd_out(decode_rd),
@@ -72,6 +74,8 @@ module rv32 (
     logic decode_alu_src2;
     logic decode_mem_read_en;
     logic decode_mem_write_en;
+    logic [1:0] decode_mem_width;
+    logic decode_mem_zero_extend;
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
     logic [4:0] decode_rd;
@@ -93,6 +97,8 @@ module rv32 (
         .alu_src2_in(decode_alu_src2),
         .mem_read_en_in(decode_mem_read_en),
         .mem_write_en_in(decode_mem_write_en),
+        .mem_width_in(decode_mem_width),
+        .mem_zero_extend_in(decode_mem_zero_extend),
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
         .rd_in(decode_rd),
@@ -107,6 +113,8 @@ module rv32 (
         /* control out */
         .mem_read_en_out(execute_mem_read_en),
         .mem_write_en_out(execute_mem_write_en),
+        .mem_width_out(execute_mem_width),
+        .mem_zero_extend_out(execute_mem_zero_extend),
         .branch_op_out(execute_branch_op),
         .rd_out(execute_rd),
         .rd_writeback_out(execute_rd_writeback),
@@ -120,6 +128,8 @@ module rv32 (
     /* execute -> mem control */
     logic execute_mem_read_en;
     logic execute_mem_write_en;
+    logic [1:0] execute_mem_width;
+    logic execute_mem_zero_extend;
     logic [1:0] execute_branch_op;
     logic [4:0] execute_rd;
     logic execute_rd_writeback;
@@ -135,6 +145,8 @@ module rv32 (
         /* control in */
         .read_en_in(execute_mem_read_en),
         .write_en_in(execute_mem_write_en),
+        .width_in(execute_mem_width),
+        .zero_extend_in(execute_mem_zero_extend),
         .branch_op_in(execute_branch_op),
         .rd_in(execute_rd),
         .rd_writeback_in(execute_rd_writeback),

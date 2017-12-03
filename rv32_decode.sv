@@ -3,6 +3,7 @@
 
 `include "rv32_alu_ops.sv"
 `include "rv32_branch_ops.sv"
+`include "rv32_mem_ops.sv"
 `include "rv32_opcodes.sv"
 `include "rv32_regs.sv"
 
@@ -26,6 +27,8 @@ module rv32_decode (
     output alu_src2_out,
     output mem_read_en_out,
     output mem_write_en_out,
+    output [1:0] mem_width_out,
+    output mem_zero_extend_out,
     output [1:0] branch_op_out,
     output branch_pc_src_out,
     output [4:0] rd_out,
@@ -83,6 +86,8 @@ module rv32_decode (
         rd_writeback_out <= 0;
         mem_read_en_out <= 0;
         mem_write_en_out <= 0;
+        mem_width_out <= 2'bx;
+        mem_zero_extend_out <= 1'bx;
         branch_op_out <= RV32_BRANCH_OP_NEVER;
         branch_pc_src_out <= 1'bx;
         imm_out <= 32'bx;
@@ -200,6 +205,8 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_BYTE;
+                mem_zero_extend_out <= 0;
                 rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
@@ -211,6 +218,8 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_HALF;
+                mem_zero_extend_out <= 0;
                 rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
@@ -222,6 +231,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_WORD;
                 rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
@@ -233,6 +243,8 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_BYTE;
+                mem_zero_extend_out <= 1;
                 rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
@@ -244,6 +256,8 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_read_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_HALF;
+                mem_zero_extend_out <= 1;
                 rd_writeback_out <= 1;
                 imm_out <= imm_i;
             end
@@ -255,6 +269,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_write_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_BYTE;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SH, RV32_FUNCT7_ANY}: begin
@@ -265,6 +280,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_write_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_HALF;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_STORE, RV32_FUNCT3_STORE_SW, RV32_FUNCT7_ANY}: begin
@@ -275,6 +291,7 @@ module rv32_decode (
                 alu_src1_out <= RV32_ALU_SRC1_REG;
                 alu_src2_out <= RV32_ALU_SRC2_IMM;
                 mem_write_en_out <= 1;
+                mem_width_out <= RV32_MEM_WIDTH_WORD;
                 imm_out <= imm_s;
             end
             {RV32_OPCODE_OP_IMM, RV32_FUNCT3_OP_ADD_SUB, RV32_FUNCT7_ANY}: begin
