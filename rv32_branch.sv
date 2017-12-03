@@ -33,7 +33,7 @@ module rv32_branch (
     /* control out */
     output taken_out
 );
-    wire non_zero = |result_in;
+    logic non_zero = |result_in;
 
     always_comb begin
         case (op_in)

@@ -7,7 +7,7 @@ module clk_div #(
     input clk_in,
     output clk_out
 );
-    wire [LOG_DIVISOR-1:0] q;
+    logic [LOG_DIVISOR-1:0] q;
 
     always_ff @(posedge clk_in)
         q <= q + 1;
