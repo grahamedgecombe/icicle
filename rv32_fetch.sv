@@ -4,10 +4,10 @@
 module rv32_fetch (
     input clk,
 
-    /* control in */
+    /* control in (from mem) */
     input branch_taken_in,
 
-    /* data in */
+    /* data in (from mem) */
     input [31:0] branch_pc_in,
 
     /* data out */

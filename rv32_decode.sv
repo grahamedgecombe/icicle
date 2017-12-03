@@ -10,13 +10,15 @@
 module rv32_decode (
     input clk,
 
-    /* control in */
+    /* control in (from writeback) */
     input [4:0] rd_in,
     input rd_writeback_in,
 
     /* data in */
     input [31:0] pc_in,
     input [31:0] instr_in,
+
+    /* data in (from writeback) */
     input [31:0] rd_value_in,
 
     /* control out */

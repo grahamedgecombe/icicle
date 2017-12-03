@@ -18,10 +18,10 @@ module rv32 (
     rv32_fetch fetch (
         .clk(clk),
 
-        /* control in */
+        /* control in (from mem) */
         .branch_taken_in(mem_branch_taken),
 
-        /* data in */
+        /* data in (from mem) */
         .branch_pc_in(mem_branch_pc),
 
         /* data out */
