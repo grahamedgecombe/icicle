@@ -27,7 +27,7 @@ module rv32_alu (
     logic src1_sign = src1[31];
     logic src2_sign = src2[31];
 
-    logic shamt = src2[4:0];
+    logic [4:0] shamt = src2[4:0];
 
     logic [32:0] add_sub = sub_sra_in ? src1 - src2 : src1 + src2;
     logic [31:0] srl_sra = $signed({sub_sra_in ? src1_sign : 1'b0, src1}) >>> shamt;
