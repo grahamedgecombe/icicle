@@ -3,6 +3,7 @@
 
 module rv32_regs (
     input clk,
+    input stall,
 
     /* control in */
     input [4:0] rs1_in,
@@ -20,8 +21,10 @@ module rv32_regs (
     logic [31:0] regs [31:0];
 
     always_ff @(posedge clk) begin
-        rs1_value_out <= regs[rs1_in];
-        rs2_value_out <= regs[rs2_in];
+        if (!stall) begin
+            rs1_value_out <= regs[rs1_in];
+            rs2_value_out <= regs[rs2_in];
+        end
 
         if (rd_writeback_in && |rd_in)
             regs[rd_in] <= rd_value_in;

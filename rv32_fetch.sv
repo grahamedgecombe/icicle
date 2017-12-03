@@ -1,8 +1,12 @@
 `ifndef RV32_FETCH
 `define RV32_FETCH
 
+`include "rv32_opcodes.sv"
+
 module rv32_fetch (
     input clk,
+    input stall,
+    input flush,
 
     /* control in (from mem) */
     input branch_taken_in,
@@ -23,9 +27,14 @@ module rv32_fetch (
         $readmemh("progmem_syn.hex", instr_mem);
 
     always_ff @(posedge clk) begin
-        instr_out <= instr_mem[pc[31:2]];
-        next_pc <= pc + 4;
-        pc_out <= pc;
+        if (!stall) begin
+            instr_out <= instr_mem[pc[31:2]];
+            next_pc <= pc + 4;
+            pc_out <= pc;
+
+            if (flush)
+                instr_out <= RV32_INSTR_NOP;
+        end
     end
 endmodule
 

@@ -51,4 +51,6 @@ localparam RV32_FUNCT7_ZERO = 7'b0000000;
 localparam RV32_FUNCT7_OP_SRA = 7'b0100000;
 localparam RV32_FUNCT7_OP_SUB = 7'b0100000;
 
+localparam RV32_INSTR_NOP = {12'bx, 5'b0, 3'bx, 5'b0, RV32_OPCODE_OP_IMM};
+
 `endif

@@ -6,6 +6,8 @@
 
 module rv32_execute (
     input clk,
+    input stall,
+    input flush,
 
     /* control in */
     input [4:0] rs1_in,
@@ -104,16 +106,25 @@ module rv32_execute (
     );
 
     always_ff @(posedge clk) begin
-        mem_read_en_out <= mem_read_en_in;
-        mem_write_en_out <= mem_write_en_in;
-        mem_width_out <= mem_width_in;
-        mem_zero_extend_out <= mem_zero_extend_in;
-        branch_op_out <= branch_op_in;
-        rd_out <= rd_in;
-        rd_writeback_out <= rd_writeback_in;
-        result_out <= result;
-        rs2_value_out <= rs2_value_in;
-        branch_pc_out <= branch_pc;
+        if (!stall) begin
+            mem_read_en_out <= mem_read_en_in;
+            mem_write_en_out <= mem_write_en_in;
+            mem_width_out <= mem_width_in;
+            mem_zero_extend_out <= mem_zero_extend_in;
+            branch_op_out <= branch_op_in;
+            rd_out <= rd_in;
+            rd_writeback_out <= rd_writeback_in;
+            result_out <= result;
+            rs2_value_out <= rs2_value_in;
+            branch_pc_out <= branch_pc;
+
+            if (flush) begin
+                mem_read_en_out <= 0;
+                mem_write_en_out <= 0;
+                branch_op_out <= RV32_BRANCH_OP_NEVER;
+                rd_writeback_out <= 0;
+            end
+        end
     end
 endmodule
 
