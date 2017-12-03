@@ -17,8 +17,10 @@ module rv32_branch_pc_mux (
     /* data out */
     output [31:0] pc_out
 );
+    logic [31:0] pc = (pc_src_in ? rs1_value_in : pc_in) + imm_in;
+
     always_ff @(posedge clk)
-        pc_out <= (pc_src_in ? rs1_value_in : pc_in) + imm_in;
+        pc_out <= {pc[31:1], 1'b0};
 endmodule
 
 module rv32_branch (
