@@ -55,7 +55,7 @@ module rv32_decode (
     logic [31:0] imm_u = {sign,       instr_in[30:20], instr_in[19:12], 12'b0};
     logic [31:0] imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:21], 1'b0};
 
-    logic [31:0] shamt = {27'b0, rs2};
+    logic [31:0] shamt = {27'bx, rs2};
 
     rv32_regs regs (
         .clk(clk),
