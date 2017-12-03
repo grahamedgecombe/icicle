@@ -46,67 +46,67 @@ module rv32_mem (
     assign branch_pc_out = branch_pc_in;
 
     logic [31:0] read_value;
-	logic [31:0] write_value;
-	logic [3:0] write_mask;
+    logic [31:0] write_value;
+    logic [3:0] write_mask;
 
-	always_comb begin
-		case (width_in)
-			RV32_MEM_WIDTH_WORD: begin
-				write_value = rs2_value_in;
-				write_mask = 4'b1111;
-			end
-			RV32_MEM_WIDTH_HALF: begin
-				case (result_in[0])
-					2'b0: begin
-						write_value = {rs2_value_in[15:0], 16'bx};
-						write_mask = 4'b1100;
-					end
-					2'b1: begin
-						write_value = {16'bx, rs2_value_in[15:0]};
-						write_mask = 4'b0011;
-					end
-				endcase
-			end
-			RV32_MEM_WIDTH_BYTE: begin
-				case (result_in[1:0])
-					2'b00: begin
-						write_value = {rs2_value_in[7:0], 24'bx};
-						write_mask = 4'b1000;
-					end
-					2'b01: begin
-						write_value = {8'bx, rs2_value_in[7:0], 16'bx};
-						write_mask = 4'b0100;
-					end
-					2'b10: begin
-						write_value = {16'bx, rs2_value_in[7:0], 8'bx};
-						write_mask = 4'b0010;
-					end
-					2'b11: begin
-						write_value = {24'bx, rs2_value_in[7:0]};
-						write_mask = 4'b0001;
-					end
-				endcase
-			end
-			default: begin
-				write_value = 32'bx;
-				write_mask = 4'bx;
-			end
-		endcase
-	end
+    always_comb begin
+        case (width_in)
+            RV32_MEM_WIDTH_WORD: begin
+                write_value = rs2_value_in;
+                write_mask = 4'b1111;
+            end
+            RV32_MEM_WIDTH_HALF: begin
+                case (result_in[0])
+                    2'b0: begin
+                        write_value = {rs2_value_in[15:0], 16'bx};
+                        write_mask = 4'b1100;
+                    end
+                    2'b1: begin
+                        write_value = {16'bx, rs2_value_in[15:0]};
+                        write_mask = 4'b0011;
+                    end
+                endcase
+            end
+            RV32_MEM_WIDTH_BYTE: begin
+                case (result_in[1:0])
+                    2'b00: begin
+                        write_value = {rs2_value_in[7:0], 24'bx};
+                        write_mask = 4'b1000;
+                    end
+                    2'b01: begin
+                        write_value = {8'bx, rs2_value_in[7:0], 16'bx};
+                        write_mask = 4'b0100;
+                    end
+                    2'b10: begin
+                        write_value = {16'bx, rs2_value_in[7:0], 8'bx};
+                        write_mask = 4'b0010;
+                    end
+                    2'b11: begin
+                        write_value = {24'bx, rs2_value_in[7:0]};
+                        write_mask = 4'b0001;
+                    end
+                endcase
+            end
+            default: begin
+                write_value = 32'bx;
+                write_mask = 4'bx;
+            end
+        endcase
+    end
 
     always_ff @(negedge clk) begin
         read_value <= data_mem[result_in[31:2]];
 
-		if (write_en_in) begin
-			if (write_mask[3])
-				data_mem[result_in[31:2]][31:24] <= write_value[31:24];
-			if (write_mask[2])
-				data_mem[result_in[31:2]][23:16] <= write_value[23:16];
-			if (write_mask[1])
-				data_mem[result_in[31:2]][15:8] <= write_value[15:8];
-			if (write_mask[0])
-				data_mem[result_in[31:2]][7:0] <= write_value[7:0];
-		end
+        if (write_en_in) begin
+            if (write_mask[3])
+                data_mem[result_in[31:2]][31:24] <= write_value[31:24];
+            if (write_mask[2])
+                data_mem[result_in[31:2]][23:16] <= write_value[23:16];
+            if (write_mask[1])
+                data_mem[result_in[31:2]][15:8] <= write_value[15:8];
+            if (write_mask[0])
+                data_mem[result_in[31:2]][7:0] <= write_value[7:0];
+        end
     end
 
     always_ff @(posedge clk) begin
