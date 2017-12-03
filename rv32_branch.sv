@@ -35,7 +35,7 @@ module rv32_branch (
 );
     wire non_zero = |result_in;
 
-    always_ff begin
+    always_comb begin
         case (op_in)
             RV32_BRANCH_OP_NEVER:    taken_out = 0;
             RV32_BRANCH_OP_ZERO:     taken_out = ~non_zero;
