@@ -47,6 +47,8 @@ module rv32 (
         .rd_value_in(writeback_rd_value),
 
         /* control out */
+        .rs1_out(decode_rs1),
+        .rs2_out(decode_rs2),
         .alu_op_out(decode_alu_op),
         .alu_sub_sra_out(decode_alu_sub_sra),
         .alu_src1_out(decode_alu_src1),
@@ -68,6 +70,8 @@ module rv32 (
     );
 
     /* decode -> execute control */
+    logic [4:0] decode_rs1;
+    logic [4:0] decode_rs2;
     logic [3:0] decode_alu_op;
     logic decode_alu_sub_sra;
     logic decode_alu_src1;
@@ -91,6 +95,8 @@ module rv32 (
         .clk(clk),
 
         /* control in */
+        .rs1_in(decode_rs1),
+        .rs2_in(decode_rs2),
         .alu_op_in(decode_alu_op),
         .alu_sub_sra_in(decode_alu_sub_sra),
         .alu_src1_in(decode_alu_src1),
@@ -104,11 +110,18 @@ module rv32 (
         .rd_in(decode_rd),
         .rd_writeback_in(decode_rd_writeback),
 
+        /* control in (from writeback) */
+        .writeback_rd_in(writeback_rd),
+        .writeback_rd_writeback_in(writeback_rd_writeback),
+
         /* data in */
         .pc_in(decode_pc),
         .rs1_value_in(decode_rs1_value),
         .rs2_value_in(decode_rs2_value),
         .imm_in(decode_imm),
+
+        /* data in (from writeback) */
+        .writeback_rd_value_in(writeback_rd_value),
 
         /* control out */
         .mem_read_en_out(execute_mem_read_en),

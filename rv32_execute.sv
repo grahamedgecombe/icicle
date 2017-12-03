@@ -8,6 +8,8 @@ module rv32_execute (
     input clk,
 
     /* control in */
+    input [4:0] rs1_in,
+    input [4:0] rs2_in,
     input [3:0] alu_op_in,
     input alu_sub_sra_in,
     input alu_src1_in,
@@ -21,11 +23,18 @@ module rv32_execute (
     input [4:0] rd_in,
     input rd_writeback_in,
 
+    /* control in (from writeback) */
+    input [4:0] writeback_rd_in,
+    input writeback_rd_writeback_in,
+
     /* data in */
     input [31:0] pc_in,
     input [31:0] rs1_value_in,
     input [31:0] rs2_value_in,
     input [31:0] imm_in,
+
+    /* data in (from writeback) */
+    input [31:0] writeback_rd_value_in,
 
     /* control out */
     output mem_read_en_out,
@@ -41,6 +50,25 @@ module rv32_execute (
     output [31:0] rs2_value_out,
     output [31:0] branch_pc_out
 );
+    logic [31:0] rs1_value;
+    logic [31:0] rs2_value;
+
+    always_comb begin
+        if (rd_writeback_out && rd_out == rs1_in && |rs1_in)
+            rs1_value = result_out;
+        else if (writeback_rd_writeback_in && writeback_rd_in == rs1_in && |rs1_in)
+            rs1_value = writeback_rd_value_in;
+        else
+            rs1_value = rs1_value_in;
+
+        if (rd_writeback_out && rd_out == rs2_in && |rs2_in)
+            rs2_value = result_out;
+        else if (writeback_rd_writeback_in && writeback_rd_in == rs2_in && |rs2_in)
+            rs2_value = writeback_rd_value_in;
+        else
+            rs2_value = rs2_value_in;
+    end
+
     rv32_alu alu (
         .clk(clk),
 
@@ -52,8 +80,8 @@ module rv32_execute (
 
         /* data in */
         .pc_in(pc_in),
-        .rs1_value_in(rs1_value_in),
-        .rs2_value_in(rs2_value_in),
+        .rs1_value_in(rs1_value),
+        .rs2_value_in(rs2_value),
         .imm_in(imm_in),
 
         /* data out */

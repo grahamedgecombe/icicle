@@ -21,6 +21,8 @@ module rv32_decode (
 
     /* control out */
     output valid_out,
+    output [4:0] rs1_out,
+    output [4:0] rs2_out,
     output [3:0] alu_op_out,
     output alu_sub_sra_out,
     output alu_src1_out,
@@ -75,6 +77,8 @@ module rv32_decode (
     );
 
     always_ff @(posedge clk) begin
+        rs1_out <= rs1;
+        rs2_out <= rs2;
         rd_out <= rd;
         pc_out <= pc_in;
 
