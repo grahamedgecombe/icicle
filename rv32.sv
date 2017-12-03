@@ -17,6 +17,8 @@ module rv32 (
 
     rv32_fetch fetch (
         .clk(clk),
+        .stall(0),
+        .flush(0),
 
         /* control in (from mem) */
         .branch_taken_in(mem_branch_taken),
@@ -35,6 +37,8 @@ module rv32 (
 
     rv32_decode decode (
         .clk(clk),
+        .stall(0),
+        .flush(0),
 
         /* control in (from writeback) */
         .rd_in(mem_rd),
@@ -94,6 +98,8 @@ module rv32 (
 
     rv32_execute execute (
         .clk(clk),
+        .stall(0),
+        .flush(0),
 
         /* control in */
         .rs1_in(decode_rs1),
@@ -155,6 +161,8 @@ module rv32 (
 
     rv32_mem mem (
         .clk(clk),
+        .stall(0),
+        .flush(0),
 
         /* control in */
         .read_en_in(execute_mem_read_en),
