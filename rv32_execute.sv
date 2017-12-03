@@ -69,9 +69,9 @@ module rv32_execute (
             rs2_value = rs2_value_in;
     end
 
-    rv32_alu alu (
-        .clk(clk),
+    logic [31:0] result;
 
+    rv32_alu alu (
         /* control in */
         .op_in(alu_op_in),
         .sub_sra_in(alu_sub_sra_in),
@@ -85,12 +85,12 @@ module rv32_execute (
         .imm_in(imm_in),
 
         /* data out */
-        .result_out(result_out)
+        .result_out(result)
     );
 
-    rv32_branch_pc_mux branch_pc_mux (
-        .clk(clk),
+    logic [31:0] branch_pc;
 
+    rv32_branch_pc_mux branch_pc_mux (
         /* control in */
         .pc_src_in(branch_pc_src_in),
 
@@ -100,7 +100,7 @@ module rv32_execute (
         .imm_in(imm_in),
 
         /* data out */
-        .pc_out(branch_pc_out)
+        .pc_out(branch_pc)
     );
 
     always_ff @(posedge clk) begin
@@ -111,7 +111,9 @@ module rv32_execute (
         branch_op_out <= branch_op_in;
         rd_out <= rd_in;
         rd_writeback_out <= rd_writeback_in;
+        result_out <= result;
         rs2_value_out <= rs2_value_in;
+        branch_pc_out <= branch_pc;
     end
 endmodule
 
