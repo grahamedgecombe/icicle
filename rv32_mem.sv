@@ -44,16 +44,22 @@ module rv32_mem (
 
     assign branch_pc_out = branch_pc_in;
 
+    logic [31:0] read_value;
+
+    always_ff @(negedge clk) begin
+        read_value <= data_mem[result_in[31:2]];
+
+        if (write_en_in)
+            data_mem[result_in[31:2]] <= rs2_value_in;
+    end
+
     always_ff @(posedge clk) begin
         read_en_out <= read_en_in;
         rd_out <= rd_in;
         rd_writeback_out <= rd_writeback_in;
         result_out <= result_in;
 
-        read_value_out <= data_mem[result_in[31:2]];
-
-        if (write_en_in)
-            data_mem[result_in[31:2]] <= rs2_value_in;
+        read_value_out <= read_value;
     end
 endmodule
 
