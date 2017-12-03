@@ -83,23 +83,23 @@ module rv32_decode (
 
     always_ff @(posedge clk) begin
         if (!stall) begin
+            valid_out <= 0;
             rs1_out <= rs1;
             rs2_out <= rs2;
-            rd_out <= rd;
-            pc_out <= pc_in;
-
-            valid_out <= 0;
             alu_op_out <= 4'bx;
             alu_sub_sra_out <= 1'bx;
             alu_src1_out <= 1'bx;
             alu_src2_out <= 1'bx;
-            rd_writeback_out <= 0;
             mem_read_en_out <= 0;
             mem_write_en_out <= 0;
             mem_width_out <= 2'bx;
             mem_zero_extend_out <= 1'bx;
             branch_op_out <= RV32_BRANCH_OP_NEVER;
             branch_pc_src_out <= 1'bx;
+            rd_out <= rd;
+            rd_writeback_out <= 0;
+
+            pc_out <= pc_in;
             imm_out <= 32'bx;
 
             casez ({opcode, funct3, funct7})
