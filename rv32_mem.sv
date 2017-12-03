@@ -22,14 +22,12 @@ module rv32_mem (
     input [31:0] branch_pc_in,
 
     /* control out */
-    output read_en_out,
     output branch_taken_out,
     output [4:0] rd_out,
     output rd_writeback_out,
 
     /* data out */
-    output [31:0] result_out,
-    output [31:0] read_value_out,
+    output [31:0] rd_value_out,
     output [31:0] branch_pc_out
 );
     logic [31:0] data_mem [255:0];
@@ -112,33 +110,35 @@ module rv32_mem (
     end
 
     always_ff @(posedge clk) begin
-        read_en_out <= read_en_in;
         rd_out <= rd_in;
         rd_writeback_out <= rd_writeback_in;
-        result_out <= result_in;
 
-        case (width_in)
-            RV32_MEM_WIDTH_WORD: begin
-                read_value_out <= read_value;
-            end
-            RV32_MEM_WIDTH_HALF: begin
-				case (result_in[0])
-					1'b0: read_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:16]};
-					1'b1: read_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:0]};
-				endcase
-            end
-            RV32_MEM_WIDTH_BYTE: begin
-                case (result_in[1:0])
-                    2'b00: read_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:24]};
-                    2'b01: read_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[23]}}, read_value[23:16]};
-                    2'b10: read_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:8]};
-                    2'b11: read_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[7]}},  read_value[7:0]};
-                endcase
-            end
-            default: begin
-                read_value_out <= 32'bx;
-            end
-        endcase
+        if (read_en_in) begin
+            case (width_in)
+                RV32_MEM_WIDTH_WORD: begin
+                    rd_value_out <= read_value;
+                end
+                RV32_MEM_WIDTH_HALF: begin
+                    case (result_in[0])
+                        1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:16]};
+                        1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:0]};
+                    endcase
+                end
+                RV32_MEM_WIDTH_BYTE: begin
+                    case (result_in[1:0])
+                        2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:24]};
+                        2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[23]}}, read_value[23:16]};
+                        2'b10: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:8]};
+                        2'b11: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[7]}},  read_value[7:0]};
+                    endcase
+                end
+                default: begin
+                    rd_value_out <= 32'bx;
+                end
+            endcase
+        end else begin
+            rd_value_out <= result_in;
+        end
     end
 endmodule
 
