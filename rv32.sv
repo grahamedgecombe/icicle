@@ -29,6 +29,8 @@ module rv32 (
     logic mem_flush;
 
     rv32_hazard hazard (
+        .branch_taken_in(mem_branch_taken),
+
         .fetch_stall_out(fetch_stall),
         .fetch_flush_out(fetch_flush),
 
@@ -37,7 +39,7 @@ module rv32 (
 
         .execute_stall_out(execute_stall),
         .execute_flush_out(execute_flush),
-        
+
         .mem_stall_out(mem_stall),
         .mem_flush_out(mem_flush)
     );
