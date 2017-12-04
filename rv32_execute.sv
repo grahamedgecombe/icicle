@@ -100,7 +100,7 @@ module rv32_execute (
 
         /* data in */
         .pc_in(pc_in),
-        .rs1_value_in(rs1_value_in),
+        .rs1_value_in(rs1_value),
         .imm_in(imm_in),
 
         /* data out */
