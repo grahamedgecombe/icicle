@@ -2,8 +2,10 @@
 `define RV32_HAZARD
 
 module rv32_hazard (
+    /* control in */
     input branch_taken_in,
 
+    /* control out */
     output fetch_stall_out,
     output fetch_flush_out,
 
