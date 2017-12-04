@@ -6,8 +6,10 @@
 
 module rv32_mem (
     input clk,
-    input stall,
-    input flush,
+
+    /* control in (from hazard) */
+    input stall_in,
+    input flush_in,
 
     /* control in */
     input read_en_in,
@@ -112,7 +114,7 @@ module rv32_mem (
     end
 
     always_ff @(posedge clk) begin
-        if (!stall) begin
+        if (!stall_in) begin
             rd_out <= rd_in;
             rd_writeback_out <= rd_writeback_in;
 
@@ -143,7 +145,7 @@ module rv32_mem (
                 rd_value_out <= result_in;
             end
 
-            if (flush)
+            if (flush_in)
                 rd_writeback_out <= 0;
         end
     end

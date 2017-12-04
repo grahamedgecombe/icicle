@@ -5,8 +5,10 @@
 
 module rv32_fetch (
     input clk,
-    input stall,
-    input flush,
+
+    /* control in (from hazard) */
+    input stall_in,
+    input flush_in,
 
     /* control in (from mem) */
     input branch_taken_in,
@@ -27,12 +29,12 @@ module rv32_fetch (
         $readmemh("progmem_syn.hex", instr_mem);
 
     always_ff @(posedge clk) begin
-        if (!stall) begin
+        if (!stall_in) begin
             instr_out <= instr_mem[pc[31:2]];
             next_pc <= pc + 4;
             pc_out <= pc;
 
-            if (flush)
+            if (flush_in)
                 instr_out <= RV32_INSTR_NOP;
         end
     end

@@ -9,8 +9,10 @@
 
 module rv32_decode (
     input clk,
-    input stall,
-    input flush,
+
+    /* control in (from hazard) */
+    input stall_in,
+    input flush_in,
 
     /* control in (from writeback) */
     input [4:0] rd_in,
@@ -65,7 +67,7 @@ module rv32_decode (
 
     rv32_regs regs (
         .clk(clk),
-        .stall(stall),
+        .stall_in(stall_in),
 
         /* control in */
         .rs1_in(rs1),
@@ -82,7 +84,7 @@ module rv32_decode (
     );
 
     always_ff @(posedge clk) begin
-        if (!stall) begin
+        if (!stall_in) begin
             valid_out <= 0;
             rs1_out <= rs1;
             rs2_out <= rs2;
@@ -486,7 +488,7 @@ module rv32_decode (
                 end
             endcase
 
-            if (flush) begin
+            if (flush_in) begin
                 rs1_out <= 0;
                 rs2_out <= 0;
                 mem_read_en_out <= 0;
