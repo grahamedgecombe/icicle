@@ -18,7 +18,17 @@ module rv32 (
 
     rv32_hazard hazard (
         /* control in */
+        .decode_rs1_in(decode_rs1),
+        .decode_rs2_in(decode_rs2),
+
+        .execute_mem_read_en_in(execute_mem_read_en),
+        .execute_rd_in(execute_rd),
+        .execute_rd_writeback_in(execute_rd_writeback),
+
         .mem_branch_taken_in(mem_branch_taken),
+        .mem_read_en_in(mem_read_en),
+        .mem_rd_in(mem_rd),
+        .mem_rd_writeback_in(mem_rd_writeback),
 
         /* control out */
         .fetch_stall_out(fetch_stall),
@@ -222,6 +232,7 @@ module rv32 (
         .branch_pc_in(execute_branch_pc),
 
         /* control out */
+        .read_en_out(mem_read_en),
         .branch_taken_out(mem_branch_taken),
         .rd_out(mem_rd),
         .rd_writeback_out(mem_rd_writeback),
@@ -230,6 +241,9 @@ module rv32 (
         .rd_value_out(mem_rd_value),
         .branch_pc_out(mem_branch_pc)
     );
+
+    /* mem -> hazard control */
+    logic mem_read_en;
 
     /* mem -> writeback control */
     logic [4:0] mem_rd;
