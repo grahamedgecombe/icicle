@@ -4,6 +4,7 @@
 `include "rv32_decode.sv"
 `include "rv32_execute.sv"
 `include "rv32_fetch.sv"
+`include "rv32_hazard.sv"
 `include "rv32_mem.sv"
 
 module rv32 (
@@ -15,10 +16,36 @@ module rv32 (
             leds <= mem_rd_value[7:0];
     end
 
+    logic fetch_stall;
+    logic fetch_flush;
+
+    logic decode_stall;
+    logic decode_flush;
+
+    logic execute_stall;
+    logic execute_flush;
+
+    logic mem_stall;
+    logic mem_flush;
+
+    rv32_hazard hazard (
+        .fetch_stall_out(fetch_stall),
+        .fetch_flush_out(fetch_flush),
+
+        .decode_stall_out(decode_stall),
+        .decode_flush_out(decode_flush),
+
+        .execute_stall_out(execute_stall),
+        .execute_flush_out(execute_flush),
+        
+        .mem_stall_out(mem_stall),
+        .mem_flush_out(mem_flush)
+    );
+
     rv32_fetch fetch (
         .clk(clk),
-        .stall(0),
-        .flush(0),
+        .stall(fetch_stall),
+        .flush(fetch_flush),
 
         /* control in (from mem) */
         .branch_taken_in(mem_branch_taken),
@@ -37,8 +64,8 @@ module rv32 (
 
     rv32_decode decode (
         .clk(clk),
-        .stall(0),
-        .flush(0),
+        .stall(decode_stall),
+        .flush(decode_flush),
 
         /* control in (from writeback) */
         .rd_in(mem_rd),
@@ -98,8 +125,8 @@ module rv32 (
 
     rv32_execute execute (
         .clk(clk),
-        .stall(0),
-        .flush(0),
+        .stall(execute_stall),
+        .flush(execute_flush),
 
         /* control in */
         .rs1_in(decode_rs1),
@@ -161,8 +188,8 @@ module rv32 (
 
     rv32_mem mem (
         .clk(clk),
-        .stall(0),
-        .flush(0),
+        .stall(mem_stall),
+        .flush(mem_flush),
 
         /* control in */
         .read_en_in(execute_mem_read_en),
