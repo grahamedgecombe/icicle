@@ -117,7 +117,7 @@ module rv32_execute (
             rd_out <= rd_in;
             rd_writeback_out <= rd_writeback_in;
             result_out <= result;
-            rs2_value_out <= rs2_value_in;
+            rs2_value_out <= rs2_value;
             branch_pc_out <= branch_pc;
 
             if (flush_in) begin
