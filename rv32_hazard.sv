@@ -3,7 +3,7 @@
 
 module rv32_hazard (
     /* control in */
-    input branch_taken_in,
+    input mem_branch_taken_in,
 
     /* control out */
     output fetch_stall_out,
@@ -22,10 +22,10 @@ module rv32_hazard (
     assign fetch_flush_out = 0;
 
     assign decode_stall_out = execute_stall_out;
-    assign decode_flush_out = fetch_stall_out || branch_taken_in;
+    assign decode_flush_out = fetch_stall_out || mem_branch_taken_in;
 
     assign execute_stall_out = mem_stall_out;
-    assign execute_flush_out = decode_stall_out || branch_taken_in;
+    assign execute_flush_out = decode_stall_out || mem_branch_taken_in;
 
     assign mem_stall_out = 0;
     assign mem_flush_out = execute_stall_out;

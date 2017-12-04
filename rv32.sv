@@ -18,7 +18,7 @@ module rv32 (
 
     rv32_hazard hazard (
         /* control in */
-        .branch_taken_in(mem_branch_taken),
+        .mem_branch_taken_in(mem_branch_taken),
 
         /* control out */
         .fetch_stall_out(fetch_stall),
