@@ -25,10 +25,6 @@ module rv32 (
         .decode_rd_in(decode_rd),
         .decode_rd_writeback_in(decode_rd_writeback),
 
-        .execute_mem_read_en_in(execute_mem_read_en),
-        .execute_rd_in(execute_rd),
-        .execute_rd_writeback_in(execute_rd_writeback),
-
         .mem_branch_taken_in(mem_branch_taken),
 
         /* control out */

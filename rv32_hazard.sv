@@ -10,10 +10,6 @@ module rv32_hazard (
     input [4:0] decode_rd_in,
     input decode_rd_writeback_in,
 
-    input execute_mem_read_en_in,
-    input [4:0] execute_rd_in,
-    input execute_rd_writeback_in,
-
     input mem_branch_taken_in,
 
     /* control out */
@@ -33,8 +29,6 @@ module rv32_hazard (
 
     always_comb begin
         if ((decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_en_in && decode_rd_writeback_in)
-            fetch_wait_for_mem_read = 1;
-        else if ((decode_rs1_in == execute_rd_in || decode_rs2_in == execute_rd_in) && |execute_rd_in && execute_mem_read_en_in && execute_rd_writeback_in)
             fetch_wait_for_mem_read = 1;
         else
             fetch_wait_for_mem_read = 0;
