@@ -2,7 +2,10 @@
 `define RV32_MEM
 
 `include "rv32_branch.sv"
-`include "rv32_mem_ops.sv"
+
+localparam RV32_MEM_WIDTH_WORD = 2'b00;
+localparam RV32_MEM_WIDTH_HALF = 2'b01;
+localparam RV32_MEM_WIDTH_BYTE = 2'b10;
 
 module rv32_mem (
     input clk,

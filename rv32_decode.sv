@@ -1,9 +1,9 @@
 `ifndef RV32_DECODE
 `define RV32_DECODE
 
-`include "rv32_alu_ops.sv"
-`include "rv32_branch_ops.sv"
-`include "rv32_mem_ops.sv"
+`include "rv32_alu.sv"
+`include "rv32_branch.sv"
+`include "rv32_mem.sv"
 `include "rv32_opcodes.sv"
 `include "rv32_regs.sv"
 
