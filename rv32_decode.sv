@@ -496,8 +496,6 @@ module rv32_decode (
             endcase
 
             if (flush_in) begin
-                rs1_out <= 0;
-                rs2_out <= 0;
                 mem_read_en_out <= 0;
                 mem_write_en_out <= 0;
                 branch_op_out <= RV32_BRANCH_OP_NEVER;
