@@ -14,7 +14,7 @@ module ram (
     /* data out */
     output [31:0] read_value_out
 );
-    logic [31:0] mem [255:0];
+    logic [31:0] mem [2047:0];
 
     always_ff @(negedge clk) begin
         read_value_out <= mem[address_in[31:2]];
