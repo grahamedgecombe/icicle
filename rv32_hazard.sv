@@ -6,14 +6,15 @@ module rv32_hazard (
     input [4:0] decode_rs1_in,
     input [4:0] decode_rs2_in,
 
+    input decode_mem_read_en_in,
+    input [4:0] decode_rd_in,
+    input decode_rd_writeback_in,
+
     input execute_mem_read_en_in,
     input [4:0] execute_rd_in,
     input execute_rd_writeback_in,
 
     input mem_branch_taken_in,
-    input mem_read_en_in,
-    input [4:0] mem_rd_in,
-    input mem_rd_writeback_in,
 
     /* control out */
     output fetch_stall_out,
@@ -28,21 +29,21 @@ module rv32_hazard (
     output mem_stall_out,
     output mem_flush_out
 );
-    logic decode_wait_for_mem_read;
+    logic fetch_wait_for_mem_read;
 
     always_comb begin
-        if ((decode_rs1_in == execute_rd_in || decode_rs2_in == execute_rd_in) && |execute_rd_in && execute_mem_read_en_in && execute_rd_writeback_in)
-            decode_wait_for_mem_read = 1;
-        else if ((decode_rs1_in == mem_rd_in || decode_rs2_in == mem_rd_in) && |mem_rd_in && mem_read_en_in && mem_rd_writeback_in)
-            decode_wait_for_mem_read = 1;
+        if ((decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_en_in && decode_rd_writeback_in)
+            fetch_wait_for_mem_read = 1;
+        else if ((decode_rs1_in == execute_rd_in || decode_rs2_in == execute_rd_in) && |execute_rd_in && execute_mem_read_en_in && execute_rd_writeback_in)
+            fetch_wait_for_mem_read = 1;
         else
-            decode_wait_for_mem_read = 0;
+            fetch_wait_for_mem_read = 0;
     end
 
-    assign fetch_stall_out = decode_stall_out;
+    assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read;
     assign fetch_flush_out = 0;
 
-    assign decode_stall_out = execute_stall_out || decode_wait_for_mem_read;
+    assign decode_stall_out = execute_stall_out;
     assign decode_flush_out = fetch_stall_out || mem_branch_taken_in;
 
     assign execute_stall_out = mem_stall_out;

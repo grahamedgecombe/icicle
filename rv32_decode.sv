@@ -25,6 +25,10 @@ module rv32_decode (
     /* data in (from writeback) */
     input [31:0] rd_value_in,
 
+    /* control out (to hazard) */
+    output [4:0] rs1_unreg_out,
+    output [4:0] rs2_unreg_out,
+
     /* control out */
     output valid_out,
     output [4:0] rs1_out,
@@ -64,6 +68,9 @@ module rv32_decode (
     logic [31:0] imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:21], 1'b0};
 
     logic [31:0] shamt = {27'bx, rs2};
+
+    assign rs1_unreg_out = rs1;
+    assign rs2_unreg_out = rs2;
 
     rv32_regs regs (
         .clk(clk),

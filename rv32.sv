@@ -18,17 +18,18 @@ module rv32 (
 
     rv32_hazard hazard (
         /* control in */
-        .decode_rs1_in(decode_rs1),
-        .decode_rs2_in(decode_rs2),
+        .decode_rs1_in(decode_rs1_unreg),
+        .decode_rs2_in(decode_rs2_unreg),
+
+        .decode_mem_read_en_in(decode_mem_read_en),
+        .decode_rd_in(decode_rd),
+        .decode_rd_writeback_in(decode_rd_writeback),
 
         .execute_mem_read_en_in(execute_mem_read_en),
         .execute_rd_in(execute_rd),
         .execute_rd_writeback_in(execute_rd_writeback),
 
         .mem_branch_taken_in(mem_branch_taken),
-        .mem_read_en_in(mem_read_en),
-        .mem_rd_in(mem_rd),
-        .mem_rd_writeback_in(mem_rd_writeback),
 
         /* control out */
         .fetch_stall_out(fetch_stall),
@@ -100,6 +101,10 @@ module rv32 (
         /* data in (from writeback) */
         .rd_value_in(mem_rd_value),
 
+        /* control out (to hazard) */
+        .rs1_unreg_out(decode_rs1_unreg),
+        .rs2_unreg_out(decode_rs2_unreg),
+
         /* control out */
         .rs1_out(decode_rs1),
         .rs2_out(decode_rs2),
@@ -122,6 +127,10 @@ module rv32 (
         .rs2_value_out(decode_rs2_value),
         .imm_out(decode_imm)
     );
+
+    /* decode -> hazard control */
+    logic [4:0] decode_rs1_unreg;
+    logic [4:0] decode_rs2_unreg;
 
     /* decode -> execute control */
     logic [4:0] decode_rs1;
