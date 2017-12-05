@@ -29,7 +29,6 @@ module rv32_mem (
     input [31:0] branch_pc_in,
 
     /* control out */
-    output read_en_out,
     output branch_taken_out,
     output [4:0] rd_out,
     output rd_writeback_out,
@@ -119,7 +118,6 @@ module rv32_mem (
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
-            read_en_out <= read_en_in;
             rd_out <= rd_in;
             rd_writeback_out <= rd_writeback_in;
 
