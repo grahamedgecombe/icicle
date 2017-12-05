@@ -9,7 +9,17 @@
 
 module rv32 (
     input clk,
-    output [7:0] leds
+    output [7:0] leds,
+
+    /* control out (memory bus) */
+    output [3:0] write_mask_out,
+
+    /* data in (memory bus) */
+    input [31:0] read_value_in,
+
+    /* data out (memory bus) */
+    output [31:0] address_out,
+    output [31:0] write_value_out
 );
     always_ff @(posedge clk) begin
         if (mem_rd_writeback && mem_rd == 31)
@@ -236,14 +246,24 @@ module rv32 (
         .rs2_value_in(execute_rs2_value),
         .branch_pc_in(execute_branch_pc),
 
+        /* data in (from memory bus) */
+        .read_value_in(read_value_in),
+
         /* control out */
         .branch_taken_out(mem_branch_taken),
         .rd_out(mem_rd),
         .rd_writeback_out(mem_rd_writeback),
 
+        /* control out (to memory bus) */
+        .write_mask_out(write_mask_out),
+
         /* data out */
         .rd_value_out(mem_rd_value),
-        .branch_pc_out(mem_branch_pc)
+        .branch_pc_out(mem_branch_pc),
+
+        /* data out (to memory bus) */
+        .address_out(address_out),
+        .write_value_out(write_value_out)
     );
 
     /* mem -> writeback control */

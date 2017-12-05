@@ -1,4 +1,5 @@
 `include "clk_div.sv"
+`include "ram.sv"
 `include "rv32.sv"
 
 module top (
@@ -45,6 +46,38 @@ module top (
 
     rv32 rv32 (
         .clk(clk_slow),
-        .leds(leds)
+        .leds(leds),
+
+        /* control out */
+        .write_mask_out(mem_write_mask),
+
+        /* data in */
+        .read_value_in(mem_read_value),
+
+        /* data out */
+        .address_out(mem_address),
+        .write_value_out(mem_write_value)
+    );
+
+    /* memory bus control */
+    logic [3:0] mem_write_mask;
+
+    /* memory bus data */
+    logic [31:0] mem_address;
+    logic [31:0] mem_read_value;
+    logic [31:0] mem_write_value;
+
+    ram ram (
+        .clk(clk_slow),
+
+        /* control in */
+        .write_mask_in(mem_write_mask),
+
+        /* data in */
+        .address_in(mem_address),
+        .write_value_in(mem_write_value),
+
+        /* data out */
+        .read_value_out(mem_read_value)
     );
 endmodule

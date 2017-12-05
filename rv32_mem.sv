@@ -28,17 +28,25 @@ module rv32_mem (
     input [31:0] rs2_value_in,
     input [31:0] branch_pc_in,
 
+    /* data in (from memory bus) */
+    input [31:0] read_value_in,
+
     /* control out */
     output branch_taken_out,
     output [4:0] rd_out,
     output rd_writeback_out,
 
+    /* control out (to memory bus) */
+    output [3:0] write_mask_out,
+
     /* data out */
     output [31:0] rd_value_out,
-    output [31:0] branch_pc_out
-);
-    logic [31:0] data_mem [255:0];
+    output [31:0] branch_pc_out,
 
+    /* data out (to memory bus) */
+    output [31:0] address_out,
+    output [31:0] write_value_out
+);
     rv32_branch branch (
         /* control in */
         .op_in(branch_op_in),
@@ -52,67 +60,55 @@ module rv32_mem (
 
     assign branch_pc_out = branch_pc_in;
 
-    logic [31:0] read_value;
-    logic [31:0] write_value;
-    logic [3:0] write_mask;
+    assign address_out = result_in;
 
     always_comb begin
-        case (width_in)
-            RV32_MEM_WIDTH_WORD: begin
-                write_value = rs2_value_in;
-                write_mask = 4'b1111;
-            end
-            RV32_MEM_WIDTH_HALF: begin
-                case (result_in[0])
-                    2'b0: begin
-                        write_value = {rs2_value_in[15:0], 16'bx};
-                        write_mask = 4'b1100;
-                    end
-                    2'b1: begin
-                        write_value = {16'bx, rs2_value_in[15:0]};
-                        write_mask = 4'b0011;
-                    end
-                endcase
-            end
-            RV32_MEM_WIDTH_BYTE: begin
-                case (result_in[1:0])
-                    2'b00: begin
-                        write_value = {rs2_value_in[7:0], 24'bx};
-                        write_mask = 4'b1000;
-                    end
-                    2'b01: begin
-                        write_value = {8'bx, rs2_value_in[7:0], 16'bx};
-                        write_mask = 4'b0100;
-                    end
-                    2'b10: begin
-                        write_value = {16'bx, rs2_value_in[7:0], 8'bx};
-                        write_mask = 4'b0010;
-                    end
-                    2'b11: begin
-                        write_value = {24'bx, rs2_value_in[7:0]};
-                        write_mask = 4'b0001;
-                    end
-                endcase
-            end
-            default: begin
-                write_value = 32'bx;
-                write_mask = 4'bx;
-            end
-        endcase
-    end
-
-    always_ff @(negedge clk) begin
-        read_value <= data_mem[result_in[31:2]];
-
         if (write_en_in) begin
-            if (write_mask[3])
-                data_mem[result_in[31:2]][31:24] <= write_value[31:24];
-            if (write_mask[2])
-                data_mem[result_in[31:2]][23:16] <= write_value[23:16];
-            if (write_mask[1])
-                data_mem[result_in[31:2]][15:8] <= write_value[15:8];
-            if (write_mask[0])
-                data_mem[result_in[31:2]][7:0] <= write_value[7:0];
+            case (width_in)
+                RV32_MEM_WIDTH_WORD: begin
+                    write_value_out = rs2_value_in;
+                    write_mask_out = 4'b1111;
+                end
+                RV32_MEM_WIDTH_HALF: begin
+                    case (result_in[0])
+                        2'b0: begin
+                            write_value_out = {rs2_value_in[15:0], 16'bx};
+                            write_mask_out = 4'b1100;
+                        end
+                        2'b1: begin
+                            write_value_out = {16'bx, rs2_value_in[15:0]};
+                            write_mask_out = 4'b0011;
+                        end
+                    endcase
+                end
+                RV32_MEM_WIDTH_BYTE: begin
+                    case (result_in[1:0])
+                        2'b00: begin
+                            write_value_out = {rs2_value_in[7:0], 24'bx};
+                            write_mask_out = 4'b1000;
+                        end
+                        2'b01: begin
+                            write_value_out = {8'bx, rs2_value_in[7:0], 16'bx};
+                            write_mask_out = 4'b0100;
+                        end
+                        2'b10: begin
+                            write_value_out = {16'bx, rs2_value_in[7:0], 8'bx};
+                            write_mask_out = 4'b0010;
+                        end
+                        2'b11: begin
+                            write_value_out = {24'bx, rs2_value_in[7:0]};
+                            write_mask_out = 4'b0001;
+                        end
+                    endcase
+                end
+                default: begin
+                    write_value_out = 32'bx;
+                    write_mask_out = 4'bx;
+                end
+            endcase
+        end else begin
+            write_value_out = 32'bx;
+            write_mask_out = 4'b0;
         end
     end
 
@@ -124,20 +120,20 @@ module rv32_mem (
             if (read_en_in) begin
                 case (width_in)
                     RV32_MEM_WIDTH_WORD: begin
-                        rd_value_out <= read_value;
+                        rd_value_out <= read_value_in;
                     end
                     RV32_MEM_WIDTH_HALF: begin
                         case (result_in[0])
-                            1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:16]};
-                            1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:0]};
+                            1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value_in[31]}}, read_value_in[31:16]};
+                            1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value_in[15]}}, read_value_in[15:0]};
                         endcase
                     end
                     RV32_MEM_WIDTH_BYTE: begin
                         case (result_in[1:0])
-                            2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[31]}}, read_value[31:24]};
-                            2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[23]}}, read_value[23:16]};
-                            2'b10: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[15]}}, read_value[15:8]};
-                            2'b11: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value[7]}},  read_value[7:0]};
+                            2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[31]}}, read_value_in[31:24]};
+                            2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[23]}}, read_value_in[23:16]};
+                            2'b10: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[15]}}, read_value_in[15:8]};
+                            2'b11: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[7]}},  read_value_in[7:0]};
                         endcase
                     end
                     default: begin
