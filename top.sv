@@ -64,13 +64,17 @@ module top (
 
     /* memory bus data */
     logic [31:0] mem_address;
-    logic [31:0] mem_read_value;
+    logic [31:0] mem_read_value = ram_read_value;
     logic [31:0] mem_write_value;
+
+    logic ram_sel = mem_address[31:16] == 0;
+    logic [31:0] ram_read_value;
 
     ram ram (
         .clk(clk_slow),
 
         /* control in */
+        .sel_in(ram_sel),
         .write_mask_in(mem_write_mask),
 
         /* data in */
@@ -78,6 +82,6 @@ module top (
         .write_value_in(mem_write_value),
 
         /* data out */
-        .read_value_out(mem_read_value)
+        .read_value_out(ram_read_value)
     );
 endmodule
