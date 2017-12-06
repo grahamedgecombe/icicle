@@ -15,8 +15,8 @@ module rv32_mem (
     input flush_in,
 
     /* control in */
-    input read_en_in,
-    input write_en_in,
+    input read_in,
+    input write_in,
     input [1:0] width_in,
     input zero_extend_in,
     input [1:0] branch_op_in,
@@ -63,7 +63,7 @@ module rv32_mem (
     assign address_out = result_in;
 
     always_comb begin
-        if (write_en_in) begin
+        if (write_in) begin
             case (width_in)
                 RV32_MEM_WIDTH_WORD: begin
                     write_value_out = rs2_value_in;
@@ -117,7 +117,7 @@ module rv32_mem (
             rd_out <= rd_in;
             rd_writeback_out <= rd_writeback_in;
 
-            if (read_en_in) begin
+            if (read_in) begin
                 case (width_in)
                     RV32_MEM_WIDTH_WORD: begin
                         rd_value_out <= read_value_in;

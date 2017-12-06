@@ -25,7 +25,7 @@ module rv32 (
         .decode_rs1_in(decode_rs1_unreg),
         .decode_rs2_in(decode_rs2_unreg),
 
-        .decode_mem_read_en_in(decode_mem_read_en),
+        .decode_mem_read_in(decode_mem_read),
         .decode_rd_in(decode_rd),
         .decode_rd_writeback_in(decode_rd_writeback),
 
@@ -112,8 +112,8 @@ module rv32 (
         .alu_sub_sra_out(decode_alu_sub_sra),
         .alu_src1_out(decode_alu_src1),
         .alu_src2_out(decode_alu_src2),
-        .mem_read_en_out(decode_mem_read_en),
-        .mem_write_en_out(decode_mem_write_en),
+        .mem_read_out(decode_mem_read),
+        .mem_write_out(decode_mem_write),
         .mem_width_out(decode_mem_width),
         .mem_zero_extend_out(decode_mem_zero_extend),
         .branch_op_out(decode_branch_op),
@@ -139,8 +139,8 @@ module rv32 (
     logic decode_alu_sub_sra;
     logic decode_alu_src1;
     logic decode_alu_src2;
-    logic decode_mem_read_en;
-    logic decode_mem_write_en;
+    logic decode_mem_read;
+    logic decode_mem_write;
     logic [1:0] decode_mem_width;
     logic decode_mem_zero_extend;
     logic [1:0] decode_branch_op;
@@ -168,8 +168,8 @@ module rv32 (
         .alu_sub_sra_in(decode_alu_sub_sra),
         .alu_src1_in(decode_alu_src1),
         .alu_src2_in(decode_alu_src2),
-        .mem_read_en_in(decode_mem_read_en),
-        .mem_write_en_in(decode_mem_write_en),
+        .mem_read_in(decode_mem_read),
+        .mem_write_in(decode_mem_write),
         .mem_width_in(decode_mem_width),
         .mem_zero_extend_in(decode_mem_zero_extend),
         .branch_op_in(decode_branch_op),
@@ -191,8 +191,8 @@ module rv32 (
         .writeback_rd_value_in(mem_rd_value),
 
         /* control out */
-        .mem_read_en_out(execute_mem_read_en),
-        .mem_write_en_out(execute_mem_write_en),
+        .mem_read_out(execute_mem_read),
+        .mem_write_out(execute_mem_write),
         .mem_width_out(execute_mem_width),
         .mem_zero_extend_out(execute_mem_zero_extend),
         .branch_op_out(execute_branch_op),
@@ -206,8 +206,8 @@ module rv32 (
     );
 
     /* execute -> mem control */
-    logic execute_mem_read_en;
-    logic execute_mem_write_en;
+    logic execute_mem_read;
+    logic execute_mem_write;
     logic [1:0] execute_mem_width;
     logic execute_mem_zero_extend;
     logic [1:0] execute_branch_op;
@@ -227,8 +227,8 @@ module rv32 (
         .flush_in(mem_flush),
 
         /* control in */
-        .read_en_in(execute_mem_read_en),
-        .write_en_in(execute_mem_write_en),
+        .read_in(execute_mem_read),
+        .write_in(execute_mem_write),
         .width_in(execute_mem_width),
         .zero_extend_in(execute_mem_zero_extend),
         .branch_op_in(execute_branch_op),
