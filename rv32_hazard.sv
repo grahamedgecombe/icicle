@@ -25,14 +25,7 @@ module rv32_hazard (
     output mem_stall_out,
     output mem_flush_out
 );
-    logic fetch_wait_for_mem_read;
-
-    always_comb begin
-        if ((decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_en_in && decode_rd_writeback_in)
-            fetch_wait_for_mem_read = 1;
-        else
-            fetch_wait_for_mem_read = 0;
-    end
+    logic fetch_wait_for_mem_read = (decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_en_in && decode_rd_writeback_in;
 
     assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read;
     assign fetch_flush_out = 0;
