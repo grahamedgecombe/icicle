@@ -1,15 +1,11 @@
 `ifndef UART
 `define UART
 
-localparam UART_STATE_IDLE  = 2'b00;
-localparam UART_STATE_START = 2'b01;
-localparam UART_STATE_DATA  = 2'b10;
-localparam UART_STATE_STOP  = 2'b11;
+localparam UART_REG_CLK_DIV = 2'b00;
+localparam UART_REG_STATUS  = 2'b01;
+localparam UART_REG_DATA    = 2'b10;
 
-module uart #(
-    parameter CLK_FREQ = 36000000,
-    parameter BAUD_RATE = 9600
-) (
+module uart (
     input clk,
     input reset,
 
@@ -18,128 +14,82 @@ module uart #(
     output tx_out,
 
     /* control in */
-    input tx_transmit_in,
+    input sel_in,
+    input read_in,
+    input [3:0] write_mask_in,
 
     /* data in */
-    input [7:0] tx_byte_in,
-
-    /* control out */
-    output rx_received_out,
-    output tx_ready_out,
+    input [31:0] address_in,
+    input [31:0] write_value_in,
 
     /* data out */
-    output [7:0] rx_byte_out
+    output [31:0] read_value_out
 );
-    localparam CLK_DIV = CLK_FREQ / BAUD_RATE;
+    logic [15:0] clk_div;
 
-    logic [11:0] rx_clk_div;
-    logic [11:0] tx_clk_div;
+    logic [15:0] tx_clks;
+    logic [3:0] tx_bits;
+    logic [9:0] tx_buf;
 
-    logic [1:0] rx_state;
-    logic [1:0] tx_state;
+    initial
+        tx_buf[0] = 1;
 
-    logic [2:0] rx_bit;
-    logic [2:0] tx_bit;
+    assign tx_out = tx_buf[0];
 
-    logic [7:0] rx_pending_byte;
-    logic [7:0] tx_byte;
-
-    initial begin
-        rx_state <= UART_STATE_IDLE;
-        tx_state <= UART_STATE_IDLE;
-        rx_received_out <= 0;
-        tx_out <= 1;
-        tx_ready_out <= 1;
+    always_comb begin
+        if (sel_in) begin
+            case (address_in[3:2])
+                UART_REG_CLK_DIV: begin
+                    read_value_out = {16'b0, clk_div};
+                end
+                UART_REG_STATUS: begin
+                    read_value_out = {31'b0, |tx_bits};
+                end
+                UART_REG_DATA: begin
+                    read_value_out = 0;
+                end
+                default: begin
+                    read_value_out = 32'bx;
+                end
+            endcase
+        end else begin
+            read_value_out = 0;
+        end
     end
 
-    always @(posedge clk) begin
-        rx_received_out <= 0;
+    always_ff @(posedge clk) begin
+        if (sel_in) begin
+            case (address_in[3:2])
+                UART_REG_CLK_DIV: begin
+                    if (write_mask_in[1])
+                        clk_div[15:8] <= write_value_in[15:8];
 
-        if (rx_clk_div)
-            rx_clk_div <= rx_clk_div - 1;
-
-        if (tx_clk_div)
-            tx_clk_div <= tx_clk_div - 1;
-
-        case (rx_state)
-            UART_STATE_IDLE: begin
-                if (!rx_in) begin
-                    rx_state <= UART_STATE_START;
-                    rx_clk_div <= CLK_DIV / 2;
+                    if (write_mask_in[0])
+                        clk_div[7:0] <= write_value_in[7:0];
                 end
-            end
-            UART_STATE_START: begin
-                if (!rx_clk_div) begin
-                    if (!rx_in) begin
-                        rx_state <= UART_STATE_DATA;
-                        rx_clk_div <= CLK_DIV;
-                        rx_bit <= 7;
-                    end else begin
-                        rx_state <= UART_STATE_IDLE;
+                UART_REG_DATA: begin
+                    if (write_mask_in[0] && !tx_bits) begin
+                        tx_clks <= clk_div;
+                        tx_bits <= 10;
+                        tx_buf <= {1'b1, write_value_in[7:0], 1'b0};
                     end
                 end
-            end
-            UART_STATE_DATA: begin
-                if (!rx_clk_div) begin
-                    rx_state <= rx_bit ? UART_STATE_DATA : UART_STATE_STOP;
-                    rx_clk_div <= CLK_DIV;
-                    rx_bit <= rx_bit - 1;
-                    rx_pending_byte <= {rx_in, rx_pending_byte[7:1]};
-                end
-            end
-            UART_STATE_STOP: begin
-                if (!rx_clk_div) begin
-                    rx_state <= UART_STATE_IDLE;
-                    if (rx_in) begin
-                        rx_received_out <= 1;
-                        rx_byte_out <= rx_pending_byte;
-                    end
-                end
-            end
-        endcase
+            endcase
+        end
 
-        case (tx_state)
-            UART_STATE_IDLE: begin
-                if (tx_transmit_in) begin
-                    tx_state <= UART_STATE_START;
-                    tx_clk_div <= CLK_DIV;
-                    tx_byte <= tx_byte_in;
-                    tx_out <= 0;
-                    tx_ready_out <= 0;
-                end
+        if (tx_bits) begin
+            if (tx_clks) begin
+                tx_clks <= tx_clks - 1;
+            end else begin
+                tx_clks <= clk_div;
+                tx_bits <= tx_bits - 1;
+                tx_buf <= {1'b1, tx_buf[9:1]};
             end
-            UART_STATE_START: begin
-                if (!tx_clk_div) begin
-                    tx_state <= UART_STATE_DATA;
-                    tx_clk_div <= CLK_DIV;
-                    tx_bit <= 7;
-                    tx_byte <= {1'b0, tx_byte[7:1]};
-                    tx_out <= tx_byte[0];
-                end
-            end
-            UART_STATE_DATA: begin
-                if (!tx_clk_div) begin
-                    tx_state <= tx_bit ? UART_STATE_DATA : UART_STATE_STOP;
-                    tx_clk_div <= CLK_DIV;
-                    tx_bit <= tx_bit - 1;
-                    tx_byte <= {1'b0, tx_byte[7:1]};
-                    tx_out <= tx_bit ? tx_byte[0] : 1;
-                end
-            end
-            UART_STATE_STOP: begin
-                if (!tx_clk_div) begin
-                    tx_state <= UART_STATE_IDLE;
-                    tx_ready_out <= 1;
-                end
-            end
-        endcase
+        end
 
         if (reset) begin
-            rx_state <= UART_STATE_IDLE;
-            tx_state <= UART_STATE_IDLE;
-            rx_received_out <= 0;
-            tx_out <= 1;
-            tx_ready_out <= 1;
+            tx_bits <= 0;
+            tx_buf[0] <= 1;
         end
     end
 endmodule
