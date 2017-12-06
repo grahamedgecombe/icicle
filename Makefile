@@ -8,6 +8,7 @@ ASC_SYN  = $(TOP)_syn.asc
 ASC      = $(TOP).asc
 BIN      = $(TOP).bin
 TIME_RPT = $(TOP).rpt
+STAT     = $(TOP).stat
 SPEED    = hx
 DEVICE   = 8k
 PACKAGE  = ct256
@@ -55,8 +56,11 @@ $(BIN): $(ASC) $(TIME_RPT)
 time: $(TIME_RPT)
 	cat $<
 
-stat: $(ASC_SYN)
-	icebox_stat $<
+$(STAT): $(ASC_SYN)
+	icebox_stat $< > $@
+
+stat: $(STAT)
+	cat $<
 
 flash: $(BIN)
 	iceprog -S $<

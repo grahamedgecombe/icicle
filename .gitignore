@@ -6,6 +6,7 @@
 *.hex
 *.o
 *.rpt
+*.stat
 /pll.sv
 !.git*
 !.mailmap
