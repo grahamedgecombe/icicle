@@ -9,7 +9,6 @@
 
 module rv32 (
     input clk,
-    output [7:0] leds,
 
     /* control out (memory bus) */
     output [3:0] write_mask_out,
@@ -21,11 +20,6 @@ module rv32 (
     output [31:0] address_out,
     output [31:0] write_value_out
 );
-    always_ff @(posedge clk) begin
-        if (mem_rd_writeback && mem_rd == 31)
-            leds <= mem_rd_value[7:0];
-    end
-
     rv32_hazard hazard (
         /* control in */
         .decode_rs1_in(decode_rs1_unreg),

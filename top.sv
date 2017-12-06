@@ -46,7 +46,6 @@ module top (
 
     rv32 rv32 (
         .clk(clk_slow),
-        .leds(leds),
 
         /* control out */
         .write_mask_out(mem_write_mask),
@@ -64,10 +63,10 @@ module top (
 
     /* memory bus data */
     logic [31:0] mem_address;
-    logic [31:0] mem_read_value = ram_read_value;
+    logic [31:0] mem_read_value = ram_read_value | leds_read_value;
     logic [31:0] mem_write_value;
 
-    logic ram_sel = mem_address[31:16] == 0;
+    logic ram_sel = mem_address[31:0] == 32'b00000000_00000000_????????_????????;
     logic [31:0] ram_read_value;
 
     ram ram (
@@ -84,4 +83,12 @@ module top (
         /* data out */
         .read_value_out(ram_read_value)
     );
+
+    logic leds_sel = mem_address[31:0] == 32'b00000000_00000001_00000000_000000??;
+    logic [31:0] leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
+
+    always_ff @(posedge clk) begin
+        if (leds_sel && mem_write_mask[0])
+            leds <= mem_write_value[7:0];
+    end
 endmodule

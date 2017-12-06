@@ -15,5 +15,6 @@ mul_even:
 
 # display results on the LEDs
 mul_done:
-    mv t6, t3
+    li t1, 0x00010000
+    sw t3, 0(t1)
     j .
