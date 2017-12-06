@@ -49,7 +49,7 @@ $(TIME_RPT): $(ASC_SYN) $(PCF)
 $(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
 	icebram progmem_syn.hex progmem.hex < $< > $@
 
-$(BIN): $(ASC)
+$(BIN): $(ASC) $(TIME_RPT)
 	icepack $< $@
 
 time: $(TIME_RPT)
