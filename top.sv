@@ -87,7 +87,7 @@ module top (
     logic leds_sel = mem_address[31:0] == 32'b00000000_00000001_00000000_000000??;
     logic [31:0] leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk_slow) begin
         if (leds_sel && mem_write_mask[0])
             leds <= mem_write_value[7:0];
     end
