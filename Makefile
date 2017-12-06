@@ -24,7 +24,7 @@ OBJCOPY  = $(TARGET)-objcopy
 all: $(TOP).bin
 
 clean:
-	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) progmem_syn.hex progmem.hex progmem.o
+	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o
 
 progmem.hex: progmem.o
 	$(OBJCOPY) -O srec $< /dev/stdout \
