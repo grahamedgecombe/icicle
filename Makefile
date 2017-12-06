@@ -7,6 +7,7 @@ BLIF     = $(TOP).blif
 ASC_SYN  = $(TOP)_syn.asc
 ASC      = $(TOP).asc
 BIN      = $(TOP).bin
+TIME_RPT = $(TOP).rpt
 SPEED    = hx
 DEVICE   = 8k
 PACKAGE  = ct256
@@ -42,14 +43,17 @@ $(BLIF): $(YS) $(SRC) progmem_syn.hex
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
 
+$(TIME_RPT): $(ASC_SYN) $(PCF)
+	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) -r $@ $<
+
 $(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
 	icebram progmem_syn.hex progmem.hex < $< > $@
 
 $(BIN): $(ASC)
 	icepack $< $@
 
-time: $(ASC_SYN) $(PCF)
-	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) $<
+time: $(TIME_RPT)
+	cat $<
 
 stat: $(ASC_SYN)
 	icebox_stat $<

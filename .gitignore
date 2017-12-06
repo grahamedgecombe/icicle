@@ -5,6 +5,7 @@
 *.blif
 *.hex
 *.o
+*.rpt
 /pll.sv
 !.git*
 !.mailmap
