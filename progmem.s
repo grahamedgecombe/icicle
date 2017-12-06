@@ -1,20 +1,20 @@
-    li t1, 7
-    li t2, 3
-    li t3, 0
+    li t0, 7
+    li t1, 3
+    li t2, 0
 
-# t3 = t1 * t2
+# t2 = t0 * t1
 mul:
-    beqz t1, mul_done
-    andi t4, t1, 1
-    beqz t4, mul_even
-    add t3, t3, t2
+    beqz t0, mul_done
+    andi t3, t0, 1
+    beqz t3, mul_even
+    add t2, t2, t1
 mul_even:
-    srli t1, t1, 1
-    slli t2, t2, 1
+    srli t0, t0, 1
+    slli t1, t1, 1
     j mul
 
 # display results on the LEDs
 mul_done:
-    li t1, 0x00010000
-    sw t3, 0(t1)
+    li t0, 0x00010000
+    sw t2, 0(t0)
     j .
