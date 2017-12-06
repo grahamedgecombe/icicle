@@ -1,5 +1,6 @@
 QUIET    = -q
-SRC      = $(wildcard *.sv)
+PLL      = pll.sv
+SRC      = $(sort $(wildcard *.sv) $(PLL))
 TOP      = top
 YS       = $(TOP).ys
 BLIF     = $(TOP).blif
@@ -11,6 +12,7 @@ DEVICE   = 8k
 PACKAGE  = ct256
 PCF      = ice40hx8k-b-evn.pcf
 FREQ_OSC = 12
+FREQ_PLL = 36
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
@@ -31,6 +33,9 @@ progmem.hex: progmem.o
 progmem_syn.hex:
 	icebram -g 32 256 > $@
 
+$(PLL):
+	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
+
 $(BLIF): $(YS) $(SRC) progmem_syn.hex
 	yosys $(QUIET) -s $<
 
@@ -44,7 +49,7 @@ $(BIN): $(ASC)
 	icepack $< $@
 
 time: $(ASC_SYN) $(PCF)
-	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_OSC) $<
+	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) $<
 
 stat: $(ASC_SYN)
 	icebox_stat $<

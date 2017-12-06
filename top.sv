@@ -1,4 +1,5 @@
 `include "clk_div.sv"
+`include "pll.sv"
 `include "ram.sv"
 `include "rv32.sv"
 
@@ -35,17 +36,17 @@ module top (
         .D_OUT_0({flash_io1_out, flash_io0_out})
     );
 
-    logic clk_slow;
+    logic pll_clk;
+    logic pll_locked;
 
-    clk_div #(
-        .LOG_DIVISOR(18)
-    ) clk_div (
-        .clk_in(clk),
-        .clk_out(clk_slow)
+    pll pll (
+        .clock_in(clk),
+        .clock_out(pll_clk),
+        .locked(pll_locked)
     );
 
     rv32 rv32 (
-        .clk(clk_slow),
+        .clk(pll_clk),
 
         /* control out */
         .write_mask_out(mem_write_mask),
@@ -70,7 +71,7 @@ module top (
     logic [31:0] ram_read_value;
 
     ram ram (
-        .clk(clk_slow),
+        .clk(pll_clk),
 
         /* control in */
         .sel_in(ram_sel),
@@ -87,7 +88,7 @@ module top (
     logic leds_sel = mem_address[31:0] == 32'b00000000_00000001_00000000_000000??;
     logic [31:0] leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
 
-    always_ff @(posedge clk_slow) begin
+    always_ff @(posedge pll_clk) begin
         if (leds_sel && mem_write_mask[0])
             leds <= mem_write_value[7:0];
     end
