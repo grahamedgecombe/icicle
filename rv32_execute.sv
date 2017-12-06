@@ -25,11 +25,11 @@ module rv32_execute (
     input [1:0] branch_op_in,
     input branch_pc_src_in,
     input [4:0] rd_in,
-    input rd_writeback_in,
+    input rd_write_in,
 
     /* control in (from writeback) */
     input [4:0] writeback_rd_in,
-    input writeback_rd_writeback_in,
+    input writeback_rd_write_in,
 
     /* data in */
     input [31:0] pc_in,
@@ -47,7 +47,7 @@ module rv32_execute (
     output mem_zero_extend_out,
     output [1:0] branch_op_out,
     output [4:0] rd_out,
-    output rd_writeback_out,
+    output rd_write_out,
 
     /* data out */
     output [31:0] result_out,
@@ -58,16 +58,16 @@ module rv32_execute (
     logic [31:0] rs2_value;
 
     always_comb begin
-        if (rd_writeback_out && rd_out == rs1_in && |rs1_in)
+        if (rd_write_out && rd_out == rs1_in && |rs1_in)
             rs1_value = result_out;
-        else if (writeback_rd_writeback_in && writeback_rd_in == rs1_in && |rs1_in)
+        else if (writeback_rd_write_in && writeback_rd_in == rs1_in && |rs1_in)
             rs1_value = writeback_rd_value_in;
         else
             rs1_value = rs1_value_in;
 
-        if (rd_writeback_out && rd_out == rs2_in && |rs2_in)
+        if (rd_write_out && rd_out == rs2_in && |rs2_in)
             rs2_value = result_out;
-        else if (writeback_rd_writeback_in && writeback_rd_in == rs2_in && |rs2_in)
+        else if (writeback_rd_write_in && writeback_rd_in == rs2_in && |rs2_in)
             rs2_value = writeback_rd_value_in;
         else
             rs2_value = rs2_value_in;
@@ -115,7 +115,7 @@ module rv32_execute (
             mem_zero_extend_out <= mem_zero_extend_in;
             branch_op_out <= branch_op_in;
             rd_out <= rd_in;
-            rd_writeback_out <= rd_writeback_in;
+            rd_write_out <= rd_write_in;
             result_out <= result;
             rs2_value_out <= rs2_value;
             branch_pc_out <= branch_pc;
@@ -124,7 +124,7 @@ module rv32_execute (
                 mem_read_out <= 0;
                 mem_write_out <= 0;
                 branch_op_out <= RV32_BRANCH_OP_NEVER;
-                rd_writeback_out <= 0;
+                rd_write_out <= 0;
             end
         end
     end

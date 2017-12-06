@@ -27,7 +27,7 @@ module rv32 (
 
         .decode_mem_read_in(decode_mem_read),
         .decode_rd_in(decode_rd),
-        .decode_rd_writeback_in(decode_rd_writeback),
+        .decode_rd_write_in(decode_rd_write),
 
         .mem_branch_taken_in(mem_branch_taken),
 
@@ -92,7 +92,7 @@ module rv32 (
 
         /* control in (from writeback) */
         .rd_in(mem_rd),
-        .rd_writeback_in(mem_rd_writeback),
+        .rd_write_in(mem_rd_write),
 
         /* data in */
         .pc_in(fetch_pc),
@@ -119,7 +119,7 @@ module rv32 (
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
         .rd_out(decode_rd),
-        .rd_writeback_out(decode_rd_writeback),
+        .rd_write_out(decode_rd_write),
 
         /* data out */
         .pc_out(decode_pc),
@@ -146,7 +146,7 @@ module rv32 (
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
     logic [4:0] decode_rd;
-    logic decode_rd_writeback;
+    logic decode_rd_write;
 
     /* decode -> execute data */
     logic [31:0] decode_pc;
@@ -175,11 +175,11 @@ module rv32 (
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
         .rd_in(decode_rd),
-        .rd_writeback_in(decode_rd_writeback),
+        .rd_write_in(decode_rd_write),
 
         /* control in (from writeback) */
         .writeback_rd_in(mem_rd),
-        .writeback_rd_writeback_in(mem_rd_writeback),
+        .writeback_rd_write_in(mem_rd_write),
 
         /* data in */
         .pc_in(decode_pc),
@@ -197,7 +197,7 @@ module rv32 (
         .mem_zero_extend_out(execute_mem_zero_extend),
         .branch_op_out(execute_branch_op),
         .rd_out(execute_rd),
-        .rd_writeback_out(execute_rd_writeback),
+        .rd_write_out(execute_rd_write),
 
         /* data out */
         .result_out(execute_result),
@@ -212,7 +212,7 @@ module rv32 (
     logic execute_mem_zero_extend;
     logic [1:0] execute_branch_op;
     logic [4:0] execute_rd;
-    logic execute_rd_writeback;
+    logic execute_rd_write;
 
     /* execute -> mem data */
     logic [31:0] execute_result;
@@ -233,7 +233,7 @@ module rv32 (
         .zero_extend_in(execute_mem_zero_extend),
         .branch_op_in(execute_branch_op),
         .rd_in(execute_rd),
-        .rd_writeback_in(execute_rd_writeback),
+        .rd_write_in(execute_rd_write),
 
         /* data in */
         .result_in(execute_result),
@@ -246,7 +246,7 @@ module rv32 (
         /* control out */
         .branch_taken_out(mem_branch_taken),
         .rd_out(mem_rd),
-        .rd_writeback_out(mem_rd_writeback),
+        .rd_write_out(mem_rd_write),
 
         /* control out (to memory bus) */
         .write_mask_out(write_mask_out),
@@ -262,7 +262,7 @@ module rv32 (
 
     /* mem -> writeback control */
     logic [4:0] mem_rd;
-    logic mem_rd_writeback;
+    logic mem_rd_write;
 
     /* mem -> fetch control */
     logic mem_branch_taken;

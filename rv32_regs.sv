@@ -9,7 +9,7 @@ module rv32_regs (
     input [4:0] rs1_in,
     input [4:0] rs2_in,
     input [4:0] rd_in,
-    input rd_writeback_in,
+    input rd_write_in,
 
     /* data in */
     input [31:0] rd_value_in,
@@ -26,7 +26,7 @@ module rv32_regs (
             rs2_value_out <= regs[rs2_in];
         end
 
-        if (rd_writeback_in && |rd_in)
+        if (rd_write_in && |rd_in)
             regs[rd_in] <= rd_value_in;
     end
 endmodule

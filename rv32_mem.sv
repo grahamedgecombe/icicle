@@ -21,7 +21,7 @@ module rv32_mem (
     input zero_extend_in,
     input [1:0] branch_op_in,
     input [4:0] rd_in,
-    input rd_writeback_in,
+    input rd_write_in,
 
     /* data in */
     input [31:0] result_in,
@@ -34,7 +34,7 @@ module rv32_mem (
     /* control out */
     output branch_taken_out,
     output [4:0] rd_out,
-    output rd_writeback_out,
+    output rd_write_out,
 
     /* control out (to memory bus) */
     output [3:0] write_mask_out,
@@ -115,7 +115,7 @@ module rv32_mem (
     always_ff @(posedge clk) begin
         if (!stall_in) begin
             rd_out <= rd_in;
-            rd_writeback_out <= rd_writeback_in;
+            rd_write_out <= rd_write_in;
 
             if (read_in) begin
                 case (width_in)
@@ -145,7 +145,7 @@ module rv32_mem (
             end
 
             if (flush_in)
-                rd_writeback_out <= 0;
+                rd_write_out <= 0;
         end
     end
 endmodule
