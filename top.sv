@@ -2,6 +2,7 @@
 `include "pll.sv"
 `include "ram.sv"
 `include "rv32.sv"
+`include "sync.sv"
 
 module top (
     input clk,
@@ -37,12 +38,20 @@ module top (
     );
 
     logic pll_clk;
-    logic pll_locked;
+    logic pll_locked_async;
 
     pll pll (
         .clock_in(clk),
         .clock_out(pll_clk),
-        .locked(pll_locked)
+        .locked(pll_locked_async)
+    );
+
+    logic pll_locked;
+
+    sync sync (
+        .clk(pll_clk),
+        .in(pll_locked_async),
+        .out(pll_locked)
     );
 
     rv32 rv32 (
