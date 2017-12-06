@@ -80,7 +80,17 @@ module top (
     logic [31:0] mem_read_value = ram_read_value | leds_read_value;
     logic [31:0] mem_write_value;
 
-    logic ram_sel = mem_address[31:0] == 32'b00000000_00000000_????????_????????;
+    always_comb begin
+        ram_sel = 0;
+        leds_sel = 0;
+
+        casez (mem_address)
+            32'b00000000_00000000_????????_????????: ram_sel = 1;
+            32'b00000000_00000001_00000000_000000??: leds_sel = 1;
+        endcase
+    end
+
+    logic ram_sel;
     logic [31:0] ram_read_value;
 
     ram ram (
@@ -98,7 +108,7 @@ module top (
         .read_value_out(ram_read_value)
     );
 
-    logic leds_sel = mem_address[31:0] == 32'b00000000_00000001_00000000_000000??;
+    logic leds_sel;
     logic [31:0] leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
 
     always_ff @(posedge pll_clk) begin
