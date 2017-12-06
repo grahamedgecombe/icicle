@@ -3,6 +3,7 @@
 `include "ram.sv"
 `include "rv32.sv"
 `include "sync.sv"
+`include "uart.sv"
 
 module top (
     input clk,
@@ -47,6 +48,7 @@ module top (
     );
 
     logic pll_locked;
+    logic reset = ~pll_locked;
 
     sync sync (
         .clk(pll_clk),
@@ -101,4 +103,30 @@ module top (
         if (leds_sel && mem_write_mask[0])
             leds <= mem_write_value[7:0];
     end
+
+    logic uart_rx_received;
+    logic uart_tx_ready;
+    logic [7:0] uart_rx_byte;
+
+    uart uart (
+        .clk(pll_clk),
+        .reset(reset),
+
+        /* serial port */
+        .rx_in(uart_rx),
+        .tx_out(uart_tx),
+
+        /* control in */
+        .tx_transmit_in(uart_rx_received),
+
+        /* data in */
+        .tx_byte_in(uart_rx_byte),
+
+        /* control out */
+        .rx_received_out(uart_rx_received),
+        .tx_ready_out(uart_tx_ready),
+
+        /* data out */
+        .rx_byte_out(uart_rx_byte)
+    );
 endmodule
