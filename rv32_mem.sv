@@ -37,6 +37,7 @@ module rv32_mem (
     output rd_write_out,
 
     /* control out (to memory bus) */
+    output read_out,
     output [3:0] write_mask_out,
 
     /* data out */
@@ -60,6 +61,7 @@ module rv32_mem (
 
     assign branch_pc_out = branch_pc_in;
 
+    assign read_out = read_in;
     assign address_out = result_in;
 
     always_comb begin

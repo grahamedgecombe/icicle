@@ -11,6 +11,7 @@ module rv32 (
     input clk,
 
     /* control out (memory bus) */
+    output read_out,
     output [3:0] write_mask_out,
 
     /* data in (memory bus) */
@@ -249,6 +250,7 @@ module rv32 (
         .rd_write_out(mem_rd_write),
 
         /* control out (to memory bus) */
+        .read_out(read_out),
         .write_mask_out(write_mask_out),
 
         /* data out */

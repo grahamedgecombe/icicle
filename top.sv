@@ -60,6 +60,7 @@ module top (
         .clk(pll_clk),
 
         /* control out */
+        .read_out(mem_read),
         .write_mask_out(mem_write_mask),
 
         /* data in */
@@ -71,6 +72,7 @@ module top (
     );
 
     /* memory bus control */
+    logic mem_read;
     logic [3:0] mem_write_mask;
 
     /* memory bus data */
