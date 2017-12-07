@@ -30,7 +30,7 @@ module top (
     logic flash_io1_out;
 
     SB_IO #(
-        .PIN_TYPE(6'b1010_01),
+        .PIN_TYPE(6'b1010_01)
     ) flash_io [1:0] (
         .PACKAGE_PIN({flash_io1, flash_io0}),
         .OUTPUT_ENABLE({flash_io1_en, flash_io0_en}),
