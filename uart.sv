@@ -27,6 +27,13 @@ module uart (
 );
     logic [15:0] clk_div;
 
+    logic [15:0] rx_clks;
+    logic [3:0] rx_bits;
+    logic [7:0] rx_buf;
+
+    logic [7:0] rx_read_buf;
+    logic rx_read_ready;
+
     logic [15:0] tx_clks;
     logic [3:0] tx_bits;
     logic [9:0] tx_buf;
@@ -43,10 +50,10 @@ module uart (
                     read_value_out = {16'b0, clk_div};
                 end
                 UART_REG_STATUS: begin
-                    read_value_out = {31'b0, ~|tx_bits};
+                    read_value_out = {30'b0, rx_read_ready, ~|tx_bits};
                 end
                 UART_REG_DATA: begin
-                    read_value_out = 0;
+                    read_value_out = {{24{~rx_read_ready}}, rx_read_ready ? rx_read_buf : 8'b0};
                 end
                 default: begin
                     read_value_out = 32'bx;
@@ -68,6 +75,9 @@ module uart (
                         clk_div[7:0] <= write_value_in[7:0];
                 end
                 UART_REG_DATA: begin
+                    if (read_in)
+                        rx_read_ready <= 0;
+
                     if (write_mask_in[0] && !tx_bits) begin
                         tx_clks <= clk_div;
                         tx_bits <= 10;
@@ -75,6 +85,34 @@ module uart (
                     end
                 end
             endcase
+        end
+
+        if (rx_bits) begin
+            if (rx_clks) begin
+                rx_clks <= rx_clks - 1;
+            end else begin
+                rx_clks <= clk_div;
+                rx_bits <= rx_bits - 1;
+
+                case (rx_bits)
+                    10: begin
+                        if (rx_in)
+                            rx_bits <= 0;
+                    end
+                    1: begin
+                        if (rx_in) begin
+                            rx_read_ready <= 1;
+                            rx_read_buf <= rx_buf;
+                        end
+                    end
+                    default: begin
+                        rx_buf <= {rx_in, rx_buf[7:1]};
+                    end
+                endcase
+            end
+        end else if (!rx_in) begin
+            rx_clks <= clk_div[15:1];
+            rx_bits <= 10;
         end
 
         if (tx_bits) begin
@@ -88,6 +126,8 @@ module uart (
         end
 
         if (reset) begin
+            rx_bits <= 0;
+
             tx_bits <= 0;
             tx_buf[0] <= 1;
         end
