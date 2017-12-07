@@ -43,7 +43,7 @@ module uart (
                     read_value_out = {16'b0, clk_div};
                 end
                 UART_REG_STATUS: begin
-                    read_value_out = {31'b0, |tx_bits};
+                    read_value_out = {31'b0, ~|tx_bits};
                 end
                 UART_REG_DATA: begin
                     read_value_out = 0;
