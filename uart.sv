@@ -38,6 +38,8 @@ module uart (
     logic [3:0] tx_bits;
     logic [9:0] tx_buf;
 
+    logic tx_write_ready = ~|tx_bits;
+
     initial
         tx_buf[0] = 1;
 
@@ -50,7 +52,7 @@ module uart (
                     read_value_out = {16'b0, clk_div};
                 end
                 UART_REG_STATUS: begin
-                    read_value_out = {30'b0, rx_read_ready, ~|tx_bits};
+                    read_value_out = {30'b0, rx_read_ready, tx_write_ready};
                 end
                 UART_REG_DATA: begin
                     read_value_out = {{24{~rx_read_ready}}, rx_read_ready ? rx_read_buf : 8'b0};
