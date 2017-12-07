@@ -1,20 +1,18 @@
-    li t0, 7
-    li t1, 3
-    li t2, 0
+# set baud rate to 9600
+    li t0, 0x00020000
+    li t1, 3750
+    sw t1, 0(t0)
 
-# t2 = t0 * t1
-mul:
-    beqz t0, mul_done
-    andi t3, t0, 1
-    beqz t3, mul_even
-    add t2, t2, t1
-mul_even:
-    srli t0, t0, 1
-    slli t1, t1, 1
-    j mul
+# read char from the UART
+    li t0, 0x00020008
+    li t1, 0x00010000
+loop:
+    lw t2, 0(t0)
+    bltz t2, loop
 
-# display results on the LEDs
-mul_done:
-    li t0, 0x00010000
+# write to the LEDs
     sw t2, 0(t0)
-    j .
+
+# echo back to the UART
+    sw t2, 0(t1)
+    j loop
