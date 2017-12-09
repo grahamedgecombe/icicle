@@ -1,22 +1,22 @@
 `ifndef RV32_ALU
 `define RV32_ALU
 
-localparam RV32_ALU_OP_ADD_SUB = 4'b0000;
-localparam RV32_ALU_OP_XOR     = 4'b0001;
-localparam RV32_ALU_OP_OR      = 4'b0010;
-localparam RV32_ALU_OP_AND     = 4'b0011;
-localparam RV32_ALU_OP_SLL     = 4'b0100;
-localparam RV32_ALU_OP_SRL_SRA = 4'b0101;
-localparam RV32_ALU_OP_SLT     = 4'b0110;
-localparam RV32_ALU_OP_SLTU    = 4'b0111;
-localparam RV32_ALU_OP_SRC1P4  = 4'b1000;
-localparam RV32_ALU_OP_SRC2    = 4'b1001;
+`define RV32_ALU_OP_ADD_SUB 4'b0000
+`define RV32_ALU_OP_XOR     4'b0001
+`define RV32_ALU_OP_OR      4'b0010
+`define RV32_ALU_OP_AND     4'b0011
+`define RV32_ALU_OP_SLL     4'b0100
+`define RV32_ALU_OP_SRL_SRA 4'b0101
+`define RV32_ALU_OP_SLT     4'b0110
+`define RV32_ALU_OP_SLTU    4'b0111
+`define RV32_ALU_OP_SRC1P4  4'b1000
+`define RV32_ALU_OP_SRC2    4'b1001
 
-localparam RV32_ALU_SRC1_REG = 1'b0;
-localparam RV32_ALU_SRC1_PC  = 1'b1;
+`define RV32_ALU_SRC1_REG 1'b0
+`define RV32_ALU_SRC1_PC  1'b1
 
-localparam RV32_ALU_SRC2_REG = 1'b0;
-localparam RV32_ALU_SRC2_IMM = 1'b1;
+`define RV32_ALU_SRC2_REG 1'b0
+`define RV32_ALU_SRC2_IMM 1'b1
 
 module rv32_alu (
     /* control in */
@@ -54,17 +54,17 @@ module rv32_alu (
 
     always_comb begin
         case (op_in)
-            RV32_ALU_OP_ADD_SUB: result_out = add_sub[31:0];
-            RV32_ALU_OP_XOR:     result_out = src1 ^ src2;
-            RV32_ALU_OP_OR:      result_out = src1 | src2;
-            RV32_ALU_OP_AND:     result_out = src1 & src2;
-            RV32_ALU_OP_SLL:     result_out = src1 << shamt;
-            RV32_ALU_OP_SRL_SRA: result_out = srl_sra;
-            RV32_ALU_OP_SLT:     result_out = {31'b0, lt};
-            RV32_ALU_OP_SLTU:    result_out = {31'b0, ltu};
-            RV32_ALU_OP_SRC1P4:  result_out = src1 + 4;
-            RV32_ALU_OP_SRC2:    result_out = src2;
-            default:             result_out = 32'bx;
+            `RV32_ALU_OP_ADD_SUB: result_out = add_sub[31:0];
+            `RV32_ALU_OP_XOR:     result_out = src1 ^ src2;
+            `RV32_ALU_OP_OR:      result_out = src1 | src2;
+            `RV32_ALU_OP_AND:     result_out = src1 & src2;
+            `RV32_ALU_OP_SLL:     result_out = src1 << shamt;
+            `RV32_ALU_OP_SRL_SRA: result_out = srl_sra;
+            `RV32_ALU_OP_SLT:     result_out = {31'b0, lt};
+            `RV32_ALU_OP_SLTU:    result_out = {31'b0, ltu};
+            `RV32_ALU_OP_SRC1P4:  result_out = src1 + 4;
+            `RV32_ALU_OP_SRC2:    result_out = src2;
+            default:              result_out = 32'bx;
         endcase
     end
 endmodule

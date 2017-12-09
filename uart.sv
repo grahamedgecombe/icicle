@@ -1,9 +1,9 @@
 `ifndef UART
 `define UART
 
-localparam UART_REG_CLK_DIV = 2'b00;
-localparam UART_REG_STATUS  = 2'b01;
-localparam UART_REG_DATA    = 2'b10;
+`define UART_REG_CLK_DIV 2'b00
+`define UART_REG_STATUS  2'b01
+`define UART_REG_DATA    2'b10
 
 module uart (
     input clk,
@@ -48,13 +48,13 @@ module uart (
     always_comb begin
         if (sel_in) begin
             case (address_in[3:2])
-                UART_REG_CLK_DIV: begin
+                `UART_REG_CLK_DIV: begin
                     read_value_out = {16'b0, clk_div};
                 end
-                UART_REG_STATUS: begin
+                `UART_REG_STATUS: begin
                     read_value_out = {30'b0, rx_read_ready, tx_write_ready};
                 end
-                UART_REG_DATA: begin
+                `UART_REG_DATA: begin
                     read_value_out = {{24{~rx_read_ready}}, rx_read_ready ? rx_read_buf : 8'b0};
                 end
                 default: begin
@@ -69,14 +69,14 @@ module uart (
     always_ff @(posedge clk) begin
         if (sel_in) begin
             case (address_in[3:2])
-                UART_REG_CLK_DIV: begin
+                `UART_REG_CLK_DIV: begin
                     if (write_mask_in[1])
                         clk_div[15:8] <= write_value_in[15:8];
 
                     if (write_mask_in[0])
                         clk_div[7:0] <= write_value_in[7:0];
                 end
-                UART_REG_DATA: begin
+                `UART_REG_DATA: begin
                     if (read_in)
                         rx_read_ready <= 0;
 

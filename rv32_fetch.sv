@@ -35,7 +35,7 @@ module rv32_fetch (
             pc_out <= pc;
 
             if (flush_in)
-                instr_out <= RV32_INSTR_NOP;
+                instr_out <= `RV32_INSTR_NOP;
         end
     end
 endmodule

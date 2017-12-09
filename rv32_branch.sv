@@ -1,13 +1,13 @@
 `ifndef RV32_BRANCH
 `define RV32_BRANCH
 
-localparam RV32_BRANCH_OP_NEVER    = 3'b00;
-localparam RV32_BRANCH_OP_ZERO     = 3'b01;
-localparam RV32_BRANCH_OP_NON_ZERO = 3'b10;
-localparam RV32_BRANCH_OP_ALWAYS   = 3'b11;
+`define RV32_BRANCH_OP_NEVER    3'b00
+`define RV32_BRANCH_OP_ZERO     3'b01
+`define RV32_BRANCH_OP_NON_ZERO 3'b10
+`define RV32_BRANCH_OP_ALWAYS   3'b11
 
-localparam RV32_BRANCH_PC_SRC_IMM = 1'b0;
-localparam RV32_BRANCH_PC_SRC_REG = 1'b1;
+`define RV32_BRANCH_PC_SRC_IMM 1'b0
+`define RV32_BRANCH_PC_SRC_REG 1'b1
 
 module rv32_branch_pc_mux (
     /* control in */
@@ -40,10 +40,10 @@ module rv32_branch (
 
     always_comb begin
         case (op_in)
-            RV32_BRANCH_OP_NEVER:    taken_out = 0;
-            RV32_BRANCH_OP_ZERO:     taken_out = ~non_zero;
-            RV32_BRANCH_OP_NON_ZERO: taken_out = non_zero;
-            RV32_BRANCH_OP_ALWAYS:   taken_out = 1;
+            `RV32_BRANCH_OP_NEVER:    taken_out = 0;
+            `RV32_BRANCH_OP_ZERO:     taken_out = ~non_zero;
+            `RV32_BRANCH_OP_NON_ZERO: taken_out = non_zero;
+            `RV32_BRANCH_OP_ALWAYS:   taken_out = 1;
         endcase
     end
 endmodule

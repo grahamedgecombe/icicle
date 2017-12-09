@@ -3,9 +3,9 @@
 
 `include "rv32_branch.sv"
 
-localparam RV32_MEM_WIDTH_WORD = 2'b00;
-localparam RV32_MEM_WIDTH_HALF = 2'b01;
-localparam RV32_MEM_WIDTH_BYTE = 2'b10;
+`define RV32_MEM_WIDTH_WORD 2'b00
+`define RV32_MEM_WIDTH_HALF 2'b01
+`define RV32_MEM_WIDTH_BYTE 2'b10
 
 module rv32_mem (
     input clk,
@@ -67,11 +67,11 @@ module rv32_mem (
     always_comb begin
         if (write_in) begin
             case (width_in)
-                RV32_MEM_WIDTH_WORD: begin
+                `RV32_MEM_WIDTH_WORD: begin
                     write_value_out = rs2_value_in;
                     write_mask_out = 4'b1111;
                 end
-                RV32_MEM_WIDTH_HALF: begin
+                `RV32_MEM_WIDTH_HALF: begin
                     case (result_in[0])
                         2'b0: begin
                             write_value_out = {rs2_value_in[15:0], 16'bx};
@@ -83,7 +83,7 @@ module rv32_mem (
                         end
                     endcase
                 end
-                RV32_MEM_WIDTH_BYTE: begin
+                `RV32_MEM_WIDTH_BYTE: begin
                     case (result_in[1:0])
                         2'b00: begin
                             write_value_out = {rs2_value_in[7:0], 24'bx};
@@ -121,16 +121,16 @@ module rv32_mem (
 
             if (read_in) begin
                 case (width_in)
-                    RV32_MEM_WIDTH_WORD: begin
+                    `RV32_MEM_WIDTH_WORD: begin
                         rd_value_out <= read_value_in;
                     end
-                    RV32_MEM_WIDTH_HALF: begin
+                    `RV32_MEM_WIDTH_HALF: begin
                         case (result_in[0])
                             1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value_in[31]}}, read_value_in[31:16]};
                             1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : read_value_in[15]}}, read_value_in[15:0]};
                         endcase
                     end
-                    RV32_MEM_WIDTH_BYTE: begin
+                    `RV32_MEM_WIDTH_BYTE: begin
                         case (result_in[1:0])
                             2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[31]}}, read_value_in[31:24]};
                             2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : read_value_in[23]}}, read_value_in[23:16]};

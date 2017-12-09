@@ -123,7 +123,7 @@ module rv32_execute (
             if (flush_in) begin
                 mem_read_out <= 0;
                 mem_write_out <= 0;
-                branch_op_out <= RV32_BRANCH_OP_NEVER;
+                branch_op_out <= `RV32_BRANCH_OP_NEVER;
                 rd_write_out <= 0;
             end
         end
