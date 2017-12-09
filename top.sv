@@ -9,17 +9,17 @@ module top (
     input clk,
 
     /* serial flash */
-    output flash_clk,
-    output flash_csn,
+    output logic flash_clk,
+    output logic flash_csn,
     inout flash_io0,
     inout flash_io1,
 
     /* LEDs */
-    output [7:0] leds,
+    output logic [7:0] leds,
 
     /* UART */
     input uart_rx,
-    output uart_tx
+    output logic uart_tx
 );
     logic flash_io0_en;
     logic flash_io0_in;
@@ -48,13 +48,26 @@ module top (
     );
 
     logic pll_locked;
-    logic reset = ~pll_locked;
+    logic reset;
+
+    assign reset = ~pll_locked;
 
     sync sync (
         .clk(pll_clk),
         .in(pll_locked_async),
         .out(pll_locked)
     );
+
+    /* memory bus control */
+    logic mem_read;
+    logic [3:0] mem_write_mask;
+
+    /* memory bus data */
+    logic [31:0] mem_address;
+    logic [31:0] mem_read_value;
+    logic [31:0] mem_write_value;
+
+    assign mem_read_value = ram_read_value | leds_read_value | uart_read_value;
 
     rv32 rv32 (
         .clk(pll_clk),
@@ -70,15 +83,6 @@ module top (
         .address_out(mem_address),
         .write_value_out(mem_write_value)
     );
-
-    /* memory bus control */
-    logic mem_read;
-    logic [3:0] mem_write_mask;
-
-    /* memory bus data */
-    logic [31:0] mem_address;
-    logic [31:0] mem_read_value = ram_read_value | leds_read_value | uart_read_value;
-    logic [31:0] mem_write_value;
 
     always_comb begin
         ram_sel = 0;
@@ -111,7 +115,9 @@ module top (
     );
 
     logic leds_sel;
-    logic [31:0] leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
+    logic [31:0] leds_read_value;
+
+    assign leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
 
     always_ff @(posedge pll_clk) begin
         if (leds_sel && mem_write_mask[0])

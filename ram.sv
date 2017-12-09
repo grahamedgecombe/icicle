@@ -13,7 +13,7 @@ module ram (
     input [31:0] write_value_in,
 
     /* data out */
-    output [31:0] read_value_out
+    output logic [31:0] read_value_out
 );
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;

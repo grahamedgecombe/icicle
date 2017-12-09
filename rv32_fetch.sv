@@ -17,16 +17,18 @@ module rv32_fetch (
     input [31:0] branch_pc_in,
 
     /* data out */
-    output [31:0] pc_out,
-    output [31:0] instr_out
+    output logic [31:0] pc_out,
+    output logic [31:0] instr_out
 );
     logic [31:0] instr_mem [255:0];
     logic [31:0] next_pc;
 
-    logic [31:0] pc = branch_taken_in ? branch_pc_in : next_pc;
+    logic [31:0] pc;
 
     initial
         $readmemh("progmem_syn.hex", instr_mem);
+
+    assign pc = branch_taken_in ? branch_pc_in : next_pc;
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin

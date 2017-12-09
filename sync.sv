@@ -6,7 +6,7 @@ module sync #(
 ) (
     input clk,
     input [BITS-1:0] in,
-    output [BITS-1:0] out
+    output logic [BITS-1:0] out
 );
     logic [BITS-1:0] metastable;
 

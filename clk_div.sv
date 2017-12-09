@@ -5,7 +5,7 @@ module clk_div #(
     parameter LOG_DIVISOR = 1
 ) (
     input clk_in,
-    output clk_out
+    output logic clk_out
 );
     logic [LOG_DIVISOR-1:0] q;
 

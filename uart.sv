@@ -11,7 +11,7 @@ module uart (
 
     /* serial port */
     input rx_in,
-    output tx_out,
+    output logic tx_out,
 
     /* control in */
     input sel_in,
@@ -23,7 +23,7 @@ module uart (
     input [31:0] write_value_in,
 
     /* data out */
-    output [31:0] read_value_out
+    output logic [31:0] read_value_out
 );
     logic [15:0] clk_div;
 
@@ -38,12 +38,13 @@ module uart (
     logic [3:0] tx_bits;
     logic [9:0] tx_buf;
 
-    logic tx_write_ready = ~|tx_bits;
+    logic tx_write_ready;
 
     initial
         tx_buf[0] = 1;
 
     assign tx_out = tx_buf[0];
+    assign tx_write_ready = ~|tx_bits;
 
     always_comb begin
         if (sel_in) begin

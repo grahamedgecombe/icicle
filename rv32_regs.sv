@@ -15,8 +15,8 @@ module rv32_regs (
     input [31:0] rd_value_in,
 
     /* data out */
-    output [31:0] rs1_value_out,
-    output [31:0] rs2_value_out
+    output logic [31:0] rs1_value_out,
+    output logic [31:0] rs2_value_out
 );
     logic [31:0] regs [31:0];
 

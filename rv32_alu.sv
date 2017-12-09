@@ -32,25 +32,43 @@ module rv32_alu (
     input [31:0] imm_in,
 
     /* data out */
-    output [31:0] result_out
+    output logic [31:0] result_out
 );
-    logic [31:0] src1 = src1_in ? pc_in : rs1_value_in;
-    logic [31:0] src2 = src2_in ? imm_in : rs2_value_in;
+    logic [31:0] src1;
+    logic [31:0] src2;
 
-    logic src1_sign = src1[31];
-    logic src2_sign = src2[31];
+    logic src1_sign;
+    logic src2_sign;
 
-    logic [4:0] shamt = src2[4:0];
+    logic [4:0] shamt;
 
-    logic [32:0] add_sub = sub_sra_in ? src1 - src2 : src1 + src2;
-    logic [31:0] srl_sra = $signed({sub_sra_in ? src1_sign : 1'b0, src1}) >>> shamt;
+    logic [32:0] add_sub;
+    logic [31:0] srl_sra;
 
-    logic carry = add_sub[32];
-    logic sign  = add_sub[31];
-    logic ovf   = (!src1_sign && src2_sign && sign) || (src1_sign && !src2_sign && !sign);
+    logic carry;
+    logic sign;
+    logic ovf;
 
-    logic lt  = sign != ovf;
-    logic ltu = carry;
+    logic lt;
+    logic ltu;
+
+    assign src1 = src1_in ? pc_in : rs1_value_in;
+    assign src2 = src2_in ? imm_in : rs2_value_in;
+
+    assign src1_sign = src1[31];
+    assign src2_sign = src2[31];
+
+    assign shamt = src2[4:0];
+
+    assign add_sub = sub_sra_in ? src1 - src2 : src1 + src2;
+    assign srl_sra = $signed({sub_sra_in ? src1_sign : 1'b0, src1}) >>> shamt;
+
+    assign carry = add_sub[32];
+    assign sign  = add_sub[31];
+    assign ovf   = (!src1_sign && src2_sign && sign) || (src1_sign && !src2_sign && !sign);
+
+    assign lt  = sign != ovf;
+    assign ltu = carry;
 
     always_comb begin
         case (op_in)

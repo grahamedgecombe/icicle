@@ -19,10 +19,11 @@ module rv32_branch_pc_mux (
     input [31:0] imm_in,
 
     /* data out */
-    output [31:0] pc_out
+    output logic [31:0] pc_out
 );
-    logic [31:0] pc = (pc_src_in ? rs1_value_in : pc_in) + imm_in;
+    logic [31:0] pc;
 
+    assign pc = (pc_src_in ? rs1_value_in : pc_in) + imm_in;
     assign pc_out = {pc[31:1], 1'b0};
 endmodule
 
@@ -34,9 +35,11 @@ module rv32_branch (
     input [31:0] result_in,
 
     /* control out */
-    output taken_out
+    output logic taken_out
 );
-    logic non_zero = |result_in;
+    logic non_zero;
+    
+    assign non_zero = |result_in;
 
     always_comb begin
         case (op_in)

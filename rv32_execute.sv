@@ -41,18 +41,18 @@ module rv32_execute (
     input [31:0] writeback_rd_value_in,
 
     /* control out */
-    output mem_read_out,
-    output mem_write_out,
-    output [1:0] mem_width_out,
-    output mem_zero_extend_out,
-    output [1:0] branch_op_out,
-    output [4:0] rd_out,
-    output rd_write_out,
+    output logic mem_read_out,
+    output logic mem_write_out,
+    output logic [1:0] mem_width_out,
+    output logic mem_zero_extend_out,
+    output logic [1:0] branch_op_out,
+    output logic [4:0] rd_out,
+    output logic rd_write_out,
 
     /* data out */
-    output [31:0] result_out,
-    output [31:0] rs2_value_out,
-    output [31:0] branch_pc_out
+    output logic [31:0] result_out,
+    output logic [31:0] rs2_value_out,
+    output logic [31:0] branch_pc_out
 );
     logic [31:0] rs1_value;
     logic [31:0] rs2_value;

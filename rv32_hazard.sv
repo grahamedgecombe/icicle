@@ -13,19 +13,21 @@ module rv32_hazard (
     input mem_branch_taken_in,
 
     /* control out */
-    output fetch_stall_out,
-    output fetch_flush_out,
+    output logic fetch_stall_out,
+    output logic fetch_flush_out,
 
-    output decode_stall_out,
-    output decode_flush_out,
+    output logic decode_stall_out,
+    output logic decode_flush_out,
 
-    output execute_stall_out,
-    output execute_flush_out,
+    output logic execute_stall_out,
+    output logic execute_flush_out,
 
-    output mem_stall_out,
-    output mem_flush_out
+    output logic mem_stall_out,
+    output logic mem_flush_out
 );
-    logic fetch_wait_for_mem_read = (decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
+    logic fetch_wait_for_mem_read;
+
+    assign fetch_wait_for_mem_read = (decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
 
     assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read;
     assign fetch_flush_out = 0;

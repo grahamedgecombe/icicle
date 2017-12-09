@@ -26,48 +26,65 @@ module rv32_decode (
     input [31:0] rd_value_in,
 
     /* control out (to hazard) */
-    output [4:0] rs1_unreg_out,
-    output [4:0] rs2_unreg_out,
+    output logic [4:0] rs1_unreg_out,
+    output logic [4:0] rs2_unreg_out,
 
     /* control out */
-    output valid_out,
-    output [4:0] rs1_out,
-    output [4:0] rs2_out,
-    output [3:0] alu_op_out,
-    output alu_sub_sra_out,
-    output alu_src1_out,
-    output alu_src2_out,
-    output mem_read_out,
-    output mem_write_out,
-    output [1:0] mem_width_out,
-    output mem_zero_extend_out,
-    output [1:0] branch_op_out,
-    output branch_pc_src_out,
-    output [4:0] rd_out,
-    output rd_write_out,
+    output logic valid_out,
+    output logic [4:0] rs1_out,
+    output logic [4:0] rs2_out,
+    output logic [3:0] alu_op_out,
+    output logic alu_sub_sra_out,
+    output logic alu_src1_out,
+    output logic alu_src2_out,
+    output logic mem_read_out,
+    output logic mem_write_out,
+    output logic [1:0] mem_width_out,
+    output logic mem_zero_extend_out,
+    output logic [1:0] branch_op_out,
+    output logic branch_pc_src_out,
+    output logic [4:0] rd_out,
+    output logic rd_write_out,
 
     /* data out */
-    output [31:0] pc_out,
-    output [31:0] rs1_value_out,
-    output [31:0] rs2_value_out,
-    output [31:0] imm_out
+    output logic [31:0] pc_out,
+    output logic [31:0] rs1_value_out,
+    output logic [31:0] rs2_value_out,
+    output logic [31:0] imm_out
 );
-    logic [6:0] funct7 = instr_in[31:25];
-    logic [4:0] rs2    = instr_in[24:20];
-    logic [4:0] rs1    = instr_in[19:15];
-    logic [2:0] funct3 = instr_in[14:12];
-    logic [4:0] rd     = instr_in[11:7];
-    logic [6:0] opcode = instr_in[6:0];
+    logic [6:0] funct7;
+    logic [4:0] rs2;
+    logic [4:0] rs1;
+    logic [2:0] funct3;
+    logic [4:0] rd;
+    logic [6:0] opcode;
 
-    logic sign = instr_in[31];
+    logic sign;
 
-    logic [31:0] imm_i = {{21{sign}}, instr_in[30:25], instr_in[24:21], instr_in[20]};
-    logic [31:0] imm_s = {{21{sign}}, instr_in[30:25], instr_in[11:8],  instr_in[7]};
-    logic [31:0] imm_b = {{20{sign}}, instr_in[7],     instr_in[30:25], instr_in[11:8],  1'b0};
-    logic [31:0] imm_u = {sign,       instr_in[30:20], instr_in[19:12], 12'b0};
-    logic [31:0] imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:21], 1'b0};
+    logic [31:0] imm_i;
+    logic [31:0] imm_s;
+    logic [31:0] imm_b;
+    logic [31:0] imm_u;
+    logic [31:0] imm_j;
 
-    logic [31:0] shamt = {27'bx, rs2};
+    logic [31:0] shamt;
+
+    assign funct7 = instr_in[31:25];
+    assign rs2    = instr_in[24:20];
+    assign rs1    = instr_in[19:15];
+    assign funct3 = instr_in[14:12];
+    assign rd     = instr_in[11:7];
+    assign opcode = instr_in[6:0];
+
+    assign sign = instr_in[31];
+
+    assign imm_i = {{21{sign}}, instr_in[30:25], instr_in[24:21], instr_in[20]};
+    assign imm_s = {{21{sign}}, instr_in[30:25], instr_in[11:8],  instr_in[7]};
+    assign imm_b = {{20{sign}}, instr_in[7],     instr_in[30:25], instr_in[11:8],  1'b0};
+    assign imm_u = {sign,       instr_in[30:20], instr_in[19:12], 12'b0};
+    assign imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:21], 1'b0};
+
+    assign shamt = {27'bx, rs2};
 
     assign rs1_unreg_out = rs1;
     assign rs2_unreg_out = rs2;

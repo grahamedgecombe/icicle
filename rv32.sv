@@ -11,16 +11,89 @@ module rv32 (
     input clk,
 
     /* control out (memory bus) */
-    output read_out,
-    output [3:0] write_mask_out,
+    output logic read_out,
+    output logic [3:0] write_mask_out,
 
     /* data in (memory bus) */
     input [31:0] read_value_in,
 
     /* data out (memory bus) */
-    output [31:0] address_out,
-    output [31:0] write_value_out
+    output logic [31:0] address_out,
+    output logic [31:0] write_value_out
 );
+    /* hazard -> fetch control */
+    logic fetch_stall;
+    logic fetch_flush;
+
+    /* hazard -> decode control */
+    logic decode_stall;
+    logic decode_flush;
+
+    /* hazard -> execute control */
+    logic execute_stall;
+    logic execute_flush;
+
+    /* hazard -> mem control */
+    logic mem_stall;
+    logic mem_flush;
+
+    /* fetch -> decode data */
+    logic [31:0] fetch_pc;
+    logic [31:0] fetch_instr;
+
+    /* decode -> hazard control */
+    logic [4:0] decode_rs1_unreg;
+    logic [4:0] decode_rs2_unreg;
+
+    /* decode -> execute control */
+    logic [4:0] decode_rs1;
+    logic [4:0] decode_rs2;
+    logic [3:0] decode_alu_op;
+    logic decode_alu_sub_sra;
+    logic decode_alu_src1;
+    logic decode_alu_src2;
+    logic decode_mem_read;
+    logic decode_mem_write;
+    logic [1:0] decode_mem_width;
+    logic decode_mem_zero_extend;
+    logic [1:0] decode_branch_op;
+    logic decode_branch_pc_src;
+    logic [4:0] decode_rd;
+    logic decode_rd_write;
+
+    /* decode -> execute data */
+    logic [31:0] decode_pc;
+    logic [31:0] decode_rs1_value;
+    logic [31:0] decode_rs2_value;
+    logic [31:0] decode_imm;
+
+    /* execute -> mem control */
+    logic execute_mem_read;
+    logic execute_mem_write;
+    logic [1:0] execute_mem_width;
+    logic execute_mem_zero_extend;
+    logic [1:0] execute_branch_op;
+    logic [4:0] execute_rd;
+    logic execute_rd_write;
+
+    /* execute -> mem data */
+    logic [31:0] execute_result;
+    logic [31:0] execute_rs2_value;
+    logic [31:0] execute_branch_pc;
+
+    /* mem -> writeback control */
+    logic [4:0] mem_rd;
+    logic mem_rd_write;
+
+    /* mem -> fetch control */
+    logic mem_branch_taken;
+
+    /* mem -> writeback data */
+    logic [31:0] mem_rd_value;
+
+    /* mem -> fetch data */
+    logic [31:0] mem_branch_pc;
+
     rv32_hazard hazard (
         /* control in */
         .decode_rs1_in(decode_rs1_unreg),
@@ -46,22 +119,6 @@ module rv32 (
         .mem_flush_out(mem_flush)
     );
 
-    /* hazard -> fetch control */
-    logic fetch_stall;
-    logic fetch_flush;
-
-    /* hazard -> decode control */
-    logic decode_stall;
-    logic decode_flush;
-
-    /* hazard -> execute control */
-    logic execute_stall;
-    logic execute_flush;
-
-    /* hazard -> mem control */
-    logic mem_stall;
-    logic mem_flush;
-
     rv32_fetch fetch (
         .clk(clk),
 
@@ -79,10 +136,6 @@ module rv32 (
         .pc_out(fetch_pc),
         .instr_out(fetch_instr)
     );
-
-    /* fetch -> decode data */
-    logic [31:0] fetch_pc;
-    logic [31:0] fetch_instr;
 
     rv32_decode decode (
         .clk(clk),
@@ -128,32 +181,6 @@ module rv32 (
         .rs2_value_out(decode_rs2_value),
         .imm_out(decode_imm)
     );
-
-    /* decode -> hazard control */
-    logic [4:0] decode_rs1_unreg;
-    logic [4:0] decode_rs2_unreg;
-
-    /* decode -> execute control */
-    logic [4:0] decode_rs1;
-    logic [4:0] decode_rs2;
-    logic [3:0] decode_alu_op;
-    logic decode_alu_sub_sra;
-    logic decode_alu_src1;
-    logic decode_alu_src2;
-    logic decode_mem_read;
-    logic decode_mem_write;
-    logic [1:0] decode_mem_width;
-    logic decode_mem_zero_extend;
-    logic [1:0] decode_branch_op;
-    logic decode_branch_pc_src;
-    logic [4:0] decode_rd;
-    logic decode_rd_write;
-
-    /* decode -> execute data */
-    logic [31:0] decode_pc;
-    logic [31:0] decode_rs1_value;
-    logic [31:0] decode_rs2_value;
-    logic [31:0] decode_imm;
 
     rv32_execute execute (
         .clk(clk),
@@ -206,20 +233,6 @@ module rv32 (
         .branch_pc_out(execute_branch_pc)
     );
 
-    /* execute -> mem control */
-    logic execute_mem_read;
-    logic execute_mem_write;
-    logic [1:0] execute_mem_width;
-    logic execute_mem_zero_extend;
-    logic [1:0] execute_branch_op;
-    logic [4:0] execute_rd;
-    logic execute_rd_write;
-
-    /* execute -> mem data */
-    logic [31:0] execute_result;
-    logic [31:0] execute_rs2_value;
-    logic [31:0] execute_branch_pc;
-
     rv32_mem mem (
         .clk(clk),
 
@@ -261,19 +274,6 @@ module rv32 (
         .address_out(address_out),
         .write_value_out(write_value_out)
     );
-
-    /* mem -> writeback control */
-    logic [4:0] mem_rd;
-    logic mem_rd_write;
-
-    /* mem -> fetch control */
-    logic mem_branch_taken;
-
-    /* mem -> writeback data */
-    logic [31:0] mem_rd_value;
-
-    /* mem -> fetch data */
-    logic [31:0] mem_branch_pc;
 endmodule
 
 `endif

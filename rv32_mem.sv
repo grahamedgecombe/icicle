@@ -32,21 +32,21 @@ module rv32_mem (
     input [31:0] read_value_in,
 
     /* control out */
-    output branch_taken_out,
-    output [4:0] rd_out,
-    output rd_write_out,
+    output logic branch_taken_out,
+    output logic [4:0] rd_out,
+    output logic rd_write_out,
 
     /* control out (to memory bus) */
-    output read_out,
-    output [3:0] write_mask_out,
+    output logic read_out,
+    output logic [3:0] write_mask_out,
 
     /* data out */
-    output [31:0] rd_value_out,
-    output [31:0] branch_pc_out,
+    output logic [31:0] rd_value_out,
+    output logic [31:0] branch_pc_out,
 
     /* data out (to memory bus) */
-    output [31:0] address_out,
-    output [31:0] write_value_out
+    output logic [31:0] address_out,
+    output logic [31:0] write_value_out
 );
     rv32_branch branch (
         /* control in */
