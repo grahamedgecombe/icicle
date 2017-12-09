@@ -20,7 +20,7 @@ AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
 OBJCOPY  = $(TARGET)-objcopy
 
-.PHONY: all clean time stat flash
+.PHONY: all clean check time stat flash
 
 all: $(TOP).bin
 
@@ -40,6 +40,9 @@ $(PLL):
 
 $(BLIF): $(YS) $(SRC) progmem_syn.hex
 	yosys $(QUIET) -s $<
+
+check: $(SRC)
+	iverilog -Wall -t null -g2012 `yosys-config --datdir/ice40/cells_sim.v` top.sv
 
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
