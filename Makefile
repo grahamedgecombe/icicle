@@ -41,7 +41,7 @@ $(PLL):
 $(BLIF): $(YS) $(SRC) progmem_syn.hex
 	yosys $(QUIET) -s $<
 
-check: $(SRC)
+check: $(SRC) progmem_syn.hex
 	iverilog -Wall -t null -g2012 `yosys-config --datdir/ice40/cells_sim.v` $(TOP).sv
 
 $(ASC_SYN): $(BLIF) $(PCF)
