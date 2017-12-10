@@ -23,7 +23,7 @@ OBJCOPY  = $(TARGET)-objcopy
 
 .PHONY: all clean check time stat flash
 
-all: $(TOP).bin
+all: $(BIN)
 
 clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o
