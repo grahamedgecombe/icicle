@@ -42,7 +42,7 @@ $(BLIF): $(YS) $(SRC) progmem_syn.hex
 	yosys $(QUIET) -s $<
 
 check: $(SRC)
-	iverilog -Wall -t null -g2012 `yosys-config --datdir/ice40/cells_sim.v` top.sv
+	iverilog -Wall -t null -g2012 `yosys-config --datdir/ice40/cells_sim.v` $(TOP).sv
 
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
