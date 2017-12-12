@@ -1,7 +1,7 @@
 `ifndef RV32_HAZARD
 `define RV32_HAZARD
 
-module rv32_hazard (
+module rv32_hazard_unit (
     /* control in */
     input [4:0] decode_rs1_in,
     input [4:0] decode_rs2_in,

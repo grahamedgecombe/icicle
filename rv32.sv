@@ -94,7 +94,7 @@ module rv32 (
     /* mem -> fetch data */
     logic [31:0] mem_branch_pc;
 
-    rv32_hazard hazard (
+    rv32_hazard_unit hazard_unit (
         /* control in */
         .decode_rs1_in(decode_rs1_unreg),
         .decode_rs2_in(decode_rs2_unreg),
