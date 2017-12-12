@@ -68,6 +68,7 @@ module rv32_decode (
     logic [31:0] imm_j;
 
     logic [31:0] shamt;
+    logic [31:0] zimm;
 
     assign funct7 = instr_in[31:25];
     assign rs2    = instr_in[24:20];
@@ -85,6 +86,7 @@ module rv32_decode (
     assign imm_j = {{12{sign}}, instr_in[19:12], instr_in[20],    instr_in[30:25], instr_in[24:21], 1'b0};
 
     assign shamt = {27'bx, rs2};
+    assign zimm  = {27'b0, rs1};
 
     assign rs1_unreg_out = rs1;
     assign rs2_unreg_out = rs2;
@@ -509,6 +511,39 @@ module rv32_decode (
                 {`RV32_OPCODE_MISC_MEM, `RV32_FUNCT3_MISC_MEM_FENCE_I, `RV32_FUNCT7_ANY}: begin
                     /* FENCE.I */
                     valid_out <= 1;
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_PRIV, `RV32_FUNCT7_ANY}: begin
+                    // TODO: EBREAK/ECALL
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRW, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRW */
+                    valid_out <= 1;
+                    // TODO
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRS, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRS */
+                    valid_out <= 1;
+                    // TODO
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRC, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRC */
+                    valid_out <= 1;
+                    // TODO
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRWI, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRWI */
+                    valid_out <= 1;
+                    // TODO
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRSI, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRSI */
+                    valid_out <= 1;
+                    // TODO
+                end
+                {`RV32_OPCODE_SYSTEM, `RV32_FUNCT3_SYSTEM_CSRRCI, `RV32_FUNCT7_ANY}: begin
+                    /* CSRRCI */
+                    valid_out <= 1;
+                    // TODO
                 end
             endcase
 
