@@ -48,7 +48,7 @@ module rv32_mem (
     output logic [31:0] address_out,
     output logic [31:0] write_value_out
 );
-    rv32_branch branch (
+    rv32_branch_unit branch_unit (
         /* control in */
         .op_in(branch_op_in),
 

@@ -27,7 +27,7 @@ module rv32_branch_pc_mux (
     assign pc_out = {pc[31:1], 1'b0};
 endmodule
 
-module rv32_branch (
+module rv32_branch_unit (
     /* control in */
     input [1:0] op_in,
 
@@ -38,7 +38,7 @@ module rv32_branch (
     output logic taken_out
 );
     logic non_zero;
-    
+
     assign non_zero = |result_in;
 
     always_comb begin
