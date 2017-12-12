@@ -13,17 +13,13 @@ module uart (
     input rx_in,
     output logic tx_out,
 
-    /* control in */
+    /* memory bus */
+    input [31:0] address_in,
     input sel_in,
     input read_in,
+    output logic [31:0] read_value_out,
     input [3:0] write_mask_in,
-
-    /* data in */
-    input [31:0] address_in,
-    input [31:0] write_value_in,
-
-    /* data out */
-    output logic [31:0] read_value_out
+    input [31:0] write_value_in
 );
     logic [15:0] clk_div;
 

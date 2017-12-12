@@ -58,13 +58,11 @@ module top (
         .out(pll_locked)
     );
 
-    /* memory bus control */
-    logic mem_read;
-    logic [3:0] mem_write_mask;
-
-    /* memory bus data */
+    /* memory bus */
     logic [31:0] mem_address;
+    logic mem_read;
     logic [31:0] mem_read_value;
+    logic [3:0] mem_write_mask;
     logic [31:0] mem_write_value;
 
     assign mem_read_value = ram_read_value | leds_read_value | uart_read_value;
@@ -72,15 +70,11 @@ module top (
     rv32 rv32 (
         .clk(pll_clk),
 
-        /* control out */
-        .read_out(mem_read),
-        .write_mask_out(mem_write_mask),
-
-        /* data in */
-        .read_value_in(mem_read_value),
-
-        /* data out */
+        /* memory bus */
         .address_out(mem_address),
+        .read_out(mem_read),
+        .read_value_in(mem_read_value),
+        .write_mask_out(mem_write_mask),
         .write_value_out(mem_write_value)
     );
 
@@ -102,16 +96,12 @@ module top (
     ram ram (
         .clk(pll_clk),
 
-        /* control in */
-        .sel_in(ram_sel),
-        .write_mask_in(mem_write_mask),
-
-        /* data in */
+        /* memory bus */
         .address_in(mem_address),
-        .write_value_in(mem_write_value),
-
-        /* data out */
-        .read_value_out(ram_read_value)
+        .sel_in(ram_sel),
+        .read_value_out(ram_read_value),
+        .write_mask_in(mem_write_mask),
+        .write_value_in(mem_write_value)
     );
 
     logic leds_sel;
@@ -135,16 +125,12 @@ module top (
         .rx_in(uart_rx),
         .tx_out(uart_tx),
 
-        /* control in */
+        /* memory bus */
+        .address_in(mem_address),
         .sel_in(uart_sel),
         .read_in(mem_read),
+        .read_value_out(uart_read_value),
         .write_mask_in(mem_write_mask),
-
-        /* data in */
-        .address_in(mem_address),
-        .write_value_in(mem_write_value),
-
-        /* data out */
-        .read_value_out(uart_read_value)
+        .write_value_in(mem_write_value)
     );
 endmodule

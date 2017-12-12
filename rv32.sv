@@ -10,15 +10,11 @@
 module rv32 (
     input clk,
 
-    /* control out (memory bus) */
-    output logic read_out,
-    output logic [3:0] write_mask_out,
-
-    /* data in (memory bus) */
-    input [31:0] read_value_in,
-
-    /* data out (memory bus) */
+    /* memory bus */
     output logic [31:0] address_out,
+    output logic read_out,
+    input [31:0] read_value_in,
+    output logic [3:0] write_mask_out,
     output logic [31:0] write_value_out
 );
     /* hazard -> fetch control */

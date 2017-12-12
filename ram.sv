@@ -4,16 +4,12 @@
 module ram (
     input clk,
 
-    /* control in */
-    input sel_in,
-    input [3:0] write_mask_in,
-
-    /* data in */
+    /* memory bus */
     input [31:0] address_in,
-    input [31:0] write_value_in,
-
-    /* data out */
-    output logic [31:0] read_value_out
+    input sel_in,
+    output logic [31:0] read_value_out,
+    input [3:0] write_mask_in,
+    input [31:0] write_value_in
 );
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;
