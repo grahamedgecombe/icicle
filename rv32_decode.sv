@@ -481,6 +481,13 @@ module rv32_decode (
                     valid_out <= 1;
                     // TODO
                 end
+                `RV32_INSTR_MRET: begin
+                    valid_out <= 1;
+                    // TODO
+                end
+                `RV32_INSTR_WFI: begin
+                    valid_out <= 1;
+                end
                 `RV32_INSTR_CSRRW: begin
                     valid_out <= 1;
                     // TODO
