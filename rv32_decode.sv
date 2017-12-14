@@ -473,11 +473,11 @@ module rv32_decode (
                 `RV32_INSTR_FENCE_I: begin
                     valid_out <= 1;
                 end
-                `RV32_INSTR_EBREAK: begin
+                `RV32_INSTR_ECALL: begin
                     valid_out <= 1;
                     // TODO
                 end
-                `RV32_INSTR_ECALL: begin
+                `RV32_INSTR_EBREAK: begin
                     valid_out <= 1;
                     // TODO
                 end
