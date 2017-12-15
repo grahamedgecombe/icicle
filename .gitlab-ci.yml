@@ -1,0 +1,9 @@
+image: gitlab-registry.grahamedgecombe.com/gpe/icestorm-docker:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - make syntax time stat
