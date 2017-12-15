@@ -20,6 +20,10 @@ FREQ_PLL = 36
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
+LD       = $(TARGET)-ld
+LDFLAGS  = -Tprogmem.lds -melf32lriscv
+CC       = $(TARGET)-gcc
+CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic
 OBJCOPY  = $(TARGET)-objcopy
 
 .PHONY: all clean syntax time stat flash
@@ -27,12 +31,15 @@ OBJCOPY  = $(TARGET)-objcopy
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o
+	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o start.o progmem
 
-progmem.hex: progmem.o
+progmem.hex: progmem
 	$(OBJCOPY) -O srec $< /dev/stdout \
 		| srec_cat - -byte-swap 4 -output - -binary \
 		| xxd -p -c 4 > $@
+
+progmem: progmem.o start.o progmem.lds
+	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
 
 progmem_syn.hex:
 	icebram -g 32 256 > $@
