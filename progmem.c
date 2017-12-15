@@ -6,7 +6,7 @@
 #define UART_DATA   *((volatile  int32_t *) 0x00020008)
 
 int main() {
-    UART_BAUD = 36000000 / 9600;
+    UART_BAUD = FREQ / 9600;
 
     for (;;) {
         int32_t c;

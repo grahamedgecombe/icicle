@@ -23,7 +23,7 @@ ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-ld
 LDFLAGS  = -Tprogmem.lds -melf32lriscv
 CC       = $(TARGET)-gcc
-CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic
+CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000
 OBJCOPY  = $(TARGET)-objcopy
 
 .PHONY: all clean syntax time stat flash
