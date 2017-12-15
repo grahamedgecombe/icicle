@@ -4,6 +4,7 @@ SRC      = $(sort $(wildcard *.sv) $(PLL))
 TOP      = top
 SV       = $(TOP).sv
 YS       = $(TOP).ys
+YS_ICE40 = `yosys-config --datdir/ice40/cells_sim.v`
 BLIF     = $(TOP).blif
 ASC_SYN  = $(TOP)_syn.asc
 ASC      = $(TOP).asc
@@ -43,7 +44,7 @@ $(BLIF): $(YS) $(SRC) progmem_syn.hex
 	yosys $(QUIET) -s $<
 
 syntax: $(SRC) progmem_syn.hex
-	iverilog -Wall -t null -g2012 `yosys-config --datdir/ice40/cells_sim.v` $(SV)
+	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)
 
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<

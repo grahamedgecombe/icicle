@@ -6,4 +6,4 @@ stages:
 build:
   stage: build
   script:
-    - make syntax time stat
+    - make YS_ICE40=/usr/share/yosys/ice40/cells_sim.v syntax time stat
