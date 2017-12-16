@@ -33,10 +33,10 @@ module rv32_decode (
     output logic valid_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
-    output logic [3:0] alu_op_out,
+    output logic [2:0] alu_op_out,
     output logic alu_sub_sra_out,
-    output logic alu_src1_out,
-    output logic alu_src2_out,
+    output logic [1:0] alu_src1_out,
+    output logic [1:0] alu_src2_out,
     output logic mem_read_out,
     output logic mem_write_out,
     output logic [1:0] mem_width_out,
@@ -114,10 +114,10 @@ module rv32_decode (
             valid_out <= 0;
             rs1_out <= rs1;
             rs2_out <= rs2;
-            alu_op_out <= 4'bx;
+            alu_op_out <= 3'bx;
             alu_sub_sra_out <= 1'bx;
-            alu_src1_out <= 1'bx;
-            alu_src2_out <= 1'bx;
+            alu_src1_out <= 2'bx;
+            alu_src2_out <= 2'bx;
             mem_read_out <= 0;
             mem_write_out <= 0;
             mem_width_out <= 2'bx;
@@ -133,7 +133,9 @@ module rv32_decode (
             casez (instr_in)
                 `RV32_INSTR_LUI: begin
                     valid_out <= 1;
-                    alu_op_out <= `RV32_ALU_OP_SRC2;
+                    alu_op_out <= `RV32_ALU_OP_ADD_SUB;
+                    alu_sub_sra_out <= 0;
+                    alu_src1_out <= `RV32_ALU_SRC1_ZERO;
                     alu_src2_out <= `RV32_ALU_SRC2_IMM;
                     rd_write_out <= 1;
                     imm_out <= imm_u;
@@ -149,8 +151,10 @@ module rv32_decode (
                 end
                 `RV32_INSTR_JAL: begin
                     valid_out <= 1;
-                    alu_op_out <= `RV32_ALU_OP_SRC1P4;
+                    alu_op_out <= `RV32_ALU_OP_ADD_SUB;
+                    alu_sub_sra_out <= 0;
                     alu_src1_out <= `RV32_ALU_SRC1_PC;
+                    alu_src2_out <= `RV32_ALU_SRC2_FOUR;
                     branch_op_out <= `RV32_BRANCH_OP_ALWAYS;
                     branch_pc_src_out <= `RV32_BRANCH_PC_SRC_IMM;
                     rd_write_out <= 1;
@@ -158,8 +162,10 @@ module rv32_decode (
                 end
                 `RV32_INSTR_JALR: begin
                     valid_out <= 1;
-                    alu_op_out <= `RV32_ALU_OP_SRC1P4;
+                    alu_op_out <= `RV32_ALU_OP_ADD_SUB;
+                    alu_sub_sra_out <= 0;
                     alu_src1_out <= `RV32_ALU_SRC1_PC;
+                    alu_src2_out <= `RV32_ALU_SRC2_FOUR;
                     branch_op_out <= `RV32_BRANCH_OP_ALWAYS;
                     branch_pc_src_out <= `RV32_BRANCH_PC_SRC_REG;
                     rd_write_out <= 1;

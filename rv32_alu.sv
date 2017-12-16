@@ -1,29 +1,29 @@
 `ifndef RV32_ALU
 `define RV32_ALU
 
-`define RV32_ALU_OP_ADD_SUB 4'b0000
-`define RV32_ALU_OP_XOR     4'b0001
-`define RV32_ALU_OP_OR      4'b0010
-`define RV32_ALU_OP_AND     4'b0011
-`define RV32_ALU_OP_SLL     4'b0100
-`define RV32_ALU_OP_SRL_SRA 4'b0101
-`define RV32_ALU_OP_SLT     4'b0110
-`define RV32_ALU_OP_SLTU    4'b0111
-`define RV32_ALU_OP_SRC1P4  4'b1000
-`define RV32_ALU_OP_SRC2    4'b1001
+`define RV32_ALU_OP_ADD_SUB 3'b000
+`define RV32_ALU_OP_XOR     3'b001
+`define RV32_ALU_OP_OR      3'b010
+`define RV32_ALU_OP_AND     3'b011
+`define RV32_ALU_OP_SLL     3'b100
+`define RV32_ALU_OP_SRL_SRA 3'b101
+`define RV32_ALU_OP_SLT     3'b110
+`define RV32_ALU_OP_SLTU    3'b111
 
-`define RV32_ALU_SRC1_REG 1'b0
-`define RV32_ALU_SRC1_PC  1'b1
+`define RV32_ALU_SRC1_REG  2'b00
+`define RV32_ALU_SRC1_PC   2'b01
+`define RV32_ALU_SRC1_ZERO 2'b10
 
-`define RV32_ALU_SRC2_REG 1'b0
-`define RV32_ALU_SRC2_IMM 1'b1
+`define RV32_ALU_SRC2_REG  2'b00
+`define RV32_ALU_SRC2_IMM  2'b01
+`define RV32_ALU_SRC2_FOUR 2'b10
 
 module rv32_alu (
     /* control in */
-    input [3:0] op_in,
+    input [2:0] op_in,
     input sub_sra_in,
-    input src1_in,
-    input src2_in,
+    input [1:0] src1_in,
+    input [1:0] src2_in,
 
     /* data in */
     input [31:0] pc_in,
@@ -52,8 +52,21 @@ module rv32_alu (
     logic lt;
     logic ltu;
 
-    assign src1 = src1_in ? pc_in : rs1_value_in;
-    assign src2 = src2_in ? imm_in : rs2_value_in;
+    always_comb begin
+        case (src1_in)
+            `RV32_ALU_SRC1_REG:  src1 = rs1_value_in;
+            `RV32_ALU_SRC1_PC:   src1 = pc_in;
+            `RV32_ALU_SRC1_ZERO: src1 = 0;
+            default:             src1 = 32'bx;
+        endcase
+
+        case (src2_in)
+            `RV32_ALU_SRC2_REG:  src2 = rs2_value_in;
+            `RV32_ALU_SRC2_IMM:  src2 = imm_in;
+            `RV32_ALU_SRC2_FOUR: src2 = 4;
+            default:             src2 = 32'bx;
+        endcase
+    end
 
     assign src1_sign = src1[31];
     assign src2_sign = src2[31];
@@ -80,9 +93,6 @@ module rv32_alu (
             `RV32_ALU_OP_SRL_SRA: result_out = srl_sra;
             `RV32_ALU_OP_SLT:     result_out = {31'b0, lt};
             `RV32_ALU_OP_SLTU:    result_out = {31'b0, ltu};
-            `RV32_ALU_OP_SRC1P4:  result_out = src1 + 4;
-            `RV32_ALU_OP_SRC2:    result_out = src2;
-            default:              result_out = 32'bx;
         endcase
     end
 endmodule

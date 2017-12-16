@@ -44,10 +44,10 @@ module rv32 (
     /* decode -> execute control */
     logic [4:0] decode_rs1;
     logic [4:0] decode_rs2;
-    logic [3:0] decode_alu_op;
+    logic [2:0] decode_alu_op;
     logic decode_alu_sub_sra;
-    logic decode_alu_src1;
-    logic decode_alu_src2;
+    logic [1:0] decode_alu_src1;
+    logic [1:0] decode_alu_src2;
     logic decode_mem_read;
     logic decode_mem_write;
     logic [1:0] decode_mem_width;
