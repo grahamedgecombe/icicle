@@ -10,12 +10,12 @@
 module rv32 (
     input clk,
 
-    /* memory bus */
-    output logic [31:0] address_out,
-    output logic read_out,
-    input [31:0] read_value_in,
-    output logic [3:0] write_mask_out,
-    output logic [31:0] write_value_out
+    /* data memory bus */
+    output logic [31:0] data_address_out,
+    output logic data_read_out,
+    input [31:0] data_read_value_in,
+    output logic [3:0] data_write_mask_out,
+    output logic [31:0] data_write_value_out
 );
     /* hazard -> fetch control */
     logic fetch_stall;
@@ -251,7 +251,7 @@ module rv32 (
         .branch_pc_in(execute_branch_pc),
 
         /* data in (from memory bus) */
-        .read_value_in(read_value_in),
+        .data_read_value_in(data_read_value_in),
 
         /* control out */
         .branch_taken_out(mem_branch_taken),
@@ -259,16 +259,16 @@ module rv32 (
         .rd_write_out(mem_rd_write),
 
         /* control out (to memory bus) */
-        .read_out(read_out),
-        .write_mask_out(write_mask_out),
+        .data_read_out(data_read_out),
+        .data_write_mask_out(data_write_mask_out),
 
         /* data out */
         .rd_value_out(mem_rd_value),
         .branch_pc_out(mem_branch_pc),
 
         /* data out (to memory bus) */
-        .address_out(address_out),
-        .write_value_out(write_value_out)
+        .data_address_out(data_address_out),
+        .data_write_value_out(data_write_value_out)
     );
 endmodule
 

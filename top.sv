@@ -70,11 +70,11 @@ module top (
         .clk(pll_clk),
 
         /* memory bus */
-        .address_out(mem_address),
-        .read_out(mem_read),
-        .read_value_in(mem_read_value),
-        .write_mask_out(mem_write_mask),
-        .write_value_out(mem_write_value)
+        .data_address_out(mem_address),
+        .data_read_out(mem_read),
+        .data_read_value_in(mem_read_value),
+        .data_write_mask_out(mem_write_mask),
+        .data_write_value_out(mem_write_value)
     );
 
     always_comb begin
