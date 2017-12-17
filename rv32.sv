@@ -13,6 +13,7 @@ module rv32 (
     /* data memory bus */
     output logic [31:0] data_address_out,
     output logic data_read_out,
+    output logic data_write_out,
     input [31:0] data_read_value_in,
     output logic [3:0] data_write_mask_out,
     output logic [31:0] data_write_value_out
@@ -260,6 +261,7 @@ module rv32 (
 
         /* control out (to memory bus) */
         .data_read_out(data_read_out),
+        .data_write_out(data_write_out),
         .data_write_mask_out(data_write_mask_out),
 
         /* data out */
