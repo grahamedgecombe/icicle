@@ -9,6 +9,7 @@ SECTIONS {
         start.o(.text);
         *(.text);
         *(.data);
+        *(.rodata);
 
         . = ALIGN(4);
         bss_start = .;
