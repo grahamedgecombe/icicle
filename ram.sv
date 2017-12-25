@@ -14,6 +14,9 @@ module ram (
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;
 
+    initial
+        $readmemh("progmem_syn.hex", mem);
+
     assign read_value_out = sel_in ? read_value : 0;
 
     always_ff @(negedge clk) begin

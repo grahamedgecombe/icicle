@@ -1,3 +1,4 @@
+`include "bus_arbiter.sv"
 `include "pll.sv"
 `include "ram.sv"
 `include "rv32.sv"
@@ -57,24 +58,73 @@ module top (
         .out(pll_locked)
     );
 
+    /* instruction memory bus */
+    logic [31:0] instr_address;
+    logic instr_read;
+    logic [31:0] instr_read_value;
+    logic instr_ready;
+
+    /* data memory bus */
+    logic [31:0] data_address;
+    logic data_read;
+    logic data_write;
+    logic [31:0] data_read_value;
+    logic [3:0] data_write_mask;
+    logic [31:0] data_write_value;
+    logic data_ready;
+
     /* memory bus */
     logic [31:0] mem_address;
     logic mem_read;
+    logic mem_write;
     logic [31:0] mem_read_value;
     logic [3:0] mem_write_mask;
     logic [31:0] mem_write_value;
 
     assign mem_read_value = ram_read_value | leds_read_value | uart_read_value;
 
+    bus_arbiter bus_arbiter (
+        /* instruction memory bus */
+        .instr_address_in(instr_address),
+        .instr_read_in(instr_read),
+        .instr_read_value_out(instr_read_value),
+        .instr_ready(instr_ready),
+
+        /* data memory bus */
+        .data_address_in(data_address),
+        .data_read_in(data_read),
+        .data_write_in(data_write),
+        .data_read_value_out(data_read_value),
+        .data_write_mask_in(data_write_mask),
+        .data_write_value_in(data_write_value),
+        .data_ready(data_ready),
+
+        /* common memory bus */
+        .address_out(mem_address),
+        .read_out(mem_read),
+        .write_out(mem_write),
+        .read_value_in(mem_read_value),
+        .write_mask_out(mem_write_mask),
+        .write_value_out(mem_write_value)
+    );
+
     rv32 rv32 (
         .clk(pll_clk),
 
-        /* memory bus */
-        .data_address_out(mem_address),
-        .data_read_out(mem_read),
-        .data_read_value_in(mem_read_value),
-        .data_write_mask_out(mem_write_mask),
-        .data_write_value_out(mem_write_value)
+        /* instruction memory bus */
+        .instr_address_out(instr_address),
+        .instr_read_out(instr_read),
+        .instr_read_value_in(instr_read_value),
+        .instr_ready_in(instr_ready),
+
+        /* data memory bus */
+        .data_address_out(data_address),
+        .data_read_out(data_read),
+        .data_write_out(data_write),
+        .data_read_value_in(data_read_value),
+        .data_write_mask_out(data_write_mask),
+        .data_write_value_out(data_write_value),
+        .data_ready_in(data_ready)
     );
 
     always_comb begin

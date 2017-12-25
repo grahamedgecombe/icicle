@@ -12,6 +12,13 @@ module rv32_hazard_unit (
 
     input mem_branch_taken_in,
 
+    input instr_read_in,
+    input instr_ready_in,
+
+    input data_read_in,
+    input data_write_in,
+    input data_ready_in,
+
     /* control out */
     output logic fetch_stall_out,
     output logic fetch_flush_out,
@@ -25,11 +32,15 @@ module rv32_hazard_unit (
     output logic mem_stall_out,
     output logic mem_flush_out
 );
+    logic fetch_wait_for_bus;
     logic fetch_wait_for_mem_read;
+    logic mem_wait_for_bus;
 
+    assign fetch_wait_for_bus = instr_read_in && !instr_ready_in;
     assign fetch_wait_for_mem_read = (decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
+    assign mem_wait_for_bus = (data_read_in || data_write_in) && !data_ready_in;
 
-    assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read;
+    assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_bus;
     assign fetch_flush_out = 0;
 
     assign decode_stall_out = execute_stall_out;
@@ -38,7 +49,7 @@ module rv32_hazard_unit (
     assign execute_stall_out = mem_stall_out;
     assign execute_flush_out = decode_stall_out || mem_branch_taken_in;
 
-    assign mem_stall_out = 0;
+    assign mem_stall_out = mem_wait_for_bus;
     assign mem_flush_out = execute_stall_out;
 endmodule
 

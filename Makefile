@@ -16,7 +16,7 @@ DEVICE   = 8k
 PACKAGE  = ct256
 PCF      = ice40hx8k-b-evn.pcf
 FREQ_OSC = 12
-FREQ_PLL = 36
+FREQ_PLL = 32
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
@@ -42,7 +42,7 @@ progmem: progmem.o start.o progmem.lds
 	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
 
 progmem_syn.hex:
-	icebram -g 32 256 > $@
+	icebram -g 32 2048 > $@
 
 $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@

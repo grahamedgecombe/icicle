@@ -16,23 +16,29 @@ module rv32_fetch (
     /* data in (from mem) */
     input [31:0] branch_pc_in,
 
+    /* data in (from memory bus) */
+    input [31:0] instr_read_value_in,
+
+    /* control out */
+    output logic instr_read_out,
+
     /* data out */
     output logic [31:0] pc_out,
-    output logic [31:0] instr_out
-);
-    logic [31:0] instr_mem [255:0];
-    logic [31:0] next_pc;
+    output logic [31:0] instr_out,
 
+    /* data out (to memory bus) */
+    output logic [31:0] instr_address_out
+);
+    logic [31:0] next_pc;
     logic [31:0] pc;
 
-    initial
-        $readmemh("progmem_syn.hex", instr_mem);
-
     assign pc = branch_taken_in ? branch_pc_in : next_pc;
+    assign instr_read_out = 1;
+    assign instr_address_out = pc;
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
-            instr_out <= instr_mem[pc[31:2]];
+            instr_out <= instr_read_value_in;
             next_pc <= pc + 4;
             pc_out <= pc;
 

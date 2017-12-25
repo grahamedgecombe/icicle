@@ -10,13 +10,20 @@
 module rv32 (
     input clk,
 
+    /* instruction memory bus */
+    output logic [31:0] instr_address_out,
+    output logic instr_read_out,
+    input [31:0] instr_read_value_in,
+    input instr_ready_in,
+
     /* data memory bus */
     output logic [31:0] data_address_out,
     output logic data_read_out,
     output logic data_write_out,
     input [31:0] data_read_value_in,
     output logic [3:0] data_write_mask_out,
-    output logic [31:0] data_write_value_out
+    output logic [31:0] data_write_value_out,
+    input data_ready_in
 );
     /* hazard -> fetch control */
     logic fetch_stall;
@@ -102,6 +109,13 @@ module rv32 (
 
         .mem_branch_taken_in(mem_branch_taken),
 
+        .instr_read_in(instr_read_out),
+        .instr_ready_in(instr_ready_in),
+
+        .data_read_in(data_read_out),
+        .data_write_in(data_write_out),
+        .data_ready_in(data_ready_in),
+
         /* control out */
         .fetch_stall_out(fetch_stall),
         .fetch_flush_out(fetch_flush),
@@ -126,12 +140,21 @@ module rv32 (
         /* control in (from mem) */
         .branch_taken_in(mem_branch_taken),
 
+        /* control out (to memory bus) */
+        .instr_read_out(instr_read_out),
+
         /* data in (from mem) */
         .branch_pc_in(mem_branch_pc),
 
+        /* data in (from memory bus) */
+        .instr_read_value_in(instr_read_value_in),
+
         /* data out */
         .pc_out(fetch_pc),
-        .instr_out(fetch_instr)
+        .instr_out(fetch_instr),
+
+        /* data out (to memory bus) */
+        .instr_address_out(instr_address_out)
     );
 
     rv32_decode decode (
