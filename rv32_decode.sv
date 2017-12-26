@@ -41,6 +41,7 @@ module rv32_decode (
     output logic mem_write_out,
     output logic [1:0] mem_width_out,
     output logic mem_zero_extend_out,
+    output logic mem_fence_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
     output logic [4:0] rd_out,
@@ -122,6 +123,7 @@ module rv32_decode (
             mem_write_out <= 0;
             mem_width_out <= 2'bx;
             mem_zero_extend_out <= 1'bx;
+            mem_fence_out <= 0;
             branch_op_out <= `RV32_BRANCH_OP_NEVER;
             branch_pc_src_out <= 1'bx;
             rd_out <= rd;
@@ -478,6 +480,7 @@ module rv32_decode (
                 end
                 `RV32_INSTR_FENCE_I: begin
                     valid_out <= 1;
+                    mem_fence_out <= 1;
                 end
                 `RV32_INSTR_ECALL: begin
                     valid_out <= 1;

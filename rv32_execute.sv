@@ -22,6 +22,7 @@ module rv32_execute (
     input mem_write_in,
     input [1:0] mem_width_in,
     input mem_zero_extend_in,
+    input mem_fence_in,
     input [1:0] branch_op_in,
     input branch_pc_src_in,
     input [4:0] rd_in,
@@ -45,6 +46,7 @@ module rv32_execute (
     output logic mem_write_out,
     output logic [1:0] mem_width_out,
     output logic mem_zero_extend_out,
+    output logic mem_fence_out,
     output logic [1:0] branch_op_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
@@ -113,6 +115,7 @@ module rv32_execute (
             mem_write_out <= mem_write_in;
             mem_width_out <= mem_width_in;
             mem_zero_extend_out <= mem_zero_extend_in;
+            mem_fence_out <= mem_fence_in;
             branch_op_out <= branch_op_in;
             rd_out <= rd_in;
             rd_write_out <= rd_write_in;

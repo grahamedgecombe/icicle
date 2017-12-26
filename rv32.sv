@@ -60,6 +60,7 @@ module rv32 (
     logic decode_mem_write;
     logic [1:0] decode_mem_width;
     logic decode_mem_zero_extend;
+    logic decode_mem_fence;
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
     logic [4:0] decode_rd;
@@ -76,6 +77,7 @@ module rv32 (
     logic execute_mem_write;
     logic [1:0] execute_mem_width;
     logic execute_mem_zero_extend;
+    logic execute_mem_fence;
     logic [1:0] execute_branch_op;
     logic [4:0] execute_rd;
     logic execute_rd_write;
