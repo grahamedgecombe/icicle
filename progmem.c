@@ -5,16 +5,22 @@
 #define UART_STATUS *((volatile uint32_t *) 0x00020004)
 #define UART_DATA   *((volatile  int32_t *) 0x00020008)
 
+#define UART_STATUS_TX_READY 0x1
+#define UART_STATUS_RX_READY 0x2
+
+static void uart_puts(const char *str) {
+    char c;
+    while ((c = *str++)) {
+        while (!(UART_STATUS & UART_STATUS_TX_READY));
+        UART_DATA = c;
+    }
+}
+
 int main() {
     UART_BAUD = FREQ / 9600;
+    LEDS = 0xAA;
 
     for (;;) {
-        int32_t c;
-        do {
-            c = UART_DATA;
-        } while (c < 0);
-
-        UART_DATA = c;
-        LEDS = c;
+        uart_puts("Hello, world!\r\n");
     }
 }
