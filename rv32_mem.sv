@@ -76,32 +76,32 @@ module rv32_mem (
                 `RV32_MEM_WIDTH_HALF: begin
                     case (result_in[0])
                         2'b0: begin
-                            data_write_value_out = {rs2_value_in[15:0], 16'bx};
-                            data_write_mask_out = 4'b1100;
-                        end
-                        2'b1: begin
                             data_write_value_out = {16'bx, rs2_value_in[15:0]};
                             data_write_mask_out = 4'b0011;
+                        end
+                        2'b1: begin
+                            data_write_value_out = {rs2_value_in[15:0], 16'bx};
+                            data_write_mask_out = 4'b1100;
                         end
                     endcase
                 end
                 `RV32_MEM_WIDTH_BYTE: begin
                     case (result_in[1:0])
                         2'b00: begin
-                            data_write_value_out = {rs2_value_in[7:0], 24'bx};
-                            data_write_mask_out = 4'b1000;
+                            data_write_value_out = {24'bx, rs2_value_in[7:0]};
+                            data_write_mask_out = 4'b0001;
                         end
                         2'b01: begin
-                            data_write_value_out = {8'bx, rs2_value_in[7:0], 16'bx};
-                            data_write_mask_out = 4'b0100;
-                        end
-                        2'b10: begin
                             data_write_value_out = {16'bx, rs2_value_in[7:0], 8'bx};
                             data_write_mask_out = 4'b0010;
                         end
+                        2'b10: begin
+                            data_write_value_out = {8'bx, rs2_value_in[7:0], 16'bx};
+                            data_write_mask_out = 4'b0100;
+                        end
                         2'b11: begin
-                            data_write_value_out = {24'bx, rs2_value_in[7:0]};
-                            data_write_mask_out = 4'b0001;
+                            data_write_value_out = {rs2_value_in[7:0], 24'bx};
+                            data_write_mask_out = 4'b1000;
                         end
                     endcase
                 end
@@ -128,16 +128,16 @@ module rv32_mem (
                     end
                     `RV32_MEM_WIDTH_HALF: begin
                         case (result_in[0])
-                            1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:16]};
-                            1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:0]};
+                            1'b0: rd_value_out <= {{16{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:0]};
+                            1'b1: rd_value_out <= {{16{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:16]};
                         endcase
                     end
                     `RV32_MEM_WIDTH_BYTE: begin
                         case (result_in[1:0])
-                            2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:24]};
-                            2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[23]}}, data_read_value_in[23:16]};
-                            2'b10: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:8]};
-                            2'b11: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[7]}},  data_read_value_in[7:0]};
+                            2'b00: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[7]}},  data_read_value_in[7:0]};
+                            2'b01: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:8]};
+                            2'b10: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[23]}}, data_read_value_in[23:16]};
+                            2'b11: rd_value_out <= {{24{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:24]};
                         endcase
                     end
                     default: begin
