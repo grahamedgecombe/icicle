@@ -34,8 +34,7 @@ clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o start.o progmem
 
 progmem.hex: progmem
-	$(OBJCOPY) -O srec $< /dev/stdout \
-		| srec_cat - -byte-swap 4 -output - -binary \
+	$(OBJCOPY) -O binary $< /dev/stdout \
 		| xxd -p -c 4 > $@
 
 progmem: progmem.o start.o progmem.lds
