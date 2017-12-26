@@ -16,7 +16,7 @@ DEVICE   = 8k
 PACKAGE  = ct256
 PCF      = ice40hx8k-b-evn.pcf
 FREQ_OSC = 12
-FREQ_PLL = 32
+FREQ_PLL = 36
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
