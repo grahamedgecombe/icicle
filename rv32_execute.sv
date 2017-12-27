@@ -36,7 +36,7 @@ module rv32_execute (
     input [31:0] pc_in,
     input [31:0] rs1_value_in,
     input [31:0] rs2_value_in,
-    input [31:0] imm_in,
+    input [31:0] imm_value_in,
 
     /* data in (from writeback) */
     input [31:0] writeback_rd_value_in,
@@ -88,7 +88,7 @@ module rv32_execute (
         .pc_in(pc_in),
         .rs1_value_in(rs1_value),
         .rs2_value_in(rs2_value),
-        .imm_in(imm_in),
+        .imm_value_in(imm_value_in),
 
         /* data out */
         .result_out(result)
@@ -103,7 +103,7 @@ module rv32_execute (
         /* data in */
         .pc_in(pc_in),
         .rs1_value_in(rs1_value),
-        .imm_in(imm_in),
+        .imm_value_in(imm_value_in),
 
         /* data out */
         .pc_out(branch_pc)

@@ -16,14 +16,14 @@ module rv32_branch_pc_mux (
     /* data in */
     input [31:0] pc_in,
     input [31:0] rs1_value_in,
-    input [31:0] imm_in,
+    input [31:0] imm_value_in,
 
     /* data out */
     output logic [31:0] pc_out
 );
     logic [31:0] pc;
 
-    assign pc = (pc_src_in ? rs1_value_in : pc_in) + imm_in;
+    assign pc = (pc_src_in ? rs1_value_in : pc_in) + imm_value_in;
     assign pc_out = {pc[31:1], 1'b0};
 endmodule
 

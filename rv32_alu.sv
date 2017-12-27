@@ -29,7 +29,7 @@ module rv32_alu (
     input [31:0] pc_in,
     input [31:0] rs1_value_in,
     input [31:0] rs2_value_in,
-    input [31:0] imm_in,
+    input [31:0] imm_value_in,
 
     /* data out */
     output logic [31:0] result_out
@@ -62,7 +62,7 @@ module rv32_alu (
 
         case (src2_in)
             `RV32_ALU_SRC2_REG:  src2 = rs2_value_in;
-            `RV32_ALU_SRC2_IMM:  src2 = imm_in;
+            `RV32_ALU_SRC2_IMM:  src2 = imm_value_in;
             `RV32_ALU_SRC2_FOUR: src2 = 4;
             default:             src2 = 32'bx;
         endcase

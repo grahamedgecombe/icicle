@@ -70,7 +70,7 @@ module rv32 (
     logic [31:0] decode_pc;
     logic [31:0] decode_rs1_value;
     logic [31:0] decode_rs2_value;
-    logic [31:0] decode_imm;
+    logic [31:0] decode_imm_value;
 
     /* execute -> mem control */
     logic execute_mem_read;
@@ -201,7 +201,7 @@ module rv32 (
         .pc_out(decode_pc),
         .rs1_value_out(decode_rs1_value),
         .rs2_value_out(decode_rs2_value),
-        .imm_out(decode_imm)
+        .imm_value_out(decode_imm_value)
     );
 
     rv32_execute execute (
@@ -235,7 +235,7 @@ module rv32 (
         .pc_in(decode_pc),
         .rs1_value_in(decode_rs1_value),
         .rs2_value_in(decode_rs2_value),
-        .imm_in(decode_imm),
+        .imm_value_in(decode_imm_value),
 
         /* data in (from writeback) */
         .writeback_rd_value_in(mem_rd_value),
