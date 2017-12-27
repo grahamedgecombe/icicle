@@ -3,12 +3,16 @@
 
 module rv32_hazard_unit (
     /* control in */
-    input [4:0] decode_rs1_in,
-    input [4:0] decode_rs2_in,
+    input [4:0] decode_rs1_unreg_in,
+    input [4:0] decode_rs2_unreg_in,
+    input decode_mem_fence_unreg_in,
 
     input decode_mem_read_in,
+    input decode_mem_fence_in,
     input [4:0] decode_rd_in,
     input decode_rd_write_in,
+
+    input execute_mem_fence_in,
 
     input mem_branch_taken_in,
 
@@ -34,10 +38,12 @@ module rv32_hazard_unit (
 );
     logic fetch_wait_for_bus;
     logic fetch_wait_for_mem_read;
+    logic fetch_wait_for_mem_fence;
     logic mem_wait_for_bus;
 
     assign fetch_wait_for_bus = instr_read_in && !instr_ready_in;
-    assign fetch_wait_for_mem_read = (decode_rs1_in == decode_rd_in || decode_rs2_in == decode_rd_in) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
+    assign fetch_wait_for_mem_read = (decode_rs1_unreg_in == decode_rd_in || decode_rs2_unreg_in == decode_rd_in) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
+    assign fetch_wait_for_mem_fence = decode_mem_fence_unreg_in || decode_mem_fence_in || execute_mem_fence_in;
     assign mem_wait_for_bus = (data_read_in || data_write_in) && !data_ready_in;
 
     assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_bus;

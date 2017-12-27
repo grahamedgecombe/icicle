@@ -48,6 +48,7 @@ module rv32 (
     /* decode -> hazard control */
     logic [4:0] decode_rs1_unreg;
     logic [4:0] decode_rs2_unreg;
+    logic decode_mem_fence_unreg;
 
     /* decode -> execute control */
     logic [4:0] decode_rs1;
@@ -102,12 +103,16 @@ module rv32 (
 
     rv32_hazard_unit hazard_unit (
         /* control in */
-        .decode_rs1_in(decode_rs1_unreg),
-        .decode_rs2_in(decode_rs2_unreg),
+        .decode_rs1_unreg_in(decode_rs1_unreg),
+        .decode_rs2_unreg_in(decode_rs2_unreg),
+        .decode_mem_fence_unreg_in(decode_mem_fence_unreg),
 
         .decode_mem_read_in(decode_mem_read),
+        .decode_mem_fence_in(decode_mem_fence),
         .decode_rd_in(decode_rd),
         .decode_rd_write_in(decode_rd_write),
+
+        .execute_mem_fence_in(execute_mem_fence),
 
         .mem_branch_taken_in(mem_branch_taken),
 
@@ -180,6 +185,7 @@ module rv32 (
         /* control out (to hazard) */
         .rs1_unreg_out(decode_rs1_unreg),
         .rs2_unreg_out(decode_rs2_unreg),
+        .mem_fence_unreg_out(decode_mem_fence_unreg),
 
         /* control out */
         .rs1_out(decode_rs1),
@@ -192,6 +198,7 @@ module rv32 (
         .mem_write_out(decode_mem_write),
         .mem_width_out(decode_mem_width),
         .mem_zero_extend_out(decode_mem_zero_extend),
+        .mem_fence_out(decode_mem_fence),
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
         .rd_out(decode_rd),
@@ -222,6 +229,7 @@ module rv32 (
         .mem_write_in(decode_mem_write),
         .mem_width_in(decode_mem_width),
         .mem_zero_extend_in(decode_mem_zero_extend),
+        .mem_fence_in(decode_mem_fence),
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
         .rd_in(decode_rd),
@@ -245,6 +253,7 @@ module rv32 (
         .mem_write_out(execute_mem_write),
         .mem_width_out(execute_mem_width),
         .mem_zero_extend_out(execute_mem_zero_extend),
+        .mem_fence_out(execute_mem_fence),
         .branch_op_out(execute_branch_op),
         .rd_out(execute_rd),
         .rd_write_out(execute_rd_write),

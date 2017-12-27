@@ -25,6 +25,7 @@ module rv32_decode (
     /* control out (to hazard) */
     output logic [4:0] rs1_unreg_out,
     output logic [4:0] rs2_unreg_out,
+    output logic mem_fence_unreg_out,
 
     /* control out */
     output logic [4:0] rs1_out,
@@ -92,6 +93,8 @@ module rv32_decode (
     logic [1:0] branch_op;
     logic branch_pc_src;
     logic rd_write;
+
+    assign mem_fence_unreg_out = mem_fence;
 
     rv32_control_unit control_unit (
         /* data in */
