@@ -24,7 +24,9 @@ module rv32_decode (
 
     /* control out (to hazard) */
     output logic [4:0] rs1_unreg_out,
+    output logic rs1_read_unreg_out,
     output logic [4:0] rs2_unreg_out,
+    output logic rs2_read_unreg_out,
     output logic mem_fence_unreg_out,
 
     /* control out */
@@ -85,6 +87,8 @@ module rv32_decode (
     );
 
     logic valid;
+    logic rs1_read;
+    logic rs2_read;
     logic [2:0] imm;
     logic [2:0] alu_op;
     logic alu_sub_sra;
@@ -102,6 +106,8 @@ module rv32_decode (
     logic branch_pc_src;
     logic rd_write;
 
+    assign rs1_read_unreg_out = rs1_read;
+    assign rs2_read_unreg_out = rs2_read;
     assign mem_fence_unreg_out = mem_fence;
 
     rv32_control_unit control_unit (
@@ -114,6 +120,8 @@ module rv32_decode (
 
         /* control out */
         .valid_out(valid),
+        .rs1_read_out(rs1_read),
+        .rs2_read_out(rs2_read),
         .imm_out(imm),
         .alu_op_out(alu_op),
         .alu_sub_sra_out(alu_sub_sra),

@@ -47,7 +47,9 @@ module rv32 (
 
     /* decode -> hazard control */
     logic [4:0] decode_rs1_unreg;
+    logic decode_rs1_read_unreg;
     logic [4:0] decode_rs2_unreg;
+    logic decode_rs2_read_unreg;
     logic decode_mem_fence_unreg;
 
     /* decode -> execute control */
@@ -114,7 +116,9 @@ module rv32 (
     rv32_hazard_unit hazard_unit (
         /* control in */
         .decode_rs1_unreg_in(decode_rs1_unreg),
+        .decode_rs1_read_unreg_in(decode_rs1_read_unreg),
         .decode_rs2_unreg_in(decode_rs2_unreg),
+        .decode_rs2_read_unreg_in(decode_rs2_read_unreg),
         .decode_mem_fence_unreg_in(decode_mem_fence_unreg),
 
         .decode_mem_read_in(decode_mem_read),
@@ -195,7 +199,9 @@ module rv32 (
 
         /* control out (to hazard) */
         .rs1_unreg_out(decode_rs1_unreg),
+        .rs1_read_unreg_out(decode_rs1_read_unreg),
         .rs2_unreg_out(decode_rs2_unreg),
+        .rs2_read_unreg_out(decode_rs2_read_unreg),
         .mem_fence_unreg_out(decode_mem_fence_unreg),
 
         /* control out */
