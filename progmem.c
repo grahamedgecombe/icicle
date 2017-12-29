@@ -18,7 +18,7 @@ static void uart_puts(const char *str) {
 
 static inline uint32_t rdcycle(void) {
     uint32_t cycle;
-    __asm__ volatile ("rdcycle %0" : "=r"(cycle));
+    asm volatile ("rdcycle %0" : "=r"(cycle));
     return cycle;
 }
 
