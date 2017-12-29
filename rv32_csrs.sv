@@ -33,20 +33,17 @@ module rv32_csrs (
 );
     logic [31:0] write_value;
 
-    logic [31:0] cycleh;
-    logic [31:0] cycle;
-
-    logic [31:0] instreth;
-    logic [31:0] instret;
+    logic [63:0] cycle;
+    logic [63:0] instret;
 
     always_comb begin
         case (csr_in)
-            `RV32_CSR_CYCLE:    read_value_out = cycle;
-            `RV32_CSR_TIME:     read_value_out = cycle;
-            `RV32_CSR_INSTRET:  read_value_out = instret;
-            `RV32_CSR_CYCLEH:   read_value_out = cycleh;
-            `RV32_CSR_TIMEH:    read_value_out = cycleh;
-            `RV32_CSR_INSTRETH: read_value_out = instreth;
+            `RV32_CSR_CYCLE:    read_value_out = cycle[31:0];
+            `RV32_CSR_TIME:     read_value_out = cycle[31:0];
+            `RV32_CSR_INSTRET:  read_value_out = instret[31:0];
+            `RV32_CSR_CYCLEH:   read_value_out = cycle[63:32];
+            `RV32_CSR_TIMEH:    read_value_out = cycle[63:32];
+            `RV32_CSR_INSTRETH: read_value_out = instret[63:32];
             default:            read_value_out = 32'bx;
         endcase
 
@@ -59,10 +56,7 @@ module rv32_csrs (
     end
 
     always_ff @(posedge clk) begin
-        cycleh <= cycleh + &cycle;
         cycle <= cycle + 1;
-
-        instreth <= instreth + (&instret && instr_retired_in);
         instret <= instret + instr_retired_in;
     end
 endmodule
