@@ -75,9 +75,6 @@ module rv32_mem (
     rv32_csrs csrs (
         .clk(clk),
 
-        /* control in (from hazard) */
-        .stall_in(stall_in),
-
         /* control in */
         .read_in(csr_read_in),
         .write_in(csr_write_in),

@@ -16,9 +16,6 @@
 module rv32_csrs (
     input clk,
 
-    /* control in (from hazard) */
-    input stall_in,
-
     /* control in */
     input read_in,
     input write_in,
