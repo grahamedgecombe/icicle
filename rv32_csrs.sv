@@ -65,7 +65,7 @@ module rv32_csrs (
         cycleh <= cycleh + &cycle;
         cycle <= cycle + 1;
 
-        instreth <= instreth + &instret;
+        instreth <= instreth + (&instret && instr_retired_in);
         instret <= instret + instr_retired_in;
     end
 endmodule
