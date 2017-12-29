@@ -31,7 +31,7 @@ OBJCOPY  = $(TARGET)-objcopy
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) progmem_syn.hex progmem.hex progmem.o start.o progmem
+	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem
 
 progmem.hex: progmem
 	$(OBJCOPY) -O binary $< /dev/stdout \
