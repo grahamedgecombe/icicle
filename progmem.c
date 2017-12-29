@@ -16,11 +16,20 @@ static void uart_puts(const char *str) {
     }
 }
 
+static inline uint32_t rdcycle(void) {
+    uint32_t cycle;
+    __asm__ volatile ("rdcycle %0" : "=r"(cycle));
+    return cycle;
+}
+
 int main() {
     UART_BAUD = FREQ / 9600;
     LEDS = 0xAA;
 
     for (;;) {
         uart_puts("Hello, world!\r\n");
+
+        uint32_t start = rdcycle();
+        while ((rdcycle() - start) <= FREQ);
     }
 }
