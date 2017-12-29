@@ -20,8 +20,8 @@ FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
-LD       = $(TARGET)-ld
-LDFLAGS  = -Tprogmem.lds -melf32lriscv
+LD       = $(TARGET)-gcc
+LDFLAGS  = -march=rv32i -mabi=ilp32 -Wl,-Tprogmem.lds -ffreestanding -nostartfiles
 CC       = $(TARGET)-gcc
 CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000
 OBJCOPY  = $(TARGET)-objcopy
