@@ -16,7 +16,8 @@
 
 `define RV32_ALU_SRC2_REG  2'b00
 `define RV32_ALU_SRC2_IMM  2'b01
-`define RV32_ALU_SRC2_FOUR 2'b10
+`define RV32_ALU_SRC2_ZERO 2'b10
+`define RV32_ALU_SRC2_FOUR 2'b11
 
 module rv32_alu (
     /* control in */
@@ -63,8 +64,8 @@ module rv32_alu (
         case (src2_in)
             `RV32_ALU_SRC2_REG:  src2 = rs2_value_in;
             `RV32_ALU_SRC2_IMM:  src2 = imm_value_in;
+            `RV32_ALU_SRC2_ZERO: src2 = 0;
             `RV32_ALU_SRC2_FOUR: src2 = 4;
-            default:             src2 = 32'bx;
         endcase
     end
 

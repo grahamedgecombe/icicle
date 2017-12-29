@@ -2,6 +2,7 @@
 `define RV32_CONTROL
 
 `include "rv32_alu.sv"
+`include "rv32_csrs.sv"
 `include "rv32_branch.sv"
 `include "rv32_imm.sv"
 `include "rv32_mem.sv"
@@ -10,6 +11,10 @@
 module rv32_control_unit (
     /* data in */
     input [31:0] instr_in,
+
+    /* control in */
+    input [4:0] rs1_in,
+    input [4:0] rd_in,
 
     /* control out */
     output logic valid_out,
@@ -23,6 +28,9 @@ module rv32_control_unit (
     output logic [1:0] mem_width_out,
     output logic mem_zero_extend_out,
     output logic mem_fence_out,
+    output logic csr_read_out,
+    output logic csr_write_out,
+    output logic [1:0] csr_write_op_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
     output logic rd_write_out
@@ -39,6 +47,9 @@ module rv32_control_unit (
         mem_width_out = 2'bx;
         mem_zero_extend_out = 1'bx;
         mem_fence_out = 0;
+        csr_read_out = 0;
+        csr_write_out = 0;
+        csr_write_op_out = 2'bx;
         branch_op_out = `RV32_BRANCH_OP_NEVER;
         branch_pc_src_out = 1'bx;
         rd_write_out = 0;
@@ -410,27 +421,72 @@ module rv32_control_unit (
             end
             `RV32_INSTR_CSRRW: begin
                 valid_out = 1;
-                // TODO
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_REG;
+                alu_src2_out = `RV32_ALU_SRC2_ZERO;
+                csr_read_out = |rd_in;
+                csr_write_out = 1;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RW;
+                rd_write_out = |rd_in;
             end
             `RV32_INSTR_CSRRS: begin
                 valid_out = 1;
-                // TODO
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_REG;
+                alu_src2_out = `RV32_ALU_SRC2_ZERO;
+                csr_read_out = 1;
+                csr_write_out = |rs1_in;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RS;
+                rd_write_out = 1;
             end
             `RV32_INSTR_CSRRC: begin
                 valid_out = 1;
-                // TODO
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_REG;
+                alu_src2_out = `RV32_ALU_SRC2_ZERO;
+                csr_read_out = 1;
+                csr_write_out = |rs1_in;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RC;
+                rd_write_out = 1;
             end
             `RV32_INSTR_CSRRWI: begin
                 valid_out = 1;
-                // TODO
+                imm_out = `RV32_IMM_ZIMM;
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_ZERO;
+                alu_src2_out = `RV32_ALU_SRC2_IMM;
+                csr_read_out = |rd_in;
+                csr_write_out = 1;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RW;
+                rd_write_out = |rd_in;
             end
             `RV32_INSTR_CSRRSI: begin
                 valid_out = 1;
-                // TODO
+                imm_out = `RV32_IMM_ZIMM;
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_ZERO;
+                alu_src2_out = `RV32_ALU_SRC2_IMM;
+                csr_read_out = 1;
+                csr_write_out = |rs1_in;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RS;
+                rd_write_out = 1;
             end
             `RV32_INSTR_CSRRCI: begin
                 valid_out = 1;
-                // TODO
+                imm_out = `RV32_IMM_ZIMM;
+                alu_op_out = `RV32_ALU_OP_ADD_SUB;
+                alu_sub_sra_out = 0;
+                alu_src1_out = `RV32_ALU_SRC1_ZERO;
+                alu_src2_out = `RV32_ALU_SRC2_IMM;
+                csr_read_out = 1;
+                csr_write_out = |rs1_in;
+                csr_write_op_out = `RV32_CSR_WRITE_OP_RC;
+                rd_write_out = 1;
             end
         endcase
     end

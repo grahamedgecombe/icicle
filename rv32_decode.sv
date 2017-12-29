@@ -28,6 +28,7 @@ module rv32_decode (
     output logic mem_fence_unreg_out,
 
     /* control out */
+    output logic valid_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
     output logic [2:0] alu_op_out,
@@ -39,6 +40,9 @@ module rv32_decode (
     output logic [1:0] mem_width_out,
     output logic mem_zero_extend_out,
     output logic mem_fence_out,
+    output logic csr_read_out,
+    output logic csr_write_out,
+    output logic [1:0] csr_write_op_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
     output logic [4:0] rd_out,
@@ -48,7 +52,8 @@ module rv32_decode (
     output logic [31:0] pc_out,
     output logic [31:0] rs1_value_out,
     output logic [31:0] rs2_value_out,
-    output logic [31:0] imm_value_out
+    output logic [31:0] imm_value_out,
+    output logic [11:0] csr_out
 );
     logic [4:0] rs2;
     logic [4:0] rs1;
@@ -90,6 +95,9 @@ module rv32_decode (
     logic [1:0] mem_width;
     logic mem_zero_extend;
     logic mem_fence;
+    logic csr_read;
+    logic csr_write;
+    logic [1:0] csr_write_op;
     logic [1:0] branch_op;
     logic branch_pc_src;
     logic rd_write;
@@ -99,6 +107,10 @@ module rv32_decode (
     rv32_control_unit control_unit (
         /* data in */
         .instr_in(instr_in),
+
+        /* control in */
+        .rs1_in(rs1),
+        .rd_in(rd),
 
         /* control out */
         .valid_out(valid),
@@ -112,6 +124,9 @@ module rv32_decode (
         .mem_width_out(mem_width),
         .mem_zero_extend_out(mem_zero_extend),
         .mem_fence_out(mem_fence),
+        .csr_read_out(csr_read),
+        .csr_write_out(csr_write),
+        .csr_write_op_out(csr_write_op),
         .branch_op_out(branch_op),
         .branch_pc_src_out(branch_pc_src),
         .rd_write_out(rd_write)
@@ -130,8 +145,13 @@ module rv32_decode (
         .imm_value_out(imm_value)
     );
 
+    logic [11:0] csr;
+
+    assign csr = instr_in[31:20];
+
     always_ff @(posedge clk) begin
         if (!stall_in) begin
+            valid_out <= valid;
             rs1_out <= rs1;
             rs2_out <= rs2;
             alu_op_out <= alu_op;
@@ -143,6 +163,9 @@ module rv32_decode (
             mem_width_out <= mem_width;
             mem_zero_extend_out <= mem_zero_extend;
             mem_fence_out <= mem_fence;
+            csr_read_out <= csr_read;
+            csr_write_out <= csr_write;
+            csr_write_op_out <= csr_write_op;
             branch_op_out <= branch_op;
             branch_pc_src_out <= branch_pc_src;
             rd_out <= rd;
@@ -150,10 +173,14 @@ module rv32_decode (
 
             pc_out <= pc_in;
             imm_value_out <= imm_value;
+            csr_out <= csr;
 
             if (flush_in) begin
+                valid_out <= 0;
                 mem_read_out <= 0;
                 mem_write_out <= 0;
+                csr_read_out <= 0;
+                csr_write_out <= 0;
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
                 rd_write_out <= 0;
             end
