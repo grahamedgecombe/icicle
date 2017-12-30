@@ -127,6 +127,10 @@ module top (
         .data_ready_in(data_ready)
     );
 
+    logic ram_sel;
+    logic leds_sel;
+    logic uart_sel;
+
     always_comb begin
         ram_sel = 0;
         leds_sel = 0;
@@ -139,7 +143,6 @@ module top (
         endcase
     end
 
-    logic ram_sel;
     logic [31:0] ram_read_value;
 
     ram ram (
@@ -153,7 +156,6 @@ module top (
         .write_value_in(mem_write_value)
     );
 
-    logic leds_sel;
     logic [31:0] leds_read_value;
 
     assign leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
@@ -163,7 +165,6 @@ module top (
             leds <= mem_write_value[7:0];
     end
 
-    logic uart_sel;
     logic [31:0] uart_read_value;
 
     uart uart (
