@@ -141,6 +141,7 @@ module rv32_decode (
         .csr_read_out(csr_read),
         .csr_write_out(csr_write),
         .csr_write_op_out(csr_write_op),
+        .csr_src_out(csr_src),
         .branch_op_out(branch_op),
         .branch_pc_src_out(branch_pc_src),
         .rd_write_out(rd_write)
