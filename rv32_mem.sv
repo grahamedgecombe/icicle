@@ -20,9 +20,6 @@ module rv32_mem (
     input write_in,
     input [1:0] width_in,
     input zero_extend_in,
-    input csr_read_in,
-    input csr_write_in,
-    input [1:0] csr_write_op_in,
     input [1:0] branch_op_in,
     input [4:0] rd_in,
     input rd_write_in,
@@ -30,7 +27,6 @@ module rv32_mem (
     /* data in */
     input [31:0] result_in,
     input [31:0] rs2_value_in,
-    input [11:0] csr_in,
     input [31:0] branch_pc_in,
 
     /* data in (from data memory bus) */
@@ -68,28 +64,6 @@ module rv32_mem (
     );
 
     assign branch_pc_out = branch_pc_in;
-
-    /* csr file */
-    logic [31:0] csr_read_value;
-
-    rv32_csrs csrs (
-        .clk(clk),
-
-        /* control in */
-        .read_in(csr_read_in),
-        .write_in(csr_write_in),
-        .write_op_in(csr_write_op_in),
-
-        /* control in (from writeback) */
-        .instr_retired_in(valid_out),
-
-        /* data in */
-        .result_in(result_in),
-        .csr_in(csr_in),
-
-        /* data out */
-        .read_value_out(csr_read_value)
-    );
 
     /* memory access unit */
     logic [31:0] mem_read_value;
@@ -183,9 +157,7 @@ module rv32_mem (
             rd_out <= rd_in;
             rd_write_out <= rd_write_in;
 
-            if (csr_read_in)
-                rd_value_out <= csr_read_value;
-            else if (read_in)
+            if (read_in)
                 rd_value_out <= mem_read_value;
             else
                 rd_value_out <= result_in;

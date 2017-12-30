@@ -13,6 +13,9 @@
 `define RV32_CSR_WRITE_OP_RS 2'b01
 `define RV32_CSR_WRITE_OP_RC 2'b10
 
+`define RV32_CSR_SRC_IMM 1'b0
+`define RV32_CSR_SRC_REG 1'b1
+
 module rv32_csrs (
     input clk,
 
@@ -20,21 +23,26 @@ module rv32_csrs (
     input read_in,
     input write_in,
     input [1:0] write_op_in,
+    input src_in,
 
     /* control in (from writeback) */
     input instr_retired_in,
 
     /* data in */
-    input [31:0] result_in,
     input [11:0] csr_in,
+    input [31:0] rs1_value_in,
+    input [31:0] imm_value_in,
 
     /* data out */
     output logic [31:0] read_value_out
 );
     logic [31:0] write_value;
+    logic [31:0] new_value;
 
     logic [63:0] cycle;
     logic [63:0] instret;
+
+    assign write_value = src_in ? imm_value_in : rs1_value_in;
 
     always_comb begin
         case (csr_in)
@@ -48,10 +56,10 @@ module rv32_csrs (
         endcase
 
         case (write_op_in)
-            `RV32_CSR_WRITE_OP_RW: write_value = result_in;
-            `RV32_CSR_WRITE_OP_RS: write_value = read_value_out |  result_in;
-            `RV32_CSR_WRITE_OP_RC: write_value = read_value_out & ~result_in;
-            default:               write_value = 32'bx;
+            `RV32_CSR_WRITE_OP_RW: new_value = write_value;
+            `RV32_CSR_WRITE_OP_RS: new_value = read_value_out |  write_value;
+            `RV32_CSR_WRITE_OP_RC: new_value = read_value_out & ~write_value;
+            default:               new_value = 32'bx;
         endcase
     end
 

@@ -33,6 +33,7 @@ module rv32_control_unit (
     output logic csr_read_out,
     output logic csr_write_out,
     output logic [1:0] csr_write_op_out,
+    output logic csr_src_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
     output logic rd_write_out
@@ -54,6 +55,7 @@ module rv32_control_unit (
         csr_read_out = 0;
         csr_write_out = 0;
         csr_write_op_out = 2'bx;
+        csr_src_out = 1'bx;
         branch_op_out = `RV32_BRANCH_OP_NEVER;
         branch_pc_src_out = 1'bx;
         rd_write_out = 0;
@@ -479,73 +481,55 @@ module rv32_control_unit (
             `RV32_INSTR_CSRRW: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_REG;
-                alu_src2_out = `RV32_ALU_SRC2_ZERO;
                 csr_read_out = |rd_in;
                 csr_write_out = 1;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RW;
+                csr_src_out = `RV32_CSR_SRC_REG;
                 rd_write_out = |rd_in;
             end
             `RV32_INSTR_CSRRS: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_REG;
-                alu_src2_out = `RV32_ALU_SRC2_ZERO;
                 csr_read_out = 1;
                 csr_write_out = |rs1_in;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RS;
+                csr_src_out = `RV32_CSR_SRC_REG;
                 rd_write_out = 1;
             end
             `RV32_INSTR_CSRRC: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_REG;
-                alu_src2_out = `RV32_ALU_SRC2_ZERO;
                 csr_read_out = 1;
                 csr_write_out = |rs1_in;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RC;
+                csr_src_out = `RV32_CSR_SRC_REG;
                 rd_write_out = 1;
             end
             `RV32_INSTR_CSRRWI: begin
                 valid_out = 1;
                 imm_out = `RV32_IMM_ZIMM;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_ZERO;
-                alu_src2_out = `RV32_ALU_SRC2_IMM;
                 csr_read_out = |rd_in;
                 csr_write_out = 1;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RW;
+                csr_src_out = `RV32_CSR_SRC_IMM;
                 rd_write_out = |rd_in;
             end
             `RV32_INSTR_CSRRSI: begin
                 valid_out = 1;
                 imm_out = `RV32_IMM_ZIMM;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_ZERO;
-                alu_src2_out = `RV32_ALU_SRC2_IMM;
                 csr_read_out = 1;
                 csr_write_out = |rs1_in;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RS;
+                csr_src_out = `RV32_CSR_SRC_IMM;
                 rd_write_out = 1;
             end
             `RV32_INSTR_CSRRCI: begin
                 valid_out = 1;
                 imm_out = `RV32_IMM_ZIMM;
-                alu_op_out = `RV32_ALU_OP_ADD_SUB;
-                alu_sub_sra_out = 0;
-                alu_src1_out = `RV32_ALU_SRC1_ZERO;
-                alu_src2_out = `RV32_ALU_SRC2_IMM;
                 csr_read_out = 1;
                 csr_write_out = |rs1_in;
                 csr_write_op_out = `RV32_CSR_WRITE_OP_RC;
+                csr_src_out = `RV32_CSR_SRC_IMM;
                 rd_write_out = 1;
             end
         endcase

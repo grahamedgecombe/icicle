@@ -68,6 +68,7 @@ module rv32 (
     logic decode_csr_read;
     logic decode_csr_write;
     logic [1:0] decode_csr_write_op;
+    logic decode_csr_src;
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
     logic [4:0] decode_rd;
@@ -84,9 +85,6 @@ module rv32 (
     logic execute_valid;
     logic execute_mem_read;
     logic execute_mem_write;
-    logic execute_csr_read;
-    logic execute_csr_write;
-    logic [1:0] execute_csr_write_op;
     logic [1:0] execute_mem_width;
     logic execute_mem_zero_extend;
     logic execute_mem_fence;
@@ -97,10 +95,10 @@ module rv32 (
     /* execute -> mem data */
     logic [31:0] execute_result;
     logic [31:0] execute_rs2_value;
-    logic [11:0] execute_csr;
     logic [31:0] execute_branch_pc;
 
     /* mem -> writeback control */
+    logic mem_valid;
     logic [4:0] mem_rd;
     logic mem_rd_write;
 
@@ -123,7 +121,6 @@ module rv32 (
 
         .decode_mem_read_in(decode_mem_read),
         .decode_mem_fence_in(decode_mem_fence),
-        .decode_csr_read_in(decode_csr_read),
         .decode_rd_in(decode_rd),
         .decode_rd_write_in(decode_rd_write),
 
@@ -220,6 +217,7 @@ module rv32 (
         .csr_read_out(decode_csr_read),
         .csr_write_out(decode_csr_write),
         .csr_write_op_out(decode_csr_write_op),
+        .csr_src_out(decode_csr_src),
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
         .rd_out(decode_rd),
@@ -256,12 +254,14 @@ module rv32 (
         .csr_read_in(decode_csr_read),
         .csr_write_in(decode_csr_write),
         .csr_write_op_in(decode_csr_write_op),
+        .csr_src_in(decode_csr_src),
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
         .rd_in(decode_rd),
         .rd_write_in(decode_rd_write),
 
         /* control in (from writeback) */
+        .writeback_valid_in(mem_valid),
         .writeback_rd_in(mem_rd),
         .writeback_rd_write_in(mem_rd_write),
 
@@ -282,9 +282,6 @@ module rv32 (
         .mem_width_out(execute_mem_width),
         .mem_zero_extend_out(execute_mem_zero_extend),
         .mem_fence_out(execute_mem_fence),
-        .csr_read_out(execute_csr_read),
-        .csr_write_out(execute_csr_write),
-        .csr_write_op_out(execute_csr_write_op),
         .branch_op_out(execute_branch_op),
         .rd_out(execute_rd),
         .rd_write_out(execute_rd_write),
@@ -292,7 +289,6 @@ module rv32 (
         /* data out */
         .result_out(execute_result),
         .rs2_value_out(execute_rs2_value),
-        .csr_out(execute_csr),
         .branch_pc_out(execute_branch_pc)
     );
 
@@ -309,9 +305,6 @@ module rv32 (
         .write_in(execute_mem_write),
         .width_in(execute_mem_width),
         .zero_extend_in(execute_mem_zero_extend),
-        .csr_read_in(execute_csr_read),
-        .csr_write_in(execute_csr_write),
-        .csr_write_op_in(execute_csr_write_op),
         .branch_op_in(execute_branch_op),
         .rd_in(execute_rd),
         .rd_write_in(execute_rd_write),
@@ -319,13 +312,13 @@ module rv32 (
         /* data in */
         .result_in(execute_result),
         .rs2_value_in(execute_rs2_value),
-        .csr_in(execute_csr),
         .branch_pc_in(execute_branch_pc),
 
         /* data in (from memory bus) */
         .data_read_value_in(data_read_value_in),
 
         /* control out */
+        .valid_out(mem_valid),
         .branch_taken_out(mem_branch_taken),
         .rd_out(mem_rd),
         .rd_write_out(mem_rd_write),
