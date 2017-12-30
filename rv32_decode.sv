@@ -11,6 +11,9 @@ module rv32_decode (
     input stall_in,
     input flush_in,
 
+    /* control in (from fetch) */
+    input branch_predicted_taken_in,
+
     /* control in (from writeback) */
     input [4:0] rd_in,
     input rd_write_in,
@@ -30,6 +33,7 @@ module rv32_decode (
     output logic mem_fence_unreg_out,
 
     /* control out */
+    output logic branch_predicted_taken_out,
     output logic valid_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
@@ -161,6 +165,7 @@ module rv32_decode (
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
+            branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid;
             rs1_out <= rs1;
             rs2_out <= rs2;

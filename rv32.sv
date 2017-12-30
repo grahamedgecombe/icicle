@@ -41,6 +41,9 @@ module rv32 (
     logic mem_stall;
     logic mem_flush;
 
+    /* fetch -> decode control */
+    logic fetch_branch_predicted_taken;
+
     /* fetch -> decode data */
     logic [31:0] fetch_pc;
     logic [31:0] fetch_instr;
@@ -53,6 +56,7 @@ module rv32 (
     logic decode_mem_fence_unreg;
 
     /* decode -> execute control */
+    logic decode_branch_predicted_taken;
     logic decode_valid;
     logic [4:0] decode_rs1;
     logic [4:0] decode_rs2;
@@ -82,6 +86,7 @@ module rv32 (
     logic [11:0] decode_csr;
 
     /* execute -> mem control */
+    logic execute_branch_predicted_taken;
     logic execute_valid;
     logic execute_mem_read;
     logic execute_mem_write;
@@ -103,7 +108,7 @@ module rv32 (
     logic mem_rd_write;
 
     /* mem -> fetch control */
-    logic mem_branch_taken;
+    logic mem_branch_mispredicted;
 
     /* mem -> writeback data */
     logic [31:0] mem_rd_value;
@@ -126,7 +131,7 @@ module rv32 (
 
         .execute_mem_fence_in(execute_mem_fence),
 
-        .mem_branch_taken_in(mem_branch_taken),
+        .mem_branch_mispredicted_in(mem_branch_mispredicted),
 
         .instr_read_in(instr_read_out),
         .instr_ready_in(instr_ready_in),
@@ -157,10 +162,13 @@ module rv32 (
         .flush_in(fetch_flush),
 
         /* control in (from mem) */
-        .branch_taken_in(mem_branch_taken),
+        .branch_mispredicted_in(mem_branch_mispredicted),
 
         /* control out (to memory bus) */
         .instr_read_out(instr_read_out),
+
+        /* control out */
+        .branch_predicted_taken_out(fetch_branch_predicted_taken),
 
         /* data in (from mem) */
         .branch_pc_in(mem_branch_pc),
@@ -183,6 +191,9 @@ module rv32 (
         .stall_in(decode_stall),
         .flush_in(decode_flush),
 
+        /* control in (from fetch) */
+        .branch_predicted_taken_in(fetch_branch_predicted_taken),
+
         /* control in (from writeback) */
         .rd_in(mem_rd),
         .rd_write_in(mem_rd_write),
@@ -202,6 +213,7 @@ module rv32 (
         .mem_fence_unreg_out(decode_mem_fence_unreg),
 
         /* control out */
+        .branch_predicted_taken_out(decode_branch_predicted_taken),
         .valid_out(decode_valid),
         .rs1_out(decode_rs1),
         .rs2_out(decode_rs2),
@@ -239,6 +251,7 @@ module rv32 (
         .flush_in(execute_flush),
 
         /* control in */
+        .branch_predicted_taken_in(decode_branch_predicted_taken),
         .valid_in(decode_valid),
         .rs1_in(decode_rs1),
         .rs2_in(decode_rs2),
@@ -276,6 +289,7 @@ module rv32 (
         .writeback_rd_value_in(mem_rd_value),
 
         /* control out */
+        .branch_predicted_taken_out(execute_branch_predicted_taken),
         .valid_out(execute_valid),
         .mem_read_out(execute_mem_read),
         .mem_write_out(execute_mem_write),
@@ -300,6 +314,7 @@ module rv32 (
         .flush_in(mem_flush),
 
         /* control in */
+        .branch_predicted_taken_in(execute_branch_predicted_taken),
         .valid_in(execute_valid),
         .read_in(execute_mem_read),
         .write_in(execute_mem_write),
@@ -319,7 +334,7 @@ module rv32 (
 
         /* control out */
         .valid_out(mem_valid),
-        .branch_taken_out(mem_branch_taken),
+        .branch_mispredicted_out(mem_branch_mispredicted),
         .rd_out(mem_rd),
         .rd_write_out(mem_rd_write),
 

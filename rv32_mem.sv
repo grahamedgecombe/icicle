@@ -15,6 +15,7 @@ module rv32_mem (
     input flush_in,
 
     /* control in */
+    input branch_predicted_taken_in,
     input valid_in,
     input read_in,
     input write_in,
@@ -34,7 +35,7 @@ module rv32_mem (
 
     /* control out */
     output logic valid_out,
-    output logic branch_taken_out,
+    output logic branch_mispredicted_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
 
@@ -54,13 +55,14 @@ module rv32_mem (
     /* branch unit */
     rv32_branch_unit branch_unit (
         /* control in */
+        .predicted_taken_in(branch_predicted_taken_in),
         .op_in(branch_op_in),
 
         /* data in */
         .result_in(result_in),
 
         /* control out */
-        .taken_out(branch_taken_out)
+        .mispredicted_out(branch_mispredicted_out)
     );
 
     assign branch_pc_out = branch_pc_in;

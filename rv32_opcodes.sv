@@ -54,4 +54,7 @@
 
 `define RV32_INSTR_NOP     32'bxxxxxxx_xxxxx_00000_xxx_00000_0010011
 
+`define RV32_OPCODE_JAL    7'b1101111
+`define RV32_OPCODE_BRANCH 7'b1100011
+
 `endif

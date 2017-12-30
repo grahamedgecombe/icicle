@@ -13,6 +13,7 @@ module rv32_execute (
     input flush_in,
 
     /* control in */
+    input branch_predicted_taken_in,
     input valid_in,
     input [4:0] rs1_in,
     input [4:0] rs2_in,
@@ -50,6 +51,7 @@ module rv32_execute (
     input [31:0] writeback_rd_value_in,
 
     /* control out */
+    output logic branch_predicted_taken_out,
     output logic valid_out,
     output logic mem_read_out,
     output logic mem_write_out,
@@ -147,6 +149,7 @@ module rv32_execute (
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
+            branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in;
             mem_read_out <= mem_read_in;
             mem_write_out <= mem_write_in;
