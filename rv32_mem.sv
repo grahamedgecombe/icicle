@@ -91,9 +91,9 @@ module rv32_mem (
         .read_value_out(csr_read_value)
     );
 
+    /* memory access unit */
     logic [31:0] mem_read_value;
 
-    /* memory access unit */
     assign data_read_out = read_in;
     assign data_write_out = write_in;
     assign data_address_out = result_in;
