@@ -30,24 +30,19 @@ endmodule
 module rv32_branch_unit (
     /* control in */
     input predicted_taken_in,
+    input alu_non_zero_in,
     input [1:0] op_in,
-
-    /* data in */
-    input [31:0] result_in,
 
     /* control out */
     output logic mispredicted_out
 );
-    logic non_zero;
     logic taken;
-
-    assign non_zero = |result_in;
 
     always_comb begin
         case (op_in)
             `RV32_BRANCH_OP_NEVER:    taken = 0;
-            `RV32_BRANCH_OP_ZERO:     taken = ~non_zero;
-            `RV32_BRANCH_OP_NON_ZERO: taken = non_zero;
+            `RV32_BRANCH_OP_ZERO:     taken = ~alu_non_zero_in;
+            `RV32_BRANCH_OP_NON_ZERO: taken = alu_non_zero_in;
             `RV32_BRANCH_OP_ALWAYS:   taken = 1;
         endcase
     end
