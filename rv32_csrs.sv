@@ -132,7 +132,7 @@
 `define RV32_CSR_SRC_IMM 1'b0
 `define RV32_CSR_SRC_REG 1'b1
 
-                       /* XLEN|    |ABCDEFGHIJKLMNOPQRSTUVWXYZ */
+                     /* | XLEN|    |ABCDEFGHIJKLMNOPQRSTUVWXYZ | */
 `define RV32_MISA_VALUE 32'b01_0000_00000000100000000000000000
 
 module rv32_csrs (
