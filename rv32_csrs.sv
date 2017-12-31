@@ -1,13 +1,12 @@
 `ifndef RV32_CSRS
 `define RV32_CSRS
 
-/*                           |rw|pl| id    | */
-`define RV32_CSR_CYCLE    12'b11_00_00000000
-`define RV32_CSR_TIME     12'b11_00_00000001
-`define RV32_CSR_INSTRET  12'b11_00_00000010
-`define RV32_CSR_CYCLEH   12'b11_00_10000000
-`define RV32_CSR_TIMEH    12'b11_00_10000001
-`define RV32_CSR_INSTRETH 12'b11_00_10000010
+`define RV32_CSR_CYCLE    12'hC00
+`define RV32_CSR_TIME     12'hC01
+`define RV32_CSR_INSTRET  12'hC02
+`define RV32_CSR_CYCLEH   12'hC80
+`define RV32_CSR_TIMEH    12'hC81
+`define RV32_CSR_INSTRETH 12'hC82
 
 `define RV32_CSR_WRITE_OP_RW 2'b00
 `define RV32_CSR_WRITE_OP_RS 2'b01
