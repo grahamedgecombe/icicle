@@ -1,6 +1,7 @@
 `ifndef RV32_CSRS
 `define RV32_CSRS
 
+`define RV32_CSR_MISA      12'h301
 `define RV32_CSR_CYCLE     12'hC00
 `define RV32_CSR_TIME      12'hC01
 `define RV32_CSR_INSTRET   12'hC02
@@ -18,6 +19,9 @@
 
 `define RV32_CSR_SRC_IMM 1'b0
 `define RV32_CSR_SRC_REG 1'b1
+
+                       /* XLEN|    |ABCDEFGHIJKLMNOPQRSTUVWXYZ */
+`define RV32_MISA_VALUE 32'b01_0000_00000000100000000000000000
 
 module rv32_csrs (
     input clk,
@@ -49,6 +53,7 @@ module rv32_csrs (
 
     always_comb begin
         case (csr_in)
+            `RV32_CSR_MISA:      read_value_out = `RV32_MISA_VALUE;
             `RV32_CSR_CYCLE:     read_value_out = cycle[31:0];
             `RV32_CSR_TIME:      read_value_out = cycle[31:0];
             `RV32_CSR_INSTRET:   read_value_out = instret[31:0];
