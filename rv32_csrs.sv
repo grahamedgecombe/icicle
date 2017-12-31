@@ -3,6 +3,10 @@
 
 `define RV32_CSR_MISA      12'h301
 `define RV32_CSR_MSCRATCH  12'h340
+`define RV32_CSR_MCYCLE    12'hB00
+`define RV32_CSR_MINSTRET  12'hB02
+`define RV32_CSR_MCYCLEH   12'hB80
+`define RV32_CSR_MINSTRETH 12'hB82
 `define RV32_CSR_CYCLE     12'hC00
 `define RV32_CSR_TIME      12'hC01
 `define RV32_CSR_INSTRET   12'hC02
@@ -57,6 +61,10 @@ module rv32_csrs (
         case (csr_in)
             `RV32_CSR_MISA:      read_value_out = `RV32_MISA_VALUE;
             `RV32_CSR_MSCRATCH:  read_value_out = mscratch;
+            `RV32_CSR_MCYCLE:    read_value_out = cycle[31:0];
+            `RV32_CSR_MINSTRET:  read_value_out = instret[31:0];
+            `RV32_CSR_MCYCLEH:   read_value_out = cycle[63:32];
+            `RV32_CSR_MINSTRETH: read_value_out = instret[63:32];
             `RV32_CSR_CYCLE:     read_value_out = cycle[31:0];
             `RV32_CSR_TIME:      read_value_out = cycle[31:0];
             `RV32_CSR_INSTRET:   read_value_out = instret[31:0];
