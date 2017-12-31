@@ -49,7 +49,7 @@ module rv32_csrs (
     logic [63:0] cycle;
     logic [63:0] instret;
 
-    assign write_value = src_in ? imm_value_in : rs1_value_in;
+    assign write_value = src_in ? rs1_value_in : imm_value_in;
 
     always_comb begin
         case (csr_in)
