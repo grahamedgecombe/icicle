@@ -20,6 +20,14 @@ module rv32_regs (
 );
     logic [31:0] regs [31:0];
 
+    generate
+        genvar i;
+        for (i = 0; i < 32; i = i+1) begin
+            initial
+                regs[i] <= 0;
+        end
+    endgenerate
+
     always_ff @(posedge clk) begin
         if (!stall_in) begin
             rs1_value_out <= regs[rs1_in];
