@@ -1,12 +1,16 @@
 `ifndef RV32_CSRS
 `define RV32_CSRS
 
-`define RV32_CSR_CYCLE    12'hC00
-`define RV32_CSR_TIME     12'hC01
-`define RV32_CSR_INSTRET  12'hC02
-`define RV32_CSR_CYCLEH   12'hC80
-`define RV32_CSR_TIMEH    12'hC81
-`define RV32_CSR_INSTRETH 12'hC82
+`define RV32_CSR_CYCLE     12'hC00
+`define RV32_CSR_TIME      12'hC01
+`define RV32_CSR_INSTRET   12'hC02
+`define RV32_CSR_CYCLEH    12'hC80
+`define RV32_CSR_TIMEH     12'hC81
+`define RV32_CSR_INSTRETH  12'hC82
+`define RV32_CSR_MVENDORID 12'hF11
+`define RV32_CSR_MARCHID   12'hF12
+`define RV32_CSR_MIMPID    12'hF13
+`define RV32_CSR_MHARTID   12'hF14
 
 `define RV32_CSR_WRITE_OP_RW 2'b00
 `define RV32_CSR_WRITE_OP_RS 2'b01
@@ -45,13 +49,17 @@ module rv32_csrs (
 
     always_comb begin
         case (csr_in)
-            `RV32_CSR_CYCLE:    read_value_out = cycle[31:0];
-            `RV32_CSR_TIME:     read_value_out = cycle[31:0];
-            `RV32_CSR_INSTRET:  read_value_out = instret[31:0];
-            `RV32_CSR_CYCLEH:   read_value_out = cycle[63:32];
-            `RV32_CSR_TIMEH:    read_value_out = cycle[63:32];
-            `RV32_CSR_INSTRETH: read_value_out = instret[63:32];
-            default:            read_value_out = 32'bx;
+            `RV32_CSR_CYCLE:     read_value_out = cycle[31:0];
+            `RV32_CSR_TIME:      read_value_out = cycle[31:0];
+            `RV32_CSR_INSTRET:   read_value_out = instret[31:0];
+            `RV32_CSR_CYCLEH:    read_value_out = cycle[63:32];
+            `RV32_CSR_TIMEH:     read_value_out = cycle[63:32];
+            `RV32_CSR_INSTRETH:  read_value_out = instret[63:32];
+            `RV32_CSR_MVENDORID: read_value_out = 32'b0;
+            `RV32_CSR_MARCHID:   read_value_out = 32'b0;
+            `RV32_CSR_MIMPID:    read_value_out = 32'b0;
+            `RV32_CSR_MHARTID:   read_value_out = 32'b0;
+            default:             read_value_out = 32'bx;
         endcase
 
         case (write_op_in)
