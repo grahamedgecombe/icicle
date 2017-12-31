@@ -2,6 +2,7 @@
 `define RV32_CSRS
 
 `define RV32_CSR_MISA      12'h301
+`define RV32_CSR_MSCRATCH  12'h340
 `define RV32_CSR_CYCLE     12'hC00
 `define RV32_CSR_TIME      12'hC01
 `define RV32_CSR_INSTRET   12'hC02
@@ -46,6 +47,7 @@ module rv32_csrs (
     logic [31:0] write_value;
     logic [31:0] new_value;
 
+    logic [31:0] mscratch;
     logic [63:0] cycle;
     logic [63:0] instret;
 
@@ -54,6 +56,7 @@ module rv32_csrs (
     always_comb begin
         case (csr_in)
             `RV32_CSR_MISA:      read_value_out = `RV32_MISA_VALUE;
+            `RV32_CSR_MSCRATCH:  read_value_out = mscratch;
             `RV32_CSR_CYCLE:     read_value_out = cycle[31:0];
             `RV32_CSR_TIME:      read_value_out = cycle[31:0];
             `RV32_CSR_INSTRET:   read_value_out = instret[31:0];
@@ -76,6 +79,12 @@ module rv32_csrs (
     end
 
     always_ff @(posedge clk) begin
+        if (write_in) begin
+            case (csr_in)
+                `RV32_CSR_MSCRATCH: mscratch <= new_value;
+            endcase
+        end
+
         cycle <= cycle + 1;
         instret <= instret + instr_retired_in;
     end
