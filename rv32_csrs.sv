@@ -32,6 +32,26 @@
 `define RV32_CSR_MHPMEVENT30    12'h33E
 `define RV32_CSR_MHPMEVENT31    12'h33F
 `define RV32_CSR_MSCRATCH       12'h340
+`define RV32_CSR_PMPCFG0        12'h3A0
+`define RV32_CSR_PMPCFG1        12'h3A1
+`define RV32_CSR_PMPCFG2        12'h3A2
+`define RV32_CSR_PMPCFG3        12'h3A3
+`define RV32_CSR_PMPADDR0       12'h3B0
+`define RV32_CSR_PMPADDR1       12'h3B1
+`define RV32_CSR_PMPADDR2       12'h3B2
+`define RV32_CSR_PMPADDR3       12'h3B3
+`define RV32_CSR_PMPADDR4       12'h3B4
+`define RV32_CSR_PMPADDR5       12'h3B5
+`define RV32_CSR_PMPADDR6       12'h3B6
+`define RV32_CSR_PMPADDR7       12'h3B7
+`define RV32_CSR_PMPADDR8       12'h3B8
+`define RV32_CSR_PMPADDR9       12'h3B9
+`define RV32_CSR_PMPADDR10      12'h3BA
+`define RV32_CSR_PMPADDR11      12'h3BB
+`define RV32_CSR_PMPADDR12      12'h3BC
+`define RV32_CSR_PMPADDR13      12'h3BD
+`define RV32_CSR_PMPADDR14      12'h3BE
+`define RV32_CSR_PMPADDR15      12'h3BF
 `define RV32_CSR_MCYCLE         12'hB00
 `define RV32_CSR_MINSTRET       12'hB02
 `define RV32_CSR_MHPMCOUNTER3   12'hB03
@@ -177,6 +197,26 @@ module rv32_csrs (
             `RV32_CSR_MHPMEVENT30:    read_value_out = 32'b0;
             `RV32_CSR_MHPMEVENT31:    read_value_out = 32'b0;
             `RV32_CSR_MSCRATCH:       read_value_out = mscratch;
+            `RV32_CSR_PMPCFG0:        read_value_out = 32'b0;
+            `RV32_CSR_PMPCFG1:        read_value_out = 32'b0;
+            `RV32_CSR_PMPCFG2:        read_value_out = 32'b0;
+            `RV32_CSR_PMPCFG3:        read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR0:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR1:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR2:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR3:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR4:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR5:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR6:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR7:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR8:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR9:       read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR10:      read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR11:      read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR12:      read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR13:      read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR14:      read_value_out = 32'b0;
+            `RV32_CSR_PMPADDR15:      read_value_out = 32'b0;
             `RV32_CSR_MCYCLE:         read_value_out = cycle[31:0];
             `RV32_CSR_MINSTRET:       read_value_out = instret[31:0];
             `RV32_CSR_MHPMCOUNTER3:   read_value_out = 32'b0;
