@@ -8,6 +8,8 @@
 #define UART_STATUS_TX_READY 0x1
 #define UART_STATUS_RX_READY 0x2
 
+#define BAUD_RATE 9600
+
 static void uart_puts(const char *str) {
     char c;
     while ((c = *str++)) {
@@ -23,7 +25,7 @@ static inline uint32_t rdcycle(void) {
 }
 
 int main() {
-    UART_BAUD = FREQ / 9600;
+    UART_BAUD = FREQ / BAUD_RATE;
     LEDS = 0xAA;
 
     for (;;) {
