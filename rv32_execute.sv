@@ -117,6 +117,7 @@ module rv32_execute (
 
     rv32_csrs csrs (
         .clk(clk),
+        .stall_in(stall_in),
 
         /* control in */
         .read_in(csr_read_in),

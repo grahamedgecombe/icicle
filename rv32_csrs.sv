@@ -137,6 +137,7 @@
 
 module rv32_csrs (
     input clk,
+    input stall_in,
 
     /* control in */
     input read_in,
@@ -301,7 +302,7 @@ module rv32_csrs (
     end
 
     always_ff @(posedge clk) begin
-        if (write_in) begin
+        if (!stall_in && write_in) begin
             case (csr_in)
                 `RV32_CSR_MSCRATCH: mscratch <= new_value;
             endcase
