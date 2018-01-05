@@ -8,7 +8,7 @@ start:
 
     beq t0, t1, clear_bss_done
 clear_bss:
-    sw x0, 0(t0)
+    sw zero, 0(t0)
     addi t0, t0, 4
     bne t0, t1, clear_bss
 clear_bss_done:
