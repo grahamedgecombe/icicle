@@ -168,6 +168,8 @@ module rv32_csrs (
 
     logic mstatus_mpie;
     logic mstatus_mie;
+    logic [31:2] mtvec_base;
+    logic mtvec_mode;
     logic [31:0] mscratch;
     logic [63:0] cycle;
     logic [63:0] instret;
@@ -178,6 +180,7 @@ module rv32_csrs (
         case (csr_in)
             `RV32_CSR_MSTATUS:        read_value_out = {19'b0, 2'b11, 3'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
             `RV32_CSR_MISA:           read_value_out = `RV32_MISA_VALUE;
+            `RV32_CSR_MTVEC:          read_value_out = {mtvec_base, 1'b0, mtvec_mode};
             `RV32_CSR_MHPMEVENT3:     read_value_out = 32'b0;
             `RV32_CSR_MHPMEVENT4:     read_value_out = 32'b0;
             `RV32_CSR_MHPMEVENT5:     read_value_out = 32'b0;
@@ -315,6 +318,7 @@ module rv32_csrs (
         if (!stall_in && write_in) begin
             case (csr_in)
                 `RV32_CSR_MSTATUS:  {mstatus_mpie, mstatus_mie} <= {new_value[7], new_value[3]};
+                `RV32_CSR_MTVEC:    {mtvec_base, mtvec_mode} <= {new_value[31:2], new_value[0]};
                 `RV32_CSR_MSCRATCH: mscratch <= new_value;
             endcase
         end
