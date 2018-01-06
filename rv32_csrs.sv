@@ -1,7 +1,10 @@
 `ifndef RV32_CSRS
 `define RV32_CSRS
 
+`define RV32_CSR_MSTATUS        12'h300
 `define RV32_CSR_MISA           12'h301
+`define RV32_CSR_MIE            12'h304
+`define RV32_CSR_MTVEC          12'h305
 `define RV32_CSR_MHPMEVENT3     12'h323
 `define RV32_CSR_MHPMEVENT4     12'h324
 `define RV32_CSR_MHPMEVENT5     12'h325
@@ -32,6 +35,10 @@
 `define RV32_CSR_MHPMEVENT30    12'h33E
 `define RV32_CSR_MHPMEVENT31    12'h33F
 `define RV32_CSR_MSCRATCH       12'h340
+`define RV32_CSR_MEPC           12'h341
+`define RV32_CSR_MCAUSE         12'h342
+`define RV32_CSR_MTVAL          12'h343
+`define RV32_CSR_MIP            12'h344
 `define RV32_CSR_PMPCFG0        12'h3A0
 `define RV32_CSR_PMPCFG1        12'h3A1
 `define RV32_CSR_PMPCFG2        12'h3A2
