@@ -168,12 +168,18 @@ module rv32_csrs (
 
     logic mstatus_mpie;
     logic mstatus_mie;
+    logic mie_meie;
+    logic mie_mtie;
+    logic mie_msie;
     logic [31:2] mtvec_base;
     logic mtvec_mode;
     logic [31:0] mscratch;
     logic [31:2] mepc;
     logic mcause_interrupt;
     logic [3:0] mcause_code;
+    logic mip_meip;
+    logic mip_mtip;
+    logic mip_msip;
     logic [63:0] cycle;
     logic [63:0] instret;
 
@@ -183,6 +189,7 @@ module rv32_csrs (
         case (csr_in)
             `RV32_CSR_MSTATUS:        read_value_out = {19'b0, 2'b11, 3'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
             `RV32_CSR_MISA:           read_value_out = `RV32_MISA_VALUE;
+            `RV32_CSR_MIE:            read_value_out = {20'b0, mie_meie, 3'b0, mie_mtie, 3'b0, mie_msie, 3'b0};
             `RV32_CSR_MTVEC:          read_value_out = {mtvec_base, 1'b0, mtvec_mode};
             `RV32_CSR_MHPMEVENT3:     read_value_out = 32'b0;
             `RV32_CSR_MHPMEVENT4:     read_value_out = 32'b0;
@@ -216,6 +223,7 @@ module rv32_csrs (
             `RV32_CSR_MSCRATCH:       read_value_out = mscratch;
             `RV32_CSR_MEPC:           read_value_out = {mepc, 2'b0};
             `RV32_CSR_MCAUSE:         read_value_out = {mcause_interrupt, 27'b0, mcause_code};
+            `RV32_CSR_MIP:            read_value_out = {20'b0, mip_meip, 3'b0, mip_mtip, 3'b0, mip_msip, 3'b0};
             `RV32_CSR_PMPCFG0:        read_value_out = 32'b0;
             `RV32_CSR_PMPCFG1:        read_value_out = 32'b0;
             `RV32_CSR_PMPCFG2:        read_value_out = 32'b0;
