@@ -172,6 +172,8 @@ module rv32_csrs (
     logic mtvec_mode;
     logic [31:0] mscratch;
     logic [31:2] mepc;
+    logic mcause_interrupt;
+    logic [3:0] mcause_code;
     logic [63:0] cycle;
     logic [63:0] instret;
 
@@ -213,6 +215,7 @@ module rv32_csrs (
             `RV32_CSR_MHPMEVENT31:    read_value_out = 32'b0;
             `RV32_CSR_MSCRATCH:       read_value_out = mscratch;
             `RV32_CSR_MEPC:           read_value_out = {mepc, 2'b0};
+            `RV32_CSR_MCAUSE:         read_value_out = {mcause_interrupt, 27'b0, mcause_code};
             `RV32_CSR_PMPCFG0:        read_value_out = 32'b0;
             `RV32_CSR_PMPCFG1:        read_value_out = 32'b0;
             `RV32_CSR_PMPCFG2:        read_value_out = 32'b0;
@@ -323,6 +326,7 @@ module rv32_csrs (
                 `RV32_CSR_MTVEC:    {mtvec_base, mtvec_mode} <= {new_value[31:2], new_value[0]};
                 `RV32_CSR_MSCRATCH: mscratch <= new_value;
                 `RV32_CSR_MEPC:     mepc <= new_value[31:2];
+                `RV32_CSR_MCAUSE:   {mcause_interrupt, mcause_code} <= {new_value[31], new_value[3:0]};
             endcase
         end
 
