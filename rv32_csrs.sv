@@ -333,6 +333,7 @@ module rv32_csrs (
         if (!stall_in && write_in) begin
             case (csr_in)
                 `RV32_CSR_MSTATUS:  {mstatus_mpie, mstatus_mie} <= {new_value[7], new_value[3]};
+                `RV32_CSR_MIE:      {mie_meie, mie_mtie, mie_msie} <= {new_value[11], new_value[7], new_value[3]};
                 `RV32_CSR_MTVEC:    {mtvec_base, mtvec_mode} <= {new_value[31:2], new_value[0]};
                 `RV32_CSR_MSCRATCH: mscratch <= new_value;
                 `RV32_CSR_MEPC:     mepc <= new_value[31:2];
