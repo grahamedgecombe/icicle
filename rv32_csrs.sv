@@ -161,7 +161,8 @@ module rv32_csrs (
     input [31:0] imm_value_in,
 
     /* data out */
-    output logic [31:0] read_value_out
+    output logic [31:0] read_value_out,
+    output logic [63:0] cycle_out
 );
     logic [31:0] write_value;
     logic [31:0] new_value;
@@ -185,6 +186,7 @@ module rv32_csrs (
     logic [63:0] instret;
 
     assign write_value = src_in ? rs1_value_in : imm_value_in;
+    assign cycle_out = cycle;
 
     always_comb begin
         case (csr_in)

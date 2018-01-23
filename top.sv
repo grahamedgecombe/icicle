@@ -3,6 +3,7 @@
 `include "ram.sv"
 `include "rv32.sv"
 `include "sync.sv"
+`include "timer.sv"
 `include "uart.sv"
 
 module top (
@@ -81,7 +82,7 @@ module top (
     logic [3:0] mem_write_mask;
     logic [31:0] mem_write_value;
 
-    assign mem_read_value = ram_read_value | leds_read_value | uart_read_value;
+    assign mem_read_value = ram_read_value | leds_read_value | uart_read_value | timer_read_value;
 
     bus_arbiter bus_arbiter (
         /* instruction memory bus */
@@ -108,6 +109,8 @@ module top (
         .write_value_out(mem_write_value)
     );
 
+    logic [63:0] cycle;
+
     rv32 rv32 (
         .clk(pll_clk),
 
@@ -124,22 +127,28 @@ module top (
         .data_read_value_in(data_read_value),
         .data_write_mask_out(data_write_mask),
         .data_write_value_out(data_write_value),
-        .data_ready_in(data_ready)
+        .data_ready_in(data_ready),
+
+        /* timer */
+        .cycle_out(cycle)
     );
 
     logic ram_sel;
     logic leds_sel;
     logic uart_sel;
+    logic timer_sel;
 
     always_comb begin
         ram_sel = 0;
         leds_sel = 0;
         uart_sel = 0;
+        timer_sel = 0;
 
         casez (mem_address)
             32'b00000000_00000000_????????_????????: ram_sel = 1;
             32'b00000000_00000001_00000000_000000??: leds_sel = 1;
             32'b00000000_00000010_00000000_0000????: uart_sel = 1;
+            32'b00000000_00000011_00000000_0000????: timer_sel = 1;
         endcase
     end
 
@@ -180,6 +189,23 @@ module top (
         .sel_in(uart_sel),
         .read_in(mem_read),
         .read_value_out(uart_read_value),
+        .write_mask_in(mem_write_mask),
+        .write_value_in(mem_write_value)
+    );
+
+    logic [31:0] timer_read_value;
+
+    timer timer (
+        .clk(pll_clk),
+
+        /* cycle count (from the CPU core) */
+        .cycle_in(cycle),
+
+        /* memory bus */
+        .address_in(mem_address),
+        .sel_in(timer_sel),
+        .read_in(mem_read),
+        .read_value_out(timer_read_value),
         .write_mask_in(mem_write_mask),
         .write_value_in(mem_write_value)
     );

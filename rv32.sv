@@ -23,7 +23,10 @@ module rv32 (
     input [31:0] data_read_value_in,
     output logic [3:0] data_write_mask_out,
     output logic [31:0] data_write_value_out,
-    input data_ready_in
+    input data_ready_in,
+
+    /* timer */
+    output logic [63:0] cycle_out
 );
     /* hazard -> fetch control */
     logic fetch_stall;
@@ -305,7 +308,10 @@ module rv32 (
         /* data out */
         .result_out(execute_result),
         .rs2_value_out(execute_rs2_value),
-        .branch_pc_out(execute_branch_pc)
+        .branch_pc_out(execute_branch_pc),
+
+        /* data out (to timer) */
+        .cycle_out(cycle_out)
     );
 
     rv32_mem mem (

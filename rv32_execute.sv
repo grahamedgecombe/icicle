@@ -66,7 +66,10 @@ module rv32_execute (
     /* data out */
     output logic [31:0] result_out,
     output logic [31:0] rs2_value_out,
-    output logic [31:0] branch_pc_out
+    output logic [31:0] branch_pc_out,
+
+    /* data out (to timer) */
+    output logic [63:0] cycle_out
 );
     /* bypassing */
     logic [31:0] rs1_value;
@@ -114,6 +117,7 @@ module rv32_execute (
 
     /* csr file */
     logic [31:0] csr_read_value;
+    logic [63:0] cycle;
 
     rv32_csrs csrs (
         .clk(clk),
@@ -134,7 +138,10 @@ module rv32_execute (
         .csr_in(csr_in),
 
         /* data out */
-        .read_value_out(csr_read_value)
+        .read_value_out(csr_read_value),
+
+        /* data out (to timer) */
+        .cycle_out(cycle_out)
     );
 
     /* branch target calculation */
