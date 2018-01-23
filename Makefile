@@ -3,7 +3,7 @@ PLL      = pll.sv
 SRC      = $(sort $(wildcard *.sv) $(PLL))
 TOP      = top
 SV       = $(TOP).sv
-YS       = $(TOP).ys
+TCL       := $(TOP).tcl
 YS_ICE40 = `yosys-config --datdir/ice40/cells_sim.v`
 BLIF     = $(TOP).blif
 ASC_SYN  = $(TOP)_syn.asc
@@ -30,6 +30,14 @@ OBJCOPY  = $(TARGET)-objcopy
 
 all: $(BIN)
 
+upduino:	SPEED=up
+upduino:	DEVICE=5k
+upduino:	PACKAGE=sg48
+upduino:	PCF=ice40up5k-upduino.pcf
+upduino:	FREQ_OSC=48
+upduino: clean all
+	@echo "executing yosys script $(YS)"
+
 clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem
 
@@ -46,8 +54,9 @@ progmem_syn.hex:
 $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
 
-$(BLIF): $(YS) $(SRC) progmem_syn.hex
-	yosys $(QUIET) -s $<
+$(BLIF): $(TCL) $(SRC) progmem_syn.hex
+	@echo "device is $(DEVICE)"
+	IC=$(SPEED)$(DEVICE) yosys $(QUIET) $<
 
 syntax: $(SRC) progmem_syn.hex
 	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)

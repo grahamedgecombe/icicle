@@ -6,7 +6,9 @@
 `include "uart.sv"
 
 module top (
+`ifndef up5k
     input clk,
+`endif
 
     /* serial flash */
     output logic flash_clk,
@@ -28,6 +30,15 @@ module top (
     logic flash_io1_en;
     logic flash_io1_in;
     logic flash_io1_out;
+
+`ifdef up5k
+    wire clk;
+    SB_HFOSC inthosc (
+        .CLKHFPU(1'b1),
+        .CLKHFEN(1'b1),
+        .CLKHF(clk)
+    );
+`endif
 
     SB_IO #(
         .PIN_TYPE(6'b1010_01)
