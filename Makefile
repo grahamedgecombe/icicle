@@ -36,7 +36,6 @@ upduino:	PACKAGE=sg48
 upduino:	PCF=ice40up5k-upduino.pcf
 upduino:	FREQ_OSC=48
 upduino: clean all
-	@echo "executing yosys script $(YS)"
 
 clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem
@@ -55,7 +54,6 @@ $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
 
 $(BLIF): $(TCL) $(SRC) progmem_syn.hex
-	@echo "device is $(DEVICE)"
 	IC=$(SPEED)$(DEVICE) yosys $(QUIET) $<
 
 syntax: $(SRC) progmem_syn.hex

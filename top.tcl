@@ -1,6 +1,5 @@
 yosys -import
 read_verilog -D$::env(IC) -noautowire -sv top.sv
-puts "device is $::env(IC)" ; 
 
 #yosys proc
 procs
