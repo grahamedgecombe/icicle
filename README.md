@@ -71,7 +71,7 @@ for the [UPduino][upduino].
 
 ## Size and performance
 
-The entire system on chip currently occupies around 2,000 LUTs on an iCE40 when
+The entire system on chip currently occupies around 2,500 LUTs on an iCE40 when
 synthesized with [Yosys][yosys].
 
 It's currently clocked at 24 MHz but `icetime` estimates it could be clocked at
