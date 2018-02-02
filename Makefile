@@ -11,11 +11,8 @@ ASC      = $(TOP).asc
 BIN      = $(TOP).bin
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
-SPEED    = hx
-DEVICE   = 8k
-PACKAGE  = ct256
-PCF      = ice40hx8k-b-evn.pcf
-FREQ_OSC = 12
+BOARD   ?= ice40hx8k-b-evn
+PCF      = boards/$(BOARD).pcf
 FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
@@ -26,16 +23,11 @@ CC       = $(TARGET)-gcc
 CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -O2
 OBJCOPY  = $(TARGET)-objcopy
 
+include boards/$(BOARD).mk
+
 .PHONY: all clean syntax time stat flash
 
 all: $(BIN)
-
-upduino:	SPEED=up
-upduino:	DEVICE=5k
-upduino:	PACKAGE=sg48
-upduino:	PCF=ice40up5k-upduino.pcf
-upduino:	FREQ_OSC=48
-upduino: clean all
 
 clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem
