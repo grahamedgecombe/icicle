@@ -2,9 +2,11 @@
 
 ## Introduction
 
-Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40] FPGAs.
-It can be built with the open-source [Project IceStorm][icestorm] toolchain and
-currently targets the [iCE40-HX8K breakout board][ice40-hx8k-breakout].
+Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40] and
+[iCE40 UP5K][ice40-up5k] FPGAs. It can be built with the open-source
+[Project IceStorm][icestorm] toolchain and currently targets the
+[iCE40-HX8K breakout board][ice40-hx8k-breakout], with experimental support for
+the [UPduino][upduino] board.
 
 ## Current features
 
@@ -46,9 +48,13 @@ The `make stat` target runs `icebox_stat` and the `make time` target prints the
 The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
 `QUIET` variable to run the toolchain in verbose mode - e.g. `make QUIET=`.
 
+Set the `BOARD` variable to target a different board - e.g. `make BOARD=upduino`
+for the [UPduino][upduino].
+
 ## Planned features
 
 * Use remaining block RAM tiles to eke out as much memory as possible.
+* Use the SPRAM tiles on UP5K devices.
 * Implement remaining bits of the user ISA.
 * Implement machine mode from the privileged ISA.
 * Interrupts/exceptions.
@@ -59,6 +65,9 @@ The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
 * Automated tests.
 * Multiply/divide support.
 * Compressed instruction support.
+* Add flags to disable certain features (e.g. privileged mode) to save LUTs on
+  smaller devices (e.g. the UP5K).
+* Investigate using DSP tiles on the UP5K.
 
 ## Size and performance
 
@@ -82,7 +91,9 @@ information and licensing terms.
 [arachne-pnr]: https://github.com/cseed/arachne-pnr
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [ice40-hx8k-breakout]: http://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
+[upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
 [ice40]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
+[ice40-up5k]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40Ultra.aspx
 [icestorm]: http://www.clifford.at/icestorm/
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/
