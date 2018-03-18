@@ -5,7 +5,8 @@
 Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40] and
 [iCE40 UP5K][ice40-up5k] FPGAs. It can be built with the open-source
 [Project IceStorm][icestorm] toolchain and currently targets the
-[iCE40-HX8K breakout board][ice40-hx8k-breakout], with experimental support for
+[iCE40-HX8K breakout board][ice40-hx8k-breakout], the
+[BlackIce-II board](blackice-ii-board), with experimental support for
 the [UPduino][upduino] board.
 
 ## Current features
@@ -91,6 +92,7 @@ information and licensing terms.
 [arachne-pnr]: https://github.com/cseed/arachne-pnr
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [ice40-hx8k-breakout]: http://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
+[blackice-ii-board]: https://github.com/mystorm-org/BlackIce-II
 [upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
 [ice40]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
 [ice40-up5k]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40Ultra.aspx
