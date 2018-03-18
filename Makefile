@@ -51,7 +51,7 @@ $(BLIF): $(TCL) $(SRC) progmem_syn.hex defines.sv
 syntax: $(SRC) progmem_syn.hex defines.sv
 	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)
 
-defines.sv: boards/$(BOARD)-defines.sv .
+defines.sv: boards/$(BOARD)-defines.sv
 	cp boards/$(BOARD)-defines.sv defines.sv
 
 $(ASC_SYN): $(BLIF) $(PCF)
