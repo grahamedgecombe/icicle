@@ -39,7 +39,7 @@ module top (
 `endif
 
 `ifdef up5k
-    wire clk;
+    logic clk;
     SB_HFOSC inthosc (
         .CLKHFPU(1'b1),
         .CLKHFEN(1'b1),
