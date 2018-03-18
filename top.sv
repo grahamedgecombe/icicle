@@ -1,3 +1,4 @@
+`include "defines.sv"
 `include "bus_arbiter.sv"
 `include "pll.sv"
 `include "ram.sv"
@@ -11,11 +12,13 @@ module top (
     input clk,
 `endif
 
+`ifdef FLASH
     /* serial flash */
     output logic flash_clk,
     output logic flash_csn,
     inout flash_io0,
     inout flash_io1,
+`endif
 
     /* LEDs */
     output logic [7:0] leds,
@@ -24,6 +27,8 @@ module top (
     input uart_rx,
     output logic uart_tx
 );
+
+`ifdef FLASH
     logic flash_io0_en;
     logic flash_io0_in;
     logic flash_io0_out;
@@ -31,6 +36,7 @@ module top (
     logic flash_io1_en;
     logic flash_io1_in;
     logic flash_io1_out;
+`endif
 
 `ifdef up5k
     wire clk;
@@ -41,6 +47,7 @@ module top (
     );
 `endif
 
+`ifdef FLASH
     SB_IO #(
         .PIN_TYPE(6'b1010_01)
     ) flash_io [1:0] (
@@ -49,6 +56,7 @@ module top (
         .D_IN_0({flash_io1_in, flash_io0_in}),
         .D_OUT_0({flash_io1_out, flash_io0_out})
     );
+`endif
 
     logic pll_clk;
     logic pll_locked_async;
