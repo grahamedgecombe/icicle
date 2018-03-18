@@ -8,6 +8,7 @@
 *.rpt
 *.stat
 /pll.sv
+/defines.sv
 /progmem
 !.git*
 !.mailmap
