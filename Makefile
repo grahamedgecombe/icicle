@@ -30,7 +30,7 @@ include boards/$(BOARD).mk
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem
+	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem defines.sv
 
 progmem.hex: progmem
 	$(OBJCOPY) -O binary $< /dev/stdout \
@@ -45,11 +45,14 @@ progmem_syn.hex:
 $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
 
-$(BLIF): $(TCL) $(SRC) progmem_syn.hex
+$(BLIF): $(TCL) $(SRC) progmem_syn.hex defines.sv
 	IC=$(SPEED)$(DEVICE) yosys $(QUIET) $<
 
-syntax: $(SRC) progmem_syn.hex
+syntax: $(SRC) progmem_syn.hex defines.sv
 	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)
+
+defines.sv: boards/$(BOARD)-defines.sv .
+	cp boards/$(BOARD)-defines.sv defines.sv
 
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
@@ -74,3 +77,8 @@ stat: $(STAT)
 
 flash: $(BIN) $(TIME_RPT)
 	iceprog -S $<
+
+# Flash to BlackIce-II board
+dfu-flash: $(BIN) $(TIME_RPT)
+	dfu-util -d 0483:df11 --alt 0 --dfuse-address 0x0801F000 -D $(BIN)
+
