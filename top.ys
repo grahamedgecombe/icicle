@@ -1,0 +1,6 @@
+read_verilog -noautowire -sv top.sv
+proc
+opt -full
+alumacc
+share -aggressive
+synth_ice40 -abc2 -top top -blif top.blif

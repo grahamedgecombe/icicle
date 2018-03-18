@@ -8,7 +8,7 @@
 `include "uart.sv"
 
 module top (
-`ifndef up5k
+`ifndef INTERNAL_OSC
     input clk,
 `endif
 
@@ -38,7 +38,7 @@ module top (
     logic flash_io1_out;
 `endif
 
-`ifdef up5k
+`ifdef INTERNAL_OSC
     logic clk;
     SB_HFOSC inthosc (
         .CLKHFPU(1'b1),

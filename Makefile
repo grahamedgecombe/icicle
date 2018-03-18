@@ -3,7 +3,7 @@ PLL      = pll.sv
 SRC      = $(sort $(wildcard *.sv) $(PLL))
 TOP      = top
 SV       = $(TOP).sv
-TCL      = $(TOP).tcl
+YS       = $(TOP).ys
 YS_ICE40 = `yosys-config --datdir/ice40/cells_sim.v`
 BLIF     = $(TOP).blif
 ASC_SYN  = $(TOP)_syn.asc
@@ -45,8 +45,8 @@ progmem_syn.hex:
 $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
 
-$(BLIF): $(TCL) $(SRC) progmem_syn.hex defines.sv
-	IC=$(SPEED)$(DEVICE) yosys $(QUIET) $<
+$(BLIF): $(YS) $(SRC) progmem_syn.hex defines.sv
+	yosys $(QUIET) $<
 
 syntax: $(SRC) progmem_syn.hex defines.sv
 	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)
