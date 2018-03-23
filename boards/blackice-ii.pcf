@@ -13,3 +13,9 @@ set_io leds[7]   15
 
 set_io uart_rx   88
 set_io uart_tx   85
+
+# set flash_* sigs to unused pmod 2 pins
+# set_io flash_clk 95
+# set_io flash_csn 93
+# set_io flash_io0 90
+# set_io flash_io1 87
