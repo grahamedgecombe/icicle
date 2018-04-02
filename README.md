@@ -47,7 +47,7 @@ the [UPduino][upduino] board.
 
 1. Run `make BOARD=blackice-ii` to synthesize the design, place and route,
    compile the demo program in `progmem.c` and create the bitstream.
-2. Configure jumper on board for [DFU Mode][DFU-mode] and connect both USB1
+2. Configure jumper on board for [DFU Mode][dfu-mode] and connect both USB1
    and USB2 on the board to host USB ports.
 3. Run `make BOARD=blackice-ii dfu-flash` to program the bitstream to the
    board. (Most likely you'll need to do this as root)
@@ -119,4 +119,4 @@ information and licensing terms.
 [riscv]: https://riscv.org/risc-v-isa/
 [vim]: http://www.vim.org/
 [yosys]: http://www.clifford.at/yosys/
-[DFU-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
+[dfu-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
