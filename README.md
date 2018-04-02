@@ -4,10 +4,8 @@
 
 Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40] and
 [iCE40 UP5K][ice40-up5k] FPGAs. It can be built with the open-source
-[Project IceStorm][icestorm] toolchain and currently targets the
-[iCE40-HX8K breakout board][ice40-hx8k-breakout], the
-[BlackIce-II board][blackice-ii-board], with experimental support for
-the [UPduino][upduino] board.
+[Project IceStorm][icestorm] toolchain and currently targets several development
+boards.
 
 ## Current features
 
@@ -30,41 +28,53 @@ the [UPduino][upduino] board.
 
 ## Building and testing
 
-1. Run `make syntax` to check the syntax with [Icarus][iverilog], which has a
-   stricter parser than [Yosys][yosys].
-2. Run `make` to synthesize the design, place and route, compile the demo
-   program in `progmem.c` and create the bitstream.
-3. Connect the [iCE40-HX8K breakout board][ice40-hx8k-breakout] and configure
-   the jumpers for direct SRAM programming.
-4. Run `make flash` to program the bitstream. `icetime` is used to check that
-   the design meets timing closure. The target fails if it does not.
-5. 4 of the 8 LEDs should turn on (with an on, off, on, off pattern). Run
-   `picocom /dev/ttyUSBN` (replacing `ttyUSBN` with the name of the serial port)
-   to connect to the serial port. `Hello, world!` should be printed once per
-   second.
+### Supported boards
 
-## Building and testing (BlackIceII board)
+Icicle supports several development boards:
 
-1. Run `make BOARD=blackice-ii` to synthesize the design, place and route,
-   compile the demo program in `progmem.c` and create the bitstream.
-2. Configure jumper on board for [DFU Mode][dfu-mode] and connect both USB1
-   and USB2 on the board to host USB ports.
-3. Run `make BOARD=blackice-ii dfu-flash` to program the bitstream to the
-   board. (Most likely you'll need to do this as root)
-4. In a separate terminal run
-   `sudo stty -F /dev/ttyUSBN 9600`
-   `sudo cat /dev/ttyUSBN`  (to connect to the serial port)
-   (replacing `ttyUSBN` with the name of the serial port - most likely ttyUSB0)
-   `Hello, world!` should be printed once per second.
+* `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
+* `blackice-ii`: [BlackIce II][blackice-ii-board]
+* `upduino`: [UPduino][upduino]
 
-The `make stat` target runs `icebox_stat` and the `make time` target prints the
-`icetime` report.
+`<board>` should be replaced with the internal name of your development board in
+the rest of the instructions (e.g. `ice40hx8k-b-evn` for the iCE40-HX8K breakout
+board).
+
+### Building
+
+* Run `make BOARD=<board> syntax` to check the syntax with [Icarus][iverilog],
+  which has a stricter parser than [Yosys][yosys].
+* Run `make BOARD=<board>` to synthesize the design, place and route, compile
+  the demo program in `progmem.c` and create the bitstream.
+
+### Programming
+
+#### iCE40-HX8K breakout board
+
+* Configure the jumpers for direct SRAM programming.
+* Run `make BOARD=ice40hx8k-b-evn flash` to flash the bitstream.
+
+#### BlackIce II
+
+* Configure jumper on board for [DFU Mode][dfu-mode] and connect both USB1 and
+  USB2 on the board to host USB ports.
+* Run `make BOARD=blackice-ii dfu-flash` to flash the bitstream.
+
+### Testing
+
+* If your chosen board has built-in LEDs, some of the LEDs should turn on.
+* Run `picocom -b 9600 /dev/ttyUSBn` (replacing `ttyUSBn` with the name of the
+  serial port) to connect to the serial port. `Hello, world!` should be printed
+  once per second.
+
+### Other targets
+
+The `make BOARD=<board> stat` target runs `icebox_stat` and the
+`make BOARD=<board> time` target prints the `icetime` report.
 
 The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
-`QUIET` variable to run the toolchain in verbose mode - e.g. `make QUIET=`.
-
-Set the `BOARD` variable to target a different board - e.g. `make BOARD=upduino`
-for the [UPduino][upduino].
+`QUIET` variable to run the toolchain in verbose mode - e.g.
+`make BOARD=<board> QUIET= ...`.
 
 ## Planned features
 
