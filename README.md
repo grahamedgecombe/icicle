@@ -104,12 +104,12 @@ to the 2-clause BSD license. See the `LICENSE` file for the copyright
 information and licensing terms.
 
 [arachne-pnr]: https://github.com/cseed/arachne-pnr
-[classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
-[ice40-hx8k-breakout]: http://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
 [blackice-ii-board]: https://github.com/mystorm-org/BlackIce-II
-[upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
-[ice40]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
+[classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
+[dfu-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
+[ice40-hx8k-breakout]: http://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
 [ice40-up5k]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40Ultra.aspx
+[ice40]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
 [icestorm]: http://www.clifford.at/icestorm/
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/
@@ -117,6 +117,6 @@ information and licensing terms.
 [riscv-priv]: https://riscv.org/specifications/privileged-isa/
 [riscv-user]: https://riscv.org/specifications/
 [riscv]: https://riscv.org/risc-v-isa/
+[upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
 [vim]: http://www.vim.org/
 [yosys]: http://www.clifford.at/yosys/
-[dfu-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
