@@ -21,7 +21,7 @@ boards.
 * [arachne-pnr][arachne-pnr]
 * [GNU RISC-V toolchain][riscv-gnu]
 * [GNU Make][make]
-* [Icarus Verilog][iverilog]
+* [Icarus Verilog][iverilog] (`master` branch)
 * [Project IceStorm][icestorm]
 * [vim][vim] (for `xxd`)
 * [Yosys][yosys]
@@ -43,7 +43,9 @@ board).
 ### Building
 
 * Run `make BOARD=<board> syntax` to check the syntax with [Icarus][iverilog],
-  which has a stricter parser than [Yosys][yosys].
+  which has a stricter parser than [Yosys][yosys]. At the time of writing the
+  `master` branch of Icarus is required as there isn't a stable release with
+  `always_comb`/`always_ff` support yet.
 * Run `make BOARD=<board>` to synthesize the design, place and route, compile
   the demo program in `progmem.c` and create the bitstream.
 
