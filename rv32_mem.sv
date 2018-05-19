@@ -9,6 +9,7 @@
 
 module rv32_mem (
     input clk,
+    input reset_,
 
     /* control in (from hazard) */
     input stall_in,
@@ -167,6 +168,13 @@ module rv32_mem (
                 valid_out <= 0;
                 rd_write_out <= 0;
             end
+        end
+
+        if (!reset_) begin
+            valid_out <= 0;
+            rd_out <= 0;
+            rd_write_out <= 0;
+            rd_value_out <= 0;
         end
     end
 endmodule

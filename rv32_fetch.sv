@@ -5,6 +5,7 @@
 
 module rv32_fetch (
     input clk,
+    input reset_,
 
     /* control in (from hazard) */
     input stall_in,
@@ -78,6 +79,13 @@ module rv32_fetch (
 
             if (flush_in)
                 instr_out <= `RV32_INSTR_NOP;
+        end
+
+        if (!reset_) begin
+            branch_predicted_taken_out <= 0;
+            instr_out <= 0;
+            next_pc <= 0;
+            pc_out <= 0;
         end
     end
 endmodule

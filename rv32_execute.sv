@@ -7,6 +7,7 @@
 
 module rv32_execute (
     input clk,
+    input reset_,
 
     /* control in (from hazard) */
     input stall_in,
@@ -121,6 +122,7 @@ module rv32_execute (
 
     rv32_csrs csrs (
         .clk(clk),
+        .reset_(reset_),
         .stall_in(stall_in),
 
         /* control in */
@@ -188,6 +190,23 @@ module rv32_execute (
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
                 rd_write_out <= 0;
             end
+        end
+
+        if (!reset_) begin
+            branch_predicted_taken_out <= 0;
+            valid_out <= 0;
+            alu_non_zero_out <= 0;
+            mem_read_out <= 0;
+            mem_write_out <= 0;
+            mem_width_out <= 0;
+            mem_zero_extend_out <= 0;
+            mem_fence_out <= 0;
+            branch_op_out <= 0;
+            rd_out <= 0;
+            rd_write_out <= 0;
+            rs2_value_out <= 0;
+            branch_pc_out <= 0;
+            result_out <= 0;
         end
     end
 endmodule

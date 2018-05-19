@@ -132,6 +132,7 @@ module top (
 
     rv32 rv32 (
         .clk(pll_clk),
+        .reset_(!reset),
 
         /* instruction memory bus */
         .instr_address_out(instr_address),
@@ -216,6 +217,7 @@ module top (
 
     timer timer (
         .clk(pll_clk),
+        .reset_(!reset),
 
         /* cycle count (from the CPU core) */
         .cycle_in(cycle),

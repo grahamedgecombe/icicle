@@ -6,6 +6,7 @@
 
 module rv32_decode (
     input clk,
+    input reset_,
 
     /* control in (from hazard) */
     input stall_in,
@@ -201,6 +202,34 @@ module rv32_decode (
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
                 rd_write_out <= 0;
             end
+        end
+
+        if (!reset_) begin
+            branch_predicted_taken_out <= 0;
+            valid_out <= 0;
+            rs1_out <= 0;
+            rs2_out <= 0;
+            alu_op_out <= 0;
+            alu_sub_sra_out <= 0;
+            alu_src1_out <= 0;
+            alu_src2_out <= 0;
+            mem_read_out <= 0;
+            mem_write_out <= 0;
+            mem_width_out <= 0;
+            mem_zero_extend_out <= 0;
+            mem_fence_out <= 0;
+            csr_read_out <= 0;
+            csr_write_out <= 0;
+            csr_write_op_out <= 0;
+            csr_src_out <= 0;
+            branch_op_out <= 0;
+            branch_pc_src_out <= 0;
+            rd_out <= 0;
+            rd_write_out <= 0;
+
+            pc_out <= 0;
+            imm_value_out <= 0;
+            csr_out <= 0;
         end
     end
 endmodule
