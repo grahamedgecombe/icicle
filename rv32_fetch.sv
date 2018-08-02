@@ -38,7 +38,7 @@ module rv32_fetch (
     logic sign;
     logic [31:0] imm_j;
     logic [31:0] imm_b;
-    logic [7:0] opcode;
+    logic [6:0] opcode;
 
     logic branch_predicted_taken;
     logic [31:0] branch_offset;
@@ -50,7 +50,7 @@ module rv32_fetch (
     assign sign = instr_read_value_in[31];
     assign imm_j = {{12{sign}}, instr_read_value_in[19:12], instr_read_value_in[20],    instr_read_value_in[30:25], instr_read_value_in[24:21], 1'b0};
     assign imm_b = {{20{sign}}, instr_read_value_in[7],     instr_read_value_in[30:25], instr_read_value_in[11:8],  1'b0};
-    assign opcode = instr_read_value_in[7:0];
+    assign opcode = instr_read_value_in[6:0];
 
     always_comb begin
         case ({opcode, sign})
