@@ -11,6 +11,7 @@
 
 module rv32_branch_pc_mux (
     /* control in */
+    input predicted_taken_in,
     input pc_src_in,
 
     /* data in */
@@ -23,7 +24,13 @@ module rv32_branch_pc_mux (
 );
     logic [31:0] pc;
 
-    assign pc = (pc_src_in ? rs1_value_in : pc_in) + imm_value_in;
+    always_comb begin
+        if (predicted_taken_in)
+            pc = pc_in + 32'd4;
+        else
+            pc = (pc_src_in ? rs1_value_in : pc_in) + imm_value_in;
+    end
+
     assign pc_out = {pc[31:1], 1'b0};
 endmodule
 

@@ -149,6 +149,7 @@ module rv32_execute (
 
     rv32_branch_pc_mux branch_pc_mux (
         /* control in */
+        .predicted_taken_in(branch_predicted_taken_in),
         .pc_src_in(branch_pc_src_in),
 
         /* data in */
