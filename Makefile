@@ -58,7 +58,7 @@ defines.sv: boards/$(BOARD)-defines.sv
 
 ifeq ($(PNR),nextpnr)
 $(ASC_SYN): $(JSON) $(PCF)
-	nextpnr-ice40 --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --asc $@
+	nextpnr-ice40 --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --freq $(FREQ_PLL) --asc $@
 else
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
