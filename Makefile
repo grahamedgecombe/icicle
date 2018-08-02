@@ -6,12 +6,14 @@ SV       = $(TOP).sv
 YS       = $(TOP).ys
 YS_ICE40 = `yosys-config --datdir/ice40/cells_sim.v`
 BLIF     = $(TOP).blif
+JSON     = $(TOP).json
 ASC_SYN  = $(TOP)_syn.asc
 ASC      = $(TOP).asc
 BIN      = $(TOP).bin
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
 BOARD   ?= ice40hx8k-b-evn
+PNR     ?= arachne-pnr
 PCF      = boards/$(BOARD).pcf
 FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
@@ -30,7 +32,7 @@ include boards/$(BOARD).mk
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem defines.sv
+	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem defines.sv
 
 progmem.hex: progmem
 	$(OBJCOPY) -O binary $< /dev/stdout \
@@ -45,7 +47,7 @@ progmem_syn.hex:
 $(PLL):
 	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
 
-$(BLIF): $(YS) $(SRC) progmem_syn.hex defines.sv
+$(BLIF) $(JSON): $(YS) $(SRC) progmem_syn.hex defines.sv
 	yosys $(QUIET) $<
 
 syntax: $(SRC) progmem_syn.hex defines.sv
@@ -54,8 +56,13 @@ syntax: $(SRC) progmem_syn.hex defines.sv
 defines.sv: boards/$(BOARD)-defines.sv
 	cp boards/$(BOARD)-defines.sv defines.sv
 
+ifeq ($(PNR),nextpnr)
+$(ASC_SYN): $(JSON) $(PCF)
+	nextpnr-ice40 --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --asc $@
+else
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
+endif
 
 $(TIME_RPT): $(ASC_SYN) $(PCF)
 	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) -r $@ $<

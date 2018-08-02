@@ -3,4 +3,4 @@ proc
 opt -full
 alumacc
 share -aggressive
-synth_ice40 -abc2 -top top -blif top.blif
+synth_ice40 -abc2 -top top -blif top.blif -json top.json

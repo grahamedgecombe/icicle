@@ -18,7 +18,7 @@ boards.
 
 ## Dependencies
 
-* [arachne-pnr][arachne-pnr]
+* [arachne-pnr][arachne-pnr] or [nextpnr][nextpnr]
 * [GNU RISC-V toolchain][riscv-gnu]
 * [GNU Make][make]
 * [Icarus Verilog][iverilog] (`master` branch)
@@ -78,6 +78,9 @@ The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
 `QUIET` variable to run the toolchain in verbose mode - e.g.
 `make BOARD=<board> QUIET= ...`.
 
+Set the `PNR` variable to `nextpnr` to use [nextpnr][nextpnr] instead of
+[arachne-pnr][arachne-pnr] (the default) - e.g. `make PNR=nextpnr`.
+
 ## Planned features
 
 * Use remaining block RAM tiles to eke out as much memory as possible.
@@ -125,6 +128,7 @@ information and licensing terms.
 [icestorm]: http://www.clifford.at/icestorm/
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/
+[nextpnr]: https://github.com/YosysHQ/nextpnr
 [riscv-gnu]: https://github.com/riscv/riscv-gnu-toolchain
 [riscv-priv]: https://riscv.org/specifications/privileged-isa/
 [riscv-user]: https://riscv.org/specifications/

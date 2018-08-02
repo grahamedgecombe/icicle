@@ -4,6 +4,7 @@
 *.bin
 *.blif
 *.hex
+*.json
 *.o
 *.rpt
 *.stat
