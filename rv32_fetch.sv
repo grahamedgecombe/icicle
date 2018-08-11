@@ -53,8 +53,8 @@ module rv32_fetch (
     assign opcode = instr_read_value_in[6:0];
 
     always_comb begin
-        case ({opcode, sign})
-            {`RV32_OPCODE_JAL, 1'bx}: begin
+        casez ({opcode, sign})
+            {`RV32_OPCODE_JAL, 1'b?}: begin
                 branch_predicted_taken = 1;
                 branch_offset = imm_j;
             end
