@@ -70,7 +70,9 @@ module rv32_fetch (
     end
 
     always_ff @(posedge clk) begin
-        if (!stall_in) begin
+        if (stall_in) begin
+            next_pc <= pc;
+        end else begin
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
             next_pc <= pc + branch_offset;
