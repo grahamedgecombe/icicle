@@ -193,6 +193,7 @@ module rv32_decode (
             csr_out <= csr;
 
             if (flush_in) begin
+                branch_predicted_taken_out <= 0;
                 valid_out <= 0;
                 mem_read_out <= 0;
                 mem_write_out <= 0;
