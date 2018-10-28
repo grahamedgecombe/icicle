@@ -9,6 +9,7 @@
 
 module flash (
     input clk,
+    input reset,
 
     /* SPI bus */
     output logic clk_out,
@@ -93,6 +94,12 @@ module flash (
                 end
             end
         endcase
+
+        if (reset) begin
+            csn_out <= 1;
+            state <= `FLASH_STATE_IDLE;
+            ready <= 0;
+        end
     end
 endmodule
 

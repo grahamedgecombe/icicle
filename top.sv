@@ -242,6 +242,7 @@ module top (
 `ifdef SPI_FLASH
     flash flash (
         .clk(pll_clk),
+        .reset(reset),
 
         /* SPI bus */
         .clk_out(flash_clk),
