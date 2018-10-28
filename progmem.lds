@@ -19,4 +19,6 @@ SECTIONS {
         . = ALIGN(4);
         bss_end = .;
     } > bram
+
+    stack_top = ORIGIN(bram) + LENGTH(bram);
 }

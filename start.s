@@ -1,5 +1,6 @@
 .extern bss_start
 .extern bss_end
+.extern stack_top
 
 .global start
 start:
@@ -16,8 +17,3 @@ clear_bss_done:
     la sp, stack_top
     call main
     j .
-
-.section bss
-.local stack_bottom
-.comm stack_bottom, 256, 16
-stack_top:
