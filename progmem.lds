@@ -1,7 +1,7 @@
 ENTRY(start)
 
 MEMORY {
-    bram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x00002000
+    bram (rwx) : ORIGIN = 0x00000000, LENGTH = 8K
 }
 
 SECTIONS {
