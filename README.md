@@ -18,7 +18,7 @@ boards.
 
 ## Dependencies
 
-* [arachne-pnr][arachne-pnr] or [nextpnr][nextpnr]
+* [nextpnr][nextpnr] or [arachne-pnr][arachne-pnr]
 * [GNU RISC-V toolchain][riscv-gnu]
 * [GNU Make][make]
 * [Icarus Verilog][iverilog] (`master` branch)
@@ -78,8 +78,8 @@ The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
 `QUIET` variable to run the toolchain in verbose mode - e.g.
 `make BOARD=<board> QUIET= ...`.
 
-Set the `PNR` variable to `nextpnr` to use [nextpnr][nextpnr] instead of
-[arachne-pnr][arachne-pnr] (the default) - e.g. `make PNR=nextpnr`.
+Set the `PNR` variable to `arachne-pnr` to use [arachne-pnr][arachne-pnr]
+instead of [nextpnr][nextpnr] (the default) - e.g. `make PNR=arachne-pnr`.
 
 ## Planned features
 

@@ -13,7 +13,7 @@ BIN      = $(TOP).bin
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
 BOARD   ?= ice40hx8k-b-evn
-PNR     ?= arachne-pnr
+PNR     ?= nextpnr
 PCF      = boards/$(BOARD).pcf
 FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
@@ -56,12 +56,12 @@ syntax: $(SRC) progmem_syn.hex defines.sv
 defines.sv: boards/$(BOARD)-defines.sv
 	cp boards/$(BOARD)-defines.sv defines.sv
 
-ifeq ($(PNR),nextpnr)
-$(ASC_SYN): $(JSON) $(PCF)
-	nextpnr-ice40 --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --freq $(FREQ_PLL) --asc $@
-else
+ifeq ($(PNR),arachne-pnr)
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
+else
+$(ASC_SYN): $(JSON) $(PCF)
+	nextpnr-ice40 --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --freq $(FREQ_PLL) --asc $@
 endif
 
 $(TIME_RPT): $(ASC_SYN) $(PCF)
