@@ -8,13 +8,17 @@ SECTIONS {
     .bram : {
         start.o(.text);
         *(.text);
+        *(.text.*);
         *(.data);
+        *(.data.*);
         *(.rodata);
+        *(.rodata.*);
 
         . = ALIGN(4);
         bss_start = .;
 
         *(.bss);
+        *(.bss.*);
 
         . = ALIGN(4);
         bss_end = .;
