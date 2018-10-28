@@ -83,11 +83,11 @@ module rv32_mem (
                 end
                 `RV32_MEM_WIDTH_HALF: begin
                     case (result_in[0])
-                        2'b0: begin
+                        1'b0: begin
                             data_write_value_out = {16'bx, rs2_value_in[15:0]};
                             data_write_mask_out = 4'b0011;
                         end
-                        2'b1: begin
+                        1'b1: begin
                             data_write_value_out = {rs2_value_in[15:0], 16'bx};
                             data_write_mask_out = 4'b1100;
                         end
