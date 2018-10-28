@@ -1,5 +1,6 @@
 `include "defines.sv"
 `include "bus_arbiter.sv"
+`include "flash.sv"
 `include "pll.sv"
 `include "ram.sv"
 `include "rv32.sv"
@@ -100,8 +101,10 @@ module top (
     logic [31:0] mem_read_value;
     logic [3:0] mem_write_mask;
     logic [31:0] mem_write_value;
+    logic mem_ready;
 
-    assign mem_read_value = ram_read_value | leds_read_value | uart_read_value | timer_read_value;
+    assign mem_read_value = ram_read_value | leds_read_value | uart_read_value | timer_read_value | flash_read_value;
+    assign mem_ready = flash_sel ? flash_ready : 1;
 
     bus_arbiter bus_arbiter (
         /* instruction memory bus */
@@ -125,7 +128,8 @@ module top (
         .write_out(mem_write),
         .read_value_in(mem_read_value),
         .write_mask_out(mem_write_mask),
-        .write_value_out(mem_write_value)
+        .write_value_out(mem_write_value),
+        .ready_in(mem_ready)
     );
 
     logic [63:0] cycle;
@@ -156,18 +160,21 @@ module top (
     logic leds_sel;
     logic uart_sel;
     logic timer_sel;
+    logic flash_sel;
 
     always_comb begin
         ram_sel = 0;
         leds_sel = 0;
         uart_sel = 0;
         timer_sel = 0;
+        flash_sel = 0;
 
         casez (mem_address)
             32'b00000000_00000000_????????_????????: ram_sel = 1;
             32'b00000000_00000001_00000000_000000??: leds_sel = 1;
             32'b00000000_00000010_00000000_0000????: uart_sel = 1;
             32'b00000000_00000011_00000000_0000????: timer_sel = 1;
+            32'b00000001_????????_????????_????????: flash_sel = 1;
         endcase
     end
 
@@ -228,4 +235,35 @@ module top (
         .write_mask_in(mem_write_mask),
         .write_value_in(mem_write_value)
     );
+
+    logic [31:0] flash_read_value;
+    logic flash_ready;
+
+`ifdef SPI_FLASH
+    flash flash (
+        .clk(pll_clk),
+
+        /* SPI bus */
+        .clk_out(flash_clk),
+        .csn_out(flash_csn),
+        .io0_in(flash_io0_in),
+        .io1_in(flash_io1_in),
+        .io0_en(flash_io0_en),
+        .io1_en(flash_io1_en),
+        .io0_out(flash_io0_out),
+        .io1_out(flash_io1_out),
+
+        /* memory bus */
+        .address_in(mem_address),
+        .sel_in(flash_sel),
+        .read_in(mem_read),
+        .read_value_out(flash_read_value),
+        .write_mask_in(mem_write_mask),
+        .write_value_in(mem_write_value),
+        .ready_out(flash_ready)
+    );
+`else
+    assign flash_read_value = 0;
+    assign flash_ready = 1;
+`endif
 endmodule
