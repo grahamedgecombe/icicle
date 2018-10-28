@@ -12,11 +12,15 @@
 
 #define BAUD_RATE 9600
 
+static void uart_putc(char c) {
+    while (!(UART_STATUS & UART_STATUS_TX_READY));
+    UART_DATA = c;
+}
+
 static void uart_puts(const char *str) {
     char c;
     while ((c = *str++)) {
-        while (!(UART_STATUS & UART_STATUS_TX_READY));
-        UART_DATA = c;
+        uart_putc(c);
     }
 }
 
