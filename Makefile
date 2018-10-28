@@ -20,9 +20,9 @@ TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-gcc
-LDFLAGS  = -march=rv32i -mabi=ilp32 -Wl,-Tprogmem.lds -ffreestanding -nostartfiles
+LDFLAGS  = $(CFLAGS) -Wl,-Tprogmem.lds
 CC       = $(TARGET)-gcc
-CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -O2
+CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -O2 -ffreestanding -nostartfiles
 OBJCOPY  = $(TARGET)-objcopy
 
 include boards/$(BOARD).mk
