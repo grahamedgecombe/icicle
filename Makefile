@@ -34,9 +34,11 @@ all: $(BIN)
 clean:
 	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem defines.sv
 
-progmem.hex: progmem
-	$(OBJCOPY) -O binary $< /dev/stdout \
-		| xxd -p -c 4 > $@
+progmem.bin: progmem
+	$(OBJCOPY) -O binary $< $@
+
+progmem.hex: progmem.bin
+	xxd -p -c 4 < $< > $@
 
 progmem: progmem.o start.o progmem.lds
 	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
