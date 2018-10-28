@@ -12,7 +12,7 @@ module top (
     input clk,
 `endif
 
-`ifdef FLASH
+`ifdef SPI_FLASH
     /* serial flash */
     output logic flash_clk,
     output logic flash_csn,
@@ -28,7 +28,7 @@ module top (
     output logic uart_tx
 );
 
-`ifdef FLASH
+`ifdef SPI_FLASH
     logic flash_io0_en;
     logic flash_io0_in;
     logic flash_io0_out;
@@ -47,7 +47,7 @@ module top (
     );
 `endif
 
-`ifdef FLASH
+`ifdef SPI_FLASH
     SB_IO #(
         .PIN_TYPE(6'b1010_01)
     ) flash_io [1:0] (
