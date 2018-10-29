@@ -52,7 +52,7 @@ module rv32_hazard_unit (
     assign fetch_wait_for_mem_fence = decode_mem_fence_unreg_in || decode_mem_fence_in || execute_mem_fence_in;
     assign mem_wait_for_bus = (data_read_in || data_write_in) && !data_ready_in;
 
-    assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_bus;
+    assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_bus || fetch_wait_for_mem_fence;
     assign fetch_flush_out = 0;
 
     assign decode_stall_out = execute_stall_out;
