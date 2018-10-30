@@ -43,6 +43,9 @@ module rv32 (
     logic mem_stall;
     logic mem_flush;
 
+    /* hazard -> writeback control */
+    logic writeback_flush;
+
     /* fetch -> decode control */
     logic fetch_branch_predicted_taken;
 
@@ -153,7 +156,9 @@ module rv32 (
         .execute_flush_out(execute_flush),
 
         .mem_stall_out(mem_stall),
-        .mem_flush_out(mem_flush)
+        .mem_flush_out(mem_flush),
+
+        .writeback_flush_out(writeback_flush)
     );
 
     rv32_fetch fetch (
@@ -191,6 +196,7 @@ module rv32 (
         /* control in (from hazard) */
         .stall_in(decode_stall),
         .flush_in(decode_flush),
+        .writeback_flush_in(writeback_flush),
 
         /* control in (from fetch) */
         .branch_predicted_taken_in(fetch_branch_predicted_taken),
@@ -250,6 +256,7 @@ module rv32 (
         /* control in (from hazard) */
         .stall_in(execute_stall),
         .flush_in(execute_flush),
+        .writeback_flush_in(writeback_flush),
 
         /* control in */
         .branch_predicted_taken_in(decode_branch_predicted_taken),

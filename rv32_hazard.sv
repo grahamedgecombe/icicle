@@ -35,7 +35,9 @@ module rv32_hazard_unit (
     output logic execute_flush_out,
 
     output logic mem_stall_out,
-    output logic mem_flush_out
+    output logic mem_flush_out,
+
+    output logic writeback_flush_out
 );
     logic rs1_matches;
     logic rs2_matches;
@@ -61,6 +63,8 @@ module rv32_hazard_unit (
 
     assign mem_stall_out = mem_wait_for_bus;
     assign mem_flush_out = execute_stall_out;
+
+    assign writeback_flush_out = mem_stall_out;
 endmodule
 
 `endif

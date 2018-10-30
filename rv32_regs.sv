@@ -4,6 +4,7 @@
 module rv32_regs (
     input clk,
     input stall_in,
+    input writeback_flush_in,
 
     /* control in */
     input [4:0] rs1_in,
@@ -34,7 +35,7 @@ module rv32_regs (
             rs2_value_out <= regs[rs2_in];
         end
 
-        if (rd_write_in && |rd_in)
+        if (!writeback_flush_in && rd_write_in && |rd_in)
             regs[rd_in] <= rd_value_in;
     end
 endmodule

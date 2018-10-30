@@ -10,6 +10,7 @@ module rv32_decode (
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
+    input writeback_flush_in,
 
     /* control in (from fetch) */
     input branch_predicted_taken_in,
@@ -76,6 +77,7 @@ module rv32_decode (
     rv32_regs regs (
         .clk(clk),
         .stall_in(stall_in),
+        .writeback_flush_in(writeback_flush_in),
 
         /* control in */
         .rs1_in(rs1),

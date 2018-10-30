@@ -11,6 +11,7 @@ module rv32_execute (
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
+    input writeback_flush_in,
 
     /* control in */
     input branch_predicted_taken_in,
@@ -122,6 +123,7 @@ module rv32_execute (
     rv32_csrs csrs (
         .clk(clk),
         .stall_in(stall_in),
+        .writeback_flush_in(writeback_flush_in),
 
         /* control in */
         .read_in(csr_read_in),
