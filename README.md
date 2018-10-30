@@ -18,10 +18,10 @@ boards.
 
 ## Dependencies
 
-* [nextpnr][nextpnr] or [arachne-pnr][arachne-pnr]
-* [GNU RISC-V toolchain][riscv-gnu]
 * [GNU Make][make]
+* [GNU RISC-V toolchain][riscv-gnu]
 * [Icarus Verilog][iverilog] (`master` branch)
+* [nextpnr][nextpnr] or [arachne-pnr][arachne-pnr]
 * [Project IceStorm][icestorm]
 * [vim][vim] (for `xxd`)
 * [Yosys][yosys]
