@@ -22,7 +22,7 @@ ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-gcc
 LDFLAGS  = $(CFLAGS) -Wl,-Tprogmem.lds
 CC       = $(TARGET)-gcc
-CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -O2 -ffreestanding -nostartfiles -g
+CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -Os -ffreestanding -nostartfiles -g
 OBJCOPY  = $(TARGET)-objcopy
 
 include boards/$(BOARD).mk
