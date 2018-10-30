@@ -363,7 +363,7 @@ module rv32_control_unit (
             `RV32_INSTR_ADD: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_ADD_SUB;
                 alu_sub_sra_out = 0;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -373,7 +373,7 @@ module rv32_control_unit (
             `RV32_INSTR_SUB: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_ADD_SUB;
                 alu_sub_sra_out = 1;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -383,7 +383,7 @@ module rv32_control_unit (
             `RV32_INSTR_SLL: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_SLL;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
                 alu_src2_out = `RV32_ALU_SRC2_REG;
@@ -392,7 +392,7 @@ module rv32_control_unit (
             `RV32_INSTR_SLT: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_SLT;
                 alu_sub_sra_out = 1;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -402,7 +402,7 @@ module rv32_control_unit (
             `RV32_INSTR_SLTU: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_SLTU;
                 alu_sub_sra_out = 1;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -412,7 +412,7 @@ module rv32_control_unit (
             `RV32_INSTR_XOR: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_XOR;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
                 alu_src2_out = `RV32_ALU_SRC2_REG;
@@ -421,7 +421,7 @@ module rv32_control_unit (
             `RV32_INSTR_SRL: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_SRL_SRA;
                 alu_sub_sra_out = 0;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -431,7 +431,7 @@ module rv32_control_unit (
             `RV32_INSTR_SRA: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_SRL_SRA;
                 alu_sub_sra_out = 1;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
@@ -441,7 +441,7 @@ module rv32_control_unit (
             `RV32_INSTR_OR: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_OR;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
                 alu_src2_out = `RV32_ALU_SRC2_REG;
@@ -450,7 +450,7 @@ module rv32_control_unit (
             `RV32_INSTR_AND: begin
                 valid_out = 1;
                 rs1_read_out = 1;
-                rs2_read_out = 2;
+                rs2_read_out = 1;
                 alu_op_out = `RV32_ALU_OP_AND;
                 alu_src1_out = `RV32_ALU_SRC1_REG;
                 alu_src2_out = `RV32_ALU_SRC2_REG;
