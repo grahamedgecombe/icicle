@@ -8,7 +8,6 @@ module rv32_fetch (
 
     /* control in (from hazard) */
     input stall_in,
-    input flush_in,
 
     /* control in (from mem) */
     input branch_mispredicted_in,
@@ -77,9 +76,6 @@ module rv32_fetch (
             instr_out <= instr_read_value_in;
             next_pc <= pc + branch_offset;
             pc_out <= pc;
-
-            if (flush_in)
-                instr_out <= `RV32_INSTR_NOP;
         end
     end
 endmodule

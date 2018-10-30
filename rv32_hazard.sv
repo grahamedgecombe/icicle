@@ -27,7 +27,6 @@ module rv32_hazard_unit (
 
     /* control out */
     output logic fetch_stall_out,
-    output logic fetch_flush_out,
 
     output logic decode_stall_out,
     output logic decode_flush_out,
@@ -53,7 +52,6 @@ module rv32_hazard_unit (
     assign mem_wait_for_bus = (data_read_in || data_write_in) && !data_ready_in;
 
     assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_bus || fetch_wait_for_mem_fence;
-    assign fetch_flush_out = 0;
 
     assign decode_stall_out = execute_stall_out;
     assign decode_flush_out = fetch_stall_out || mem_branch_mispredicted_in;
