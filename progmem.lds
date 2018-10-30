@@ -5,15 +5,23 @@ MEMORY {
 }
 
 SECTIONS {
-    .bram : {
+    .text : {
         start.o(.text);
         *(.text);
         *(.text.*);
+    } > bram
+
+    .data : {
         *(.data);
         *(.data.*);
+    } > bram
+
+    .rodata : {
         *(.rodata);
         *(.rodata.*);
+    } > bram
 
+    .bss : {
         . = ALIGN(4);
         bss_start = .;
 
