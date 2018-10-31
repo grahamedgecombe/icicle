@@ -9,6 +9,8 @@ module clk_div #(
 );
     logic [LOG_DIVISOR-1:0] q;
 
+    initial q = 0;
+
     always_ff @(posedge clk_in)
         q <= q + 1;
 

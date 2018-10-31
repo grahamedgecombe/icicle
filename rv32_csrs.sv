@@ -144,6 +144,7 @@
 
 module rv32_csrs (
     input clk,
+    input reset_,
     input stall_in,
     input writeback_flush_in,
 
@@ -347,6 +348,11 @@ module rv32_csrs (
 
         cycle <= cycle + 1;
         instret <= instret + (instr_retired_in && !writeback_flush_in);
+
+        if (!reset_) begin
+            cycle <= 0;
+            instret <= 0;
+        end
     end
 endmodule
 

@@ -8,6 +8,7 @@
 
 module timer (
     input clk,
+    input reset_,
 
     /* cycle count (from the CPU core) */
     input [63:0] cycle_in,
@@ -65,6 +66,10 @@ module timer (
                         mtimecmp[39:32] <= write_value_in[7:0];
                 end
             endcase
+        end
+
+        if (!reset_) begin
+            mtimecmp <= 0;
         end
     end
 endmodule
