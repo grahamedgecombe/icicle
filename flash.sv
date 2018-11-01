@@ -6,6 +6,7 @@
 `define FLASH_STATE_IDLE      2'b00
 `define FLASH_STATE_WRITE_CMD 2'b01
 `define FLASH_STATE_READ_DATA 2'b10
+`define FLASH_STATE_DONE      2'b11
 
 module flash (
     input clk,
@@ -40,10 +41,9 @@ module flash (
     assign io1_en = 0;
 
     logic [31:0] read_value;
-    logic ready;
 
     assign read_value_out = sel_in ? read_value : 0;
-    assign ready_out = ready;
+    assign ready_out = state == `FLASH_STATE_DONE;
 
     logic [31:0] read_cmd;
 
@@ -53,22 +53,15 @@ module flash (
     logic [1:0] state;
     logic [4:0] bits;
 
-    always_ff @(negedge clk) begin
-        ready <= 0;
-
+    always_ff @(posedge clk) begin
         case (state)
             `FLASH_STATE_IDLE: begin
-                if (sel_in) begin
-                    if (read_in) begin
-                        csn_out <= 0;
-                        io0_out <= read_cmd[31];
-                        shift_reg <= read_cmd[30:0];
-                        state <= `FLASH_STATE_WRITE_CMD;
-                        bits <= 31;
-                    end else begin
-                        /* ignore writes */
-                        ready <= 1;
-                    end
+                if (sel_in && read_in) begin
+                    csn_out <= 0;
+                    io0_out <= read_cmd[31];
+                    shift_reg <= read_cmd[30:0];
+                    state <= `FLASH_STATE_WRITE_CMD;
+                    bits <= 31;
                 end
             end
             `FLASH_STATE_WRITE_CMD: begin
@@ -89,16 +82,17 @@ module flash (
                 end else begin
                     csn_out <= 1;
                     read_value <= {shift_reg, io1_in};
-                    state <= `FLASH_STATE_IDLE;
-                    ready <= 1;
+                    state <= `FLASH_STATE_DONE;
                 end
+            end
+            `FLASH_STATE_DONE: begin
+                state <= `FLASH_STATE_IDLE;
             end
         endcase
 
         if (reset) begin
             csn_out <= 1;
             state <= `FLASH_STATE_IDLE;
-            ready <= 0;
         end
     end
 endmodule
