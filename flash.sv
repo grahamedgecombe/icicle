@@ -1,7 +1,8 @@
 `ifndef FLASH
 `define FLASH
 
-`define FLASH_CMD_READ 8'h03
+`define FLASH_CMD_READ_MSB 1'b0
+`define FLASH_CMD_READ     7'b000_0011
 
 `define FLASH_STATE_IDLE      2'b00
 `define FLASH_STATE_WRITE_CMD 2'b01
@@ -44,10 +45,6 @@ module flash (
     assign read_value_out = sel_in ? read_value : 0;
     assign ready_out = state == `FLASH_STATE_DONE;
 
-    logic [31:0] read_cmd;
-
-    assign read_cmd = {`FLASH_CMD_READ, address_in[23:0]};
-
     logic [1:0] state;
     logic [4:0] bits;
 
@@ -55,8 +52,8 @@ module flash (
         case (state)
             `FLASH_STATE_IDLE: begin
                 if (sel_in && read_in) begin
-                    io0_out <= read_cmd[31];
-                    read_value <= {read_cmd[30:0], 1'bx};
+                    io0_out <= `FLASH_CMD_READ_MSB;
+                    read_value <= {`FLASH_CMD_READ, address_in[23:0], 1'bx};
                     state <= `FLASH_STATE_WRITE_CMD;
                     bits <= 31;
                 end else begin
