@@ -2,6 +2,9 @@
 `define BUS_ARBITER
 
 module bus_arbiter (
+    input clk,
+    input reset,
+
     /* instruction memory bus */
     input [31:0] instr_address_in,
     input instr_read_in,
@@ -26,8 +29,13 @@ module bus_arbiter (
     output logic [31:0] write_value_out,
     input ready_in
 );
+    logic data_read;
+    logic instr_read_in_progress;
+
+    assign data_read = data_read_in || data_write_in;
+
     always_comb begin
-        if (data_read_in || data_write_in) begin
+        if (data_read && !instr_read_in_progress) begin
             address_out = data_address_in;
             read_out = data_read_in;
             write_out = data_write_in;
@@ -58,6 +66,19 @@ module bus_arbiter (
             instr_ready = 1'b0;
             data_ready = 1'b0;
         end
+    end
+
+    always_ff @(posedge clk) begin
+        if (instr_read_in_progress) begin
+            if (ready_in)
+                instr_read_in_progress <= 0;
+        end else begin
+            if (!data_read && instr_read_in && !ready_in)
+                instr_read_in_progress <= 1;
+        end
+
+        if (reset)
+            instr_read_in_progress <= 0;
     end
 endmodule
 

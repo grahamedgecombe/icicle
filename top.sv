@@ -107,6 +107,9 @@ module top (
     assign mem_ready = flash_sel ? flash_ready : 1;
 
     bus_arbiter bus_arbiter (
+        .clk(pll_clk),
+        .reset(reset),
+
         /* instruction memory bus */
         .instr_address_in(instr_address),
         .instr_read_in(instr_read),
