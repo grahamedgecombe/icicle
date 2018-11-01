@@ -32,62 +32,60 @@ module flash (
     input [31:0] write_value_in,
     output logic ready_out
 );
-    initial
-        state <= `FLASH_STATE_IDLE;
+    logic [31:0] read_value;
+    logic [1:0] state;
+    logic [4:0] bits;
 
     assign clk_out = clk;
     assign csn_out = state != `FLASH_STATE_WRITE_CMD && state != `FLASH_STATE_READ_DATA;
     assign io0_en = 1;
     assign io1_en = 0;
-
-    logic [31:0] read_value;
-
     assign read_value_out = sel_in ? read_value : 0;
     assign ready_out = state == `FLASH_STATE_DONE;
 
-    logic [1:0] state;
-    logic [4:0] bits;
+    initial
+        state <= `FLASH_STATE_IDLE;
 
     always_ff @(posedge clk) begin
         case (state)
             `FLASH_STATE_IDLE: begin
                 if (sel_in && read_in) begin
-                    io0_out <= `FLASH_CMD_READ_MSB;
-                    read_value <= {`FLASH_CMD_READ, address_in[23:0], 1'bx};
                     state <= `FLASH_STATE_WRITE_CMD;
                     bits <= 31;
+                    io0_out <= `FLASH_CMD_READ_MSB;
+                    read_value <= {`FLASH_CMD_READ, address_in[23:0], 1'bx};
                 end else begin
-                    io0_out <= 1'bx;
                     bits <= 5'bx;
+                    io0_out <= 1'bx;
                 end
             end
             `FLASH_STATE_WRITE_CMD: begin
                 if (|bits) begin
+                    bits <= bits - 1;
                     io0_out <= read_value[31];
                     read_value <= {read_value[30:0], 1'bx};
-                    bits <= bits - 1;
                 end else begin
-                    io0_out <= 1'bx;
-                    read_value <= {31'bx, io1_in};
                     state <= `FLASH_STATE_READ_DATA;
                     bits <= 31;
+                    io0_out <= 1'bx;
+                    read_value <= {31'bx, io1_in};
                 end
             end
             `FLASH_STATE_READ_DATA: begin
-                io0_out <= 1'bx;
-                read_value <= {read_value[30:0], io1_in};
-
                 if (|bits) begin
                     bits <= bits - 1;
                 end else begin
                     state <= `FLASH_STATE_DONE;
                     bits <= 5'bx;
                 end
+
+                io0_out <= 1'bx;
+                read_value <= {read_value[30:0], io1_in};
             end
             `FLASH_STATE_DONE: begin
                 state <= `FLASH_STATE_IDLE;
-                io0_out <= 1'bx;
                 bits <= 5'bx;
+                io0_out <= 1'bx;
             end
         endcase
 
