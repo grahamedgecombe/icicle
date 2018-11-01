@@ -60,6 +60,10 @@ module flash (
                     shift_reg <= read_cmd[30:0];
                     state <= `FLASH_STATE_WRITE_CMD;
                     bits <= 31;
+                end else begin
+                    io0_out <= 1'bx;
+                    shift_reg <= 31'bx;
+                    bits <= 5'bx;
                 end
             end
             `FLASH_STATE_WRITE_CMD: begin
@@ -68,6 +72,7 @@ module flash (
                     shift_reg <= {shift_reg[29:0], 1'bx};
                     bits <= bits - 1;
                 end else begin
+                    io0_out <= 1'bx;
                     shift_reg <= {30'bx, io1_in};
                     state <= `FLASH_STATE_READ_DATA;
                     bits <= 31;
@@ -75,15 +80,22 @@ module flash (
             end
             `FLASH_STATE_READ_DATA: begin
                 if (|bits) begin
+                    io0_out <= 1'bx;
                     shift_reg <= {shift_reg[29:0], io1_in};
                     bits <= bits - 1;
                 end else begin
                     read_value <= {shift_reg, io1_in};
                     state <= `FLASH_STATE_DONE;
+                    io0_out <= 1'bx;
+                    shift_reg <= 31'bx;
+                    bits <= 5'bx;
                 end
             end
             `FLASH_STATE_DONE: begin
                 state <= `FLASH_STATE_IDLE;
+                io0_out <= 1'bx;
+                shift_reg <= 31'bx;
+                bits <= 5'bx;
             end
         endcase
 
