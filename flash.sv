@@ -48,7 +48,6 @@ module flash (
 
     assign read_cmd = {`FLASH_CMD_READ, address_in[23:0]};
 
-    logic [30:0] shift_reg;
     logic [1:0] state;
     logic [4:0] bits;
 
@@ -57,23 +56,22 @@ module flash (
             `FLASH_STATE_IDLE: begin
                 if (sel_in && read_in) begin
                     io0_out <= read_cmd[31];
-                    shift_reg <= read_cmd[30:0];
+                    read_value <= {read_cmd[30:0], 1'bx};
                     state <= `FLASH_STATE_WRITE_CMD;
                     bits <= 31;
                 end else begin
                     io0_out <= 1'bx;
-                    shift_reg <= 31'bx;
                     bits <= 5'bx;
                 end
             end
             `FLASH_STATE_WRITE_CMD: begin
                 if (|bits) begin
-                    io0_out <= shift_reg[30];
-                    shift_reg <= {shift_reg[29:0], 1'bx};
+                    io0_out <= read_value[31];
+                    read_value <= {read_value[30:0], 1'bx};
                     bits <= bits - 1;
                 end else begin
                     io0_out <= 1'bx;
-                    shift_reg <= {30'bx, io1_in};
+                    read_value <= {31'bx, io1_in};
                     state <= `FLASH_STATE_READ_DATA;
                     bits <= 31;
                 end
@@ -81,20 +79,18 @@ module flash (
             `FLASH_STATE_READ_DATA: begin
                 if (|bits) begin
                     io0_out <= 1'bx;
-                    shift_reg <= {shift_reg[29:0], io1_in};
+                    read_value <= {read_value[30:0], io1_in};
                     bits <= bits - 1;
                 end else begin
-                    read_value <= {shift_reg, io1_in};
+                    read_value <= {read_value[30:0], io1_in};
                     state <= `FLASH_STATE_DONE;
                     io0_out <= 1'bx;
-                    shift_reg <= 31'bx;
                     bits <= 5'bx;
                 end
             end
             `FLASH_STATE_DONE: begin
                 state <= `FLASH_STATE_IDLE;
                 io0_out <= 1'bx;
-                shift_reg <= 31'bx;
                 bits <= 5'bx;
             end
         endcase
