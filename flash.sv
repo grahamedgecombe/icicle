@@ -77,14 +77,13 @@ module flash (
                 end
             end
             `FLASH_STATE_READ_DATA: begin
+                io0_out <= 1'bx;
+                read_value <= {read_value[30:0], io1_in};
+
                 if (|bits) begin
-                    io0_out <= 1'bx;
-                    read_value <= {read_value[30:0], io1_in};
                     bits <= bits - 1;
                 end else begin
-                    read_value <= {read_value[30:0], io1_in};
                     state <= `FLASH_STATE_DONE;
-                    io0_out <= 1'bx;
                     bits <= 5'bx;
                 end
             end
