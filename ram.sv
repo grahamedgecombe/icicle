@@ -9,7 +9,8 @@ module ram (
     input sel_in,
     output logic [31:0] read_value_out,
     input [3:0] write_mask_in,
-    input [31:0] write_value_in
+    input [31:0] write_value_in,
+    output logic ready_out
 );
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;
@@ -18,6 +19,7 @@ module ram (
         $readmemh("progmem_syn.hex", mem);
 
     assign read_value_out = sel_in ? read_value : 0;
+    assign ready_out = sel_in;
 
     always_ff @(negedge clk) begin
         read_value <= {mem[address_in[31:2]][7:0], mem[address_in[31:2]][15:8], mem[address_in[31:2]][23:16], mem[address_in[31:2]][31:24]};

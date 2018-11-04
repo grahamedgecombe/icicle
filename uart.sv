@@ -19,7 +19,8 @@ module uart (
     input read_in,
     output logic [31:0] read_value_out,
     input [3:0] write_mask_in,
-    input [31:0] write_value_in
+    input [31:0] write_value_in,
+    output logic ready_out
 );
     logic [15:0] clk_div;
 
@@ -41,6 +42,7 @@ module uart (
 
     assign tx_out = tx_buf[0];
     assign tx_write_ready = ~|tx_bits;
+    assign ready_out = sel_in;
 
     always_comb begin
         if (sel_in) begin

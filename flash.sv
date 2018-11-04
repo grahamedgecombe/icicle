@@ -41,7 +41,7 @@ module flash (
     assign io0_en = 1;
     assign io1_en = 0;
     assign read_value_out = sel_in ? read_value : 0;
-    assign ready_out = state == `FLASH_STATE_DONE;
+    assign ready_out = sel_in ? state == `FLASH_STATE_DONE : 0;
 
     initial
         state <= `FLASH_STATE_IDLE;

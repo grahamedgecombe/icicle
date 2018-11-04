@@ -104,7 +104,7 @@ module top (
     logic mem_ready;
 
     assign mem_read_value = ram_read_value | leds_read_value | uart_read_value | timer_read_value | flash_read_value;
-    assign mem_ready = flash_sel ? flash_ready : 1;
+    assign mem_ready = ram_ready | leds_ready | uart_ready | timer_ready | flash_ready;
 
     bus_arbiter bus_arbiter (
         .clk(pll_clk),
@@ -183,6 +183,7 @@ module top (
     end
 
     logic [31:0] ram_read_value;
+    logic ram_ready;
 
     ram ram (
         .clk(pll_clk),
@@ -192,12 +193,15 @@ module top (
         .sel_in(ram_sel),
         .read_value_out(ram_read_value),
         .write_mask_in(mem_write_mask),
-        .write_value_in(mem_write_value)
+        .write_value_in(mem_write_value),
+        .ready_out(ram_ready)
     );
 
     logic [31:0] leds_read_value;
+    logic leds_ready;
 
     assign leds_read_value = {24'b0, leds_sel ? leds : 8'b0};
+    assign leds_ready = leds_sel;
 
     always_ff @(posedge pll_clk) begin
         if (leds_sel && mem_write_mask[0])
@@ -205,6 +209,7 @@ module top (
     end
 
     logic [31:0] uart_read_value;
+    logic uart_ready;
 
     uart uart (
         .clk(pll_clk),
@@ -220,10 +225,12 @@ module top (
         .read_in(mem_read),
         .read_value_out(uart_read_value),
         .write_mask_in(mem_write_mask),
-        .write_value_in(mem_write_value)
+        .write_value_in(mem_write_value),
+        .ready_out(uart_ready)
     );
 
     logic [31:0] timer_read_value;
+    logic timer_ready;
 
     timer timer (
         .clk(pll_clk),
@@ -238,7 +245,8 @@ module top (
         .read_in(mem_read),
         .read_value_out(timer_read_value),
         .write_mask_in(mem_write_mask),
-        .write_value_in(mem_write_value)
+        .write_value_in(mem_write_value),
+        .ready_out(timer_ready)
     );
 
     logic [31:0] flash_read_value;
