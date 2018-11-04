@@ -23,6 +23,7 @@ module rv32_fetch (
     output logic instr_read_out,
 
     /* control out */
+    output logic valid_out,
     output logic branch_predicted_taken_out,
 
     /* data out */
@@ -76,6 +77,7 @@ module rv32_fetch (
         if (stall_in) begin
             next_pc <= pc;
         end else begin
+            valid_out <= 1;
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
             next_pc <= pc + branch_offset;
@@ -83,6 +85,7 @@ module rv32_fetch (
         end
 
         if (!reset_) begin
+            valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
             next_pc <= 0;

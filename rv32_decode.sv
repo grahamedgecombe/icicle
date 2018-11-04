@@ -14,6 +14,7 @@ module rv32_decode (
     input writeback_flush_in,
 
     /* control in (from fetch) */
+    input valid_in,
     input branch_predicted_taken_in,
 
     /* control in (from writeback) */
@@ -170,7 +171,7 @@ module rv32_decode (
     always_ff @(posedge clk) begin
         if (!stall_in) begin
             branch_predicted_taken_out <= branch_predicted_taken_in;
-            valid_out <= valid;
+            valid_out <= valid_in && valid;
             rs1_out <= rs1;
             rs2_out <= rs2;
             alu_op_out <= alu_op;

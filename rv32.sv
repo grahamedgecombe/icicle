@@ -48,6 +48,7 @@ module rv32 (
     logic writeback_flush;
 
     /* fetch -> decode control */
+    logic fetch_valid;
     logic fetch_branch_predicted_taken;
 
     /* fetch -> decode data */
@@ -176,6 +177,7 @@ module rv32 (
         .instr_read_out(instr_read_out),
 
         /* control out */
+        .valid_out(fetch_valid),
         .branch_predicted_taken_out(fetch_branch_predicted_taken),
 
         /* data in (from mem) */
@@ -202,6 +204,7 @@ module rv32 (
         .writeback_flush_in(writeback_flush),
 
         /* control in (from fetch) */
+        .valid_in(fetch_valid),
         .branch_predicted_taken_in(fetch_branch_predicted_taken),
 
         /* control in (from writeback) */
