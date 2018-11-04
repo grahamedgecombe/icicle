@@ -69,6 +69,9 @@ module rv32_fetch (
         endcase
     end
 
+    initial
+        instr_out <= `RV32_INSTR_NOP;
+
     always_ff @(posedge clk) begin
         if (stall_in) begin
             next_pc <= pc;
@@ -81,7 +84,7 @@ module rv32_fetch (
 
         if (!reset_) begin
             branch_predicted_taken_out <= 0;
-            instr_out <= 0;
+            instr_out <= `RV32_INSTR_NOP;
             next_pc <= 0;
             pc_out <= 0;
         end
