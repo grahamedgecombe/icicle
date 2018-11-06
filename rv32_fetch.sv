@@ -33,7 +33,6 @@ module rv32_fetch (
     /* data out (to memory bus) */
     output logic [31:0] instr_address_out
 );
-    logic [31:0] next_pc;
     logic [31:0] pc;
 
     logic sign;
@@ -44,7 +43,6 @@ module rv32_fetch (
     logic branch_predicted_taken;
     logic [31:0] branch_offset;
 
-    assign pc = branch_mispredicted_in ? branch_pc_in : next_pc;
     assign instr_read_out = 1;
     assign instr_address_out = pc;
 
@@ -75,20 +73,27 @@ module rv32_fetch (
 
     always_ff @(posedge clk) begin
         if (stall_in) begin
-            next_pc <= pc;
+            pc <= branch_mispredicted_in ? branch_pc_in : pc;
         end else begin
             valid_out <= 1;
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
-            next_pc <= pc + branch_offset;
+            pc <= branch_mispredicted_in ? branch_pc_in : pc + branch_offset;
             pc_out <= pc;
+
+            if (branch_mispredicted_in) begin
+                valid_out <= 0;
+                branch_predicted_taken_out <= 0;
+                instr_out <= `RV32_INSTR_NOP;
+                pc_out <= 0;
+            end
         end
 
         if (!reset_) begin
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
-            next_pc <= 0;
+            pc <= 0;
             pc_out <= 0;
         end
     end
