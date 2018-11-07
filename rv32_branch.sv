@@ -57,9 +57,9 @@ module rv32_branch_unit (
             `RV32_BRANCH_OP_NON_ZERO: taken = alu_non_zero;
             `RV32_BRANCH_OP_ALWAYS:   taken = 1;
         endcase
-    end
 
-    assign mispredicted_out = taken != predicted_taken_in;
+        mispredicted_out = taken != predicted_taken_in;
+    end
 endmodule
 
 `endif
