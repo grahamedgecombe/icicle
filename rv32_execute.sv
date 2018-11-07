@@ -12,6 +12,7 @@ module rv32_execute (
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
+    input mem_flush_in,
     input writeback_flush_in,
 
     /* control in */
@@ -78,16 +79,16 @@ module rv32_execute (
     logic [31:0] rs2_value;
 
     always_comb begin
-        if (rd_write_out && rd_out == rs1_in && |rs1_in)
+        if (rd_write_out && !mem_flush_in && rd_out == rs1_in && |rs1_in)
             rs1_value = result_out;
-        else if (writeback_rd_write_in && writeback_rd_in == rs1_in && |rs1_in)
+        else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs1_in && |rs1_in)
             rs1_value = writeback_rd_value_in;
         else
             rs1_value = rs1_value_in;
 
-        if (rd_write_out && rd_out == rs2_in && |rs2_in)
+        if (rd_write_out && !mem_flush_in && rd_out == rs2_in && |rs2_in)
             rs2_value = result_out;
-        else if (writeback_rd_write_in && writeback_rd_in == rs2_in && |rs2_in)
+        else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs2_in && |rs2_in)
             rs2_value = writeback_rd_value_in;
         else
             rs2_value = rs2_value_in;

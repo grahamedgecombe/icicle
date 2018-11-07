@@ -270,6 +270,7 @@ module rv32 (
         /* control in (from hazard) */
         .stall_in(execute_stall),
         .flush_in(execute_flush),
+        .mem_flush_in(mem_flush),
         .writeback_flush_in(writeback_flush),
 
         /* control in */
