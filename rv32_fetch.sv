@@ -36,6 +36,10 @@ module rv32_fetch (
     output logic [31:0] instr_address_out
 );
     logic [31:0] pc;
+    logic [31:0] next_pc;
+
+    logic branch_mispredicted;
+    logic [31:0] branch_pc;
 
     logic sign;
     logic [31:0] imm_j;
@@ -68,6 +72,13 @@ module rv32_fetch (
                 branch_offset = 32'd4;
             end
         endcase
+
+        if (branch_mispredicted)
+            next_pc = branch_pc;
+        else if (branch_mispredicted_in)
+            next_pc = branch_pc_in;
+        else
+            next_pc = pc + branch_offset;
     end
 
     initial
@@ -75,9 +86,13 @@ module rv32_fetch (
 
     always_ff @(posedge clk) begin
         if (pcgen_stall_in) begin
-            pc <= branch_mispredicted_in ? branch_pc_in : pc;
+            if (!branch_mispredicted && branch_mispredicted_in) begin
+                branch_mispredicted <= 1;
+                branch_pc <= branch_pc_in;
+            end
         end else begin
-            pc <= branch_mispredicted_in ? branch_pc_in : pc + branch_offset;
+            branch_mispredicted <= 0;
+            pc <= next_pc;
         end
 
         if (!stall_in) begin
@@ -86,7 +101,7 @@ module rv32_fetch (
             instr_out <= instr_read_value_in;
             pc_out <= pc;
 
-            if (flush_in) begin
+            if (flush_in || branch_mispredicted) begin
                 valid_out <= 0;
                 branch_predicted_taken_out <= 0;
                 instr_out <= `RV32_INSTR_NOP;
@@ -95,6 +110,7 @@ module rv32_fetch (
         end
 
         if (!reset_) begin
+            branch_mispredicted <= 0;
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
