@@ -97,7 +97,6 @@ module rv32 (
     /* execute -> mem control */
     logic execute_branch_predicted_taken;
     logic execute_valid;
-    logic execute_alu_non_zero;
     logic execute_mem_read;
     logic execute_mem_write;
     logic [1:0] execute_mem_width;
@@ -314,7 +313,6 @@ module rv32 (
         /* control out */
         .branch_predicted_taken_out(execute_branch_predicted_taken),
         .valid_out(execute_valid),
-        .alu_non_zero_out(execute_alu_non_zero),
         .mem_read_out(execute_mem_read),
         .mem_write_out(execute_mem_write),
         .mem_width_out(execute_mem_width),
@@ -344,7 +342,6 @@ module rv32 (
         /* control in */
         .branch_predicted_taken_in(execute_branch_predicted_taken),
         .valid_in(execute_valid),
-        .alu_non_zero_in(execute_alu_non_zero),
         .read_in(execute_mem_read),
         .write_in(execute_mem_write),
         .width_in(execute_mem_width),

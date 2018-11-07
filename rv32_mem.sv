@@ -18,7 +18,6 @@ module rv32_mem (
     /* control in */
     input branch_predicted_taken_in,
     input valid_in,
-    input alu_non_zero_in,
     input read_in,
     input write_in,
     input [1:0] width_in,
@@ -60,8 +59,10 @@ module rv32_mem (
     rv32_branch_unit branch_unit (
         /* control in */
         .predicted_taken_in(branch_predicted_taken_in),
-        .alu_non_zero_in(alu_non_zero_in),
         .op_in(branch_op_in),
+
+        /* data in */
+        .result_in(result_in),
 
         /* control out */
         .mispredicted_out(branch_mispredicted)

@@ -56,7 +56,6 @@ module rv32_execute (
     /* control out */
     output logic branch_predicted_taken_out,
     output logic valid_out,
-    output logic alu_non_zero_out,
     output logic mem_read_out,
     output logic mem_write_out,
     output logic [1:0] mem_width_out,
@@ -95,7 +94,6 @@ module rv32_execute (
     end
 
     /* ALU */
-    logic alu_non_zero;
     logic [31:0] alu_result;
 
     rv32_alu alu (
@@ -110,9 +108,6 @@ module rv32_execute (
         .rs1_value_in(rs1_value),
         .rs2_value_in(rs2_value),
         .imm_value_in(imm_value_in),
-
-        /* control out */
-        .non_zero_out(alu_non_zero),
 
         /* data out */
         .result_out(alu_result)
@@ -170,7 +165,6 @@ module rv32_execute (
         if (!stall_in) begin
             branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in;
-            alu_non_zero_out <= alu_non_zero;
             mem_read_out <= mem_read_in;
             mem_write_out <= mem_write_in;
             mem_width_out <= mem_width_in;
@@ -200,7 +194,6 @@ module rv32_execute (
         if (reset) begin
             branch_predicted_taken_out <= 0;
             valid_out <= 0;
-            alu_non_zero_out <= 0;
             mem_read_out <= 0;
             mem_write_out <= 0;
             mem_width_out <= 0;
