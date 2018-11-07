@@ -30,7 +30,9 @@ module rv32 (
     output logic [63:0] cycle_out
 );
     /* hazard -> fetch control */
+    logic pcgen_stall;
     logic fetch_stall;
+    logic fetch_flush;
 
     /* hazard -> decode control */
     logic decode_stall;
@@ -149,7 +151,10 @@ module rv32 (
         .data_ready_in(data_ready_in),
 
         /* control out */
+        .pcgen_stall_out(pcgen_stall),
+
         .fetch_stall_out(fetch_stall),
+        .fetch_flush_out(fetch_flush),
 
         .decode_stall_out(decode_stall),
         .decode_flush_out(decode_flush),
@@ -168,7 +173,9 @@ module rv32 (
         .reset_(reset_),
 
         /* control in (from hazard) */
+        .pcgen_stall_in(pcgen_stall),
         .stall_in(fetch_stall),
+        .flush_in(fetch_flush),
 
         /* control in (from mem) */
         .branch_mispredicted_in(mem_branch_mispredicted),

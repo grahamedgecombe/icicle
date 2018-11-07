@@ -8,7 +8,9 @@ module rv32_fetch (
     input reset_,
 
     /* control in (from hazard) */
+    input pcgen_stall_in,
     input stall_in,
+    input flush_in,
 
     /* control in (from mem) */
     input branch_mispredicted_in,
@@ -72,16 +74,19 @@ module rv32_fetch (
         instr_out <= `RV32_INSTR_NOP;
 
     always_ff @(posedge clk) begin
-        if (stall_in) begin
+        if (pcgen_stall_in) begin
             pc <= branch_mispredicted_in ? branch_pc_in : pc;
         end else begin
+            pc <= branch_mispredicted_in ? branch_pc_in : pc + branch_offset;
+        end
+
+        if (!stall_in) begin
             valid_out <= 1;
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
-            pc <= branch_mispredicted_in ? branch_pc_in : pc + branch_offset;
             pc_out <= pc;
 
-            if (branch_mispredicted_in) begin
+            if (flush_in) begin
                 valid_out <= 0;
                 branch_predicted_taken_out <= 0;
                 instr_out <= `RV32_INSTR_NOP;
