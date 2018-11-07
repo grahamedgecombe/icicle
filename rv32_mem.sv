@@ -54,6 +54,8 @@ module rv32_mem (
     output logic [31:0] data_address_out,
     output logic [31:0] data_write_value_out
 );
+    logic branch_mispredicted;
+
     /* branch unit */
     rv32_branch_unit branch_unit (
         /* control in */
@@ -62,10 +64,11 @@ module rv32_mem (
         .op_in(branch_op_in),
 
         /* control out */
-        .mispredicted_out(branch_mispredicted_out)
+        .mispredicted_out(branch_mispredicted)
     );
 
     assign branch_pc_out = branch_pc_in;
+    assign branch_mispredicted_out = branch_mispredicted && !flush_in;
 
     /* memory access unit */
     logic [31:0] mem_read_value;
