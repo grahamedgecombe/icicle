@@ -9,7 +9,7 @@
 
 module rv32 (
     input clk,
-    input reset_,
+    input reset,
 
     /* instruction memory bus */
     output logic [31:0] instr_address_out,
@@ -170,7 +170,7 @@ module rv32 (
 
     rv32_fetch fetch (
         .clk(clk),
-        .reset_(reset_),
+        .reset(reset),
 
         /* control in (from hazard) */
         .pcgen_stall_in(pcgen_stall),
@@ -203,7 +203,7 @@ module rv32 (
 
     rv32_decode decode (
         .clk(clk),
-        .reset_(reset_),
+        .reset(reset),
 
         /* control in (from hazard) */
         .stall_in(decode_stall),
@@ -265,7 +265,7 @@ module rv32 (
 
     rv32_execute execute (
         .clk(clk),
-        .reset_(reset_),
+        .reset(reset),
 
         /* control in (from hazard) */
         .stall_in(execute_stall),
@@ -335,7 +335,7 @@ module rv32 (
 
     rv32_mem mem (
         .clk(clk),
-        .reset_(reset_),
+        .reset(reset),
 
         /* control in (from hazard) */
         .stall_in(mem_stall),

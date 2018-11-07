@@ -6,7 +6,7 @@
 
 module rv32_decode (
     input clk,
-    input reset_,
+    input reset,
 
     /* control in (from hazard) */
     input stall_in,
@@ -208,7 +208,7 @@ module rv32_decode (
             end
         end
 
-        if (!reset_) begin
+        if (reset) begin
             branch_predicted_taken_out <= 0;
             valid_out <= 0;
             rs1_out <= 0;

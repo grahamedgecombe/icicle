@@ -5,7 +5,7 @@
 
 module rv32_fetch (
     input clk,
-    input reset_,
+    input reset,
 
     /* control in (from hazard) */
     input pcgen_stall_in,
@@ -109,7 +109,7 @@ module rv32_fetch (
             end
         end
 
-        if (!reset_) begin
+        if (reset) begin
             branch_mispredicted <= 0;
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
