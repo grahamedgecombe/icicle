@@ -53,7 +53,7 @@ module flash (
                     state <= `FLASH_STATE_WRITE_CMD;
                     bits <= 31;
                     io0_out <= `FLASH_CMD_READ_MSB;
-                    read_value <= {`FLASH_CMD_READ, address_in[23:0], 1'bx};
+                    read_value <= {`FLASH_CMD_READ, address_in[23:2], 2'b0, 1'bx};
                 end else begin
                     bits <= 5'bx;
                     io0_out <= 1'bx;
