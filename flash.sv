@@ -40,7 +40,7 @@ module flash (
     assign csn_out = state != `FLASH_STATE_WRITE_CMD && state != `FLASH_STATE_READ_DATA;
     assign io0_en = 1;
     assign io1_en = 0;
-    assign read_value_out = sel_in ? read_value : 0;
+    assign read_value_out = sel_in ? {read_value[7:0], read_value[15:8], read_value[23:16], read_value[31:24]} : 0;
     assign ready_out = sel_in && state == `FLASH_STATE_DONE;
 
     initial
