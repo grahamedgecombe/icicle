@@ -121,6 +121,7 @@ module rv32_execute (
         .clk(clk),
         .reset(reset),
         .stall_in(stall_in),
+        .flush_in(flush_in),
         .writeback_flush_in(writeback_flush_in),
 
         /* control in */

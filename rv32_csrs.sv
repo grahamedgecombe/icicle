@@ -146,6 +146,7 @@ module rv32_csrs (
     input clk,
     input reset,
     input stall_in,
+    input flush_in,
     input writeback_flush_in,
 
     /* control in */
@@ -334,7 +335,7 @@ module rv32_csrs (
     end
 
     always_ff @(posedge clk) begin
-        if (!stall_in && write_in) begin
+        if (!stall_in && !flush_in && write_in) begin
             case (csr_in)
                 `RV32_CSR_MSTATUS:  {mstatus_mpie, mstatus_mie} <= {new_value[7], new_value[3]};
                 `RV32_CSR_MIE:      {mie_meie, mie_mtie, mie_msie} <= {new_value[11], new_value[7], new_value[3]};
