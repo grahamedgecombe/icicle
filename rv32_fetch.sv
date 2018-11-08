@@ -3,6 +3,8 @@
 
 `include "rv32_opcodes.sv"
 
+`define RV32_RESET_VECTOR 32'h00000000
+
 module rv32_fetch (
     input clk,
     input reset,
@@ -81,8 +83,10 @@ module rv32_fetch (
             next_pc = pc + branch_offset;
     end
 
-    initial
+    initial begin
+        pc <= `RV32_RESET_VECTOR;
         instr_out <= `RV32_INSTR_NOP;
+    end
 
     always_ff @(posedge clk) begin
         if (pcgen_stall_in) begin
@@ -114,7 +118,7 @@ module rv32_fetch (
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
-            pc <= 0;
+            pc <= `RV32_RESET_VECTOR;
             pc_out <= 0;
         end
     end
