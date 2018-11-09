@@ -3,7 +3,11 @@
 
 `include "rv32_opcodes.sv"
 
+`ifdef SPI_FLASH
+`define RV32_RESET_VECTOR 32'h01100000
+`else
 `define RV32_RESET_VECTOR 32'h00000000
+`endif
 
 module rv32_fetch (
     input clk,

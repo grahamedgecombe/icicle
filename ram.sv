@@ -15,8 +15,10 @@ module ram (
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;
 
+`ifndef SPI_FLASH
     initial
         $readmemh("progmem_syn.hex", mem);
+`endif
 
     assign read_value_out = sel_in ? read_value : 0;
     assign ready_out = sel_in;

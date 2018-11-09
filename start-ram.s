@@ -1,5 +1,6 @@
 .extern bss_start
 .extern bss_end
+
 .extern stack_top
 
 .global start

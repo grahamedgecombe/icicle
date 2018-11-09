@@ -11,5 +11,7 @@
 /pll.sv
 /defines.sv
 /progmem
+/progmem.lds
+/start.s
 !.git*
 !.mailmap

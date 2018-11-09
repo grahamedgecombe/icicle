@@ -15,6 +15,7 @@ boards.
   [privileged ISA][riscv-priv].
 * Shared instruction and data memory (8 KiB, implemented with FPGA block RAM).
 * Memory-mapped UART and LEDs.
+* Memory-mapped XIP/SPI flash.
 
 ## Dependencies
 
@@ -53,7 +54,7 @@ board).
 
 #### iCE40-HX8K breakout board
 
-* Configure the jumpers for direct SRAM programming.
+* Configure the jumpers for flash programming.
 * Run `make BOARD=ice40hx8k-b-evn flash` to flash the bitstream.
 
 #### BlackIce II
@@ -90,7 +91,6 @@ instead of [nextpnr][nextpnr] (the default) - e.g. `make PNR=arachne-pnr`.
 * Interrupts/exceptions.
 * Unaligned memory access support.
 * Memory-mapped GPIOs.
-* Memory-mapped XIP/SPI flash.
 * Improved reset support (a reset signal + boot ROM to zero all the registers).
 * Automated tests.
 * Multiply/divide support.

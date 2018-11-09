@@ -32,7 +32,7 @@ include boards/$(BOARD).mk
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.bin progmem.o start.o progmem defines.sv
+	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.bin progmem.o start.o start.s progmem progmem.lds defines.sv
 
 progmem.bin: progmem
 	$(OBJCOPY) -O binary $< $@
@@ -58,6 +58,12 @@ syntax: $(SRC) progmem_syn.hex defines.sv
 defines.sv: boards/$(BOARD)-defines.sv
 	cp boards/$(BOARD)-defines.sv defines.sv
 
+start.s: start-$(PROGMEM).s
+	cp $< $@
+
+progmem.lds: progmem-$(PROGMEM).lds
+	cp $< $@
+
 ifeq ($(PNR),arachne-pnr)
 $(ASC_SYN): $(BLIF) $(PCF)
 	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
@@ -70,7 +76,11 @@ $(TIME_RPT): $(ASC_SYN) $(PCF)
 	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) -r $@ $<
 
 $(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
+ifeq ($(PROGMEM),ram)
 	icebram progmem_syn.hex progmem.hex < $< > $@
+else
+	cp $< $@
+endif
 
 $(BIN): $(ASC)
 	icepack $< $@
@@ -84,8 +94,11 @@ $(STAT): $(ASC_SYN)
 stat: $(STAT)
 	cat $<
 
-flash: $(BIN) $(TIME_RPT)
-	iceprog -S $<
+flash: $(BIN) progmem.bin $(TIME_RPT)
+	iceprog $<
+ifeq ($(PROGMEM),flash)
+	iceprog -o 1M progmem.bin
+endif
 
 # Flash to BlackIce-II board
 dfu-flash: $(BIN) $(TIME_RPT)
