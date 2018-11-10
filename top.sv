@@ -8,6 +8,12 @@
 `include "timer.sv"
 `include "uart.sv"
 
+`ifdef SPI_FLASH
+`define RESET_VECTOR 32'h01100000
+`else
+`define RESET_VECTOR 32'h00000000
+`endif
+
 module top (
 `ifndef INTERNAL_OSC
     input clk,
@@ -137,7 +143,9 @@ module top (
 
     logic [63:0] cycle;
 
-    rv32 rv32 (
+    rv32 #(
+        .RESET_VECTOR(`RESET_VECTOR)
+    ) rv32 (
         .clk(pll_clk),
         .reset(reset),
 

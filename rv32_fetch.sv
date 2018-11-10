@@ -3,13 +3,9 @@
 
 `include "rv32_opcodes.sv"
 
-`ifdef SPI_FLASH
-`define RV32_RESET_VECTOR 32'h01100000
-`else
-`define RV32_RESET_VECTOR 32'h00000000
-`endif
-
-module rv32_fetch (
+module rv32_fetch #(
+    parameter RESET_VECTOR = 32'b0
+) (
     input clk,
     input reset,
 
@@ -88,7 +84,7 @@ module rv32_fetch (
     end
 
     initial begin
-        pc <= `RV32_RESET_VECTOR;
+        pc <= RESET_VECTOR;
         instr_out <= `RV32_INSTR_NOP;
     end
 
@@ -122,7 +118,7 @@ module rv32_fetch (
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
-            pc <= `RV32_RESET_VECTOR;
+            pc <= RESET_VECTOR;
             pc_out <= 0;
         end
     end

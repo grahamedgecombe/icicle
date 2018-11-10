@@ -7,7 +7,9 @@
 `include "rv32_hazard.sv"
 `include "rv32_mem.sv"
 
-module rv32 (
+module rv32 #(
+    parameter RESET_VECTOR = 32'b0
+) (
     input clk,
     input reset,
 
@@ -167,7 +169,9 @@ module rv32 (
         .writeback_flush_out(writeback_flush)
     );
 
-    rv32_fetch fetch (
+    rv32_fetch #(
+        .RESET_VECTOR(RESET_VECTOR)
+    ) fetch (
         .clk(clk),
         .reset(reset),
 
