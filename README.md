@@ -15,7 +15,7 @@ boards.
   [privileged ISA][riscv-priv].
 * Shared instruction and data memory (8 KiB, implemented with FPGA block RAM).
 * Memory-mapped UART and LEDs.
-* Memory-mapped XIP/SPI flash.
+* Memory-mapped SPI flash.
 
 ## Dependencies
 
@@ -91,6 +91,7 @@ instead of [nextpnr][nextpnr] (the default) - e.g. `make PNR=arachne-pnr`.
 * Interrupts/exceptions.
 * Unaligned memory access support.
 * Memory-mapped GPIOs.
+* Add XIP, DDR, DSPI and QSPI support to the SPI flash controller.
 * Improved reset support (a reset signal + boot ROM to zero all the registers).
 * Automated tests.
 * Multiply/divide support.
