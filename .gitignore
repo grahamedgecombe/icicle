@@ -8,6 +8,7 @@
 *.o
 *.rpt
 *.stat
+/checks
 /pll.sv
 /defines.sv
 /progmem

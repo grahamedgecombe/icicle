@@ -8,6 +8,15 @@ module rv32_decode (
     input clk,
     input reset,
 
+`ifdef RISCV_FORMAL
+    /* debug data in */
+    input [31:0] next_pc_in,
+
+    /* debug data out */
+    output logic [31:0] next_pc_out,
+    output logic [31:0] instr_out,
+`endif
+
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
@@ -170,6 +179,11 @@ module rv32_decode (
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
+`ifdef RISCV_FORMAL
+            next_pc_out <= next_pc_in;
+            instr_out <= instr_in;
+`endif
+
             branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in && valid;
             rs1_out <= rs1;

@@ -6,12 +6,17 @@
 `include "rv32_fetch.sv"
 `include "rv32_hazard.sv"
 `include "rv32_mem.sv"
+`include "rv32_writeback.sv"
 
 module rv32 #(
     parameter RESET_VECTOR = 32'b0
 ) (
     input clk,
     input reset,
+
+`ifdef RISCV_FORMAL
+    `RVFI_OUTPUTS,
+`endif
 
     /* instruction memory bus */
     output logic [31:0] instr_address_out,
@@ -51,6 +56,9 @@ module rv32 #(
     /* hazard -> writeback control */
     logic writeback_flush;
 
+    /* fetch -> decode debug data */
+    logic [31:0] fetch_next_pc;
+
     /* fetch -> decode control */
     logic fetch_valid;
     logic fetch_branch_predicted_taken;
@@ -65,6 +73,12 @@ module rv32 #(
     logic [4:0] decode_rs2_unreg;
     logic decode_rs2_read_unreg;
     logic decode_mem_fence_unreg;
+
+`ifdef RISCV_FORMAL
+    /* decode -> execute debug data */
+    logic [31:0] decode_next_pc;
+    logic [31:0] decode_instr;
+`endif
 
     /* decode -> execute control */
     logic decode_branch_predicted_taken;
@@ -96,6 +110,18 @@ module rv32 #(
     logic [31:0] decode_imm_value;
     logic [11:0] decode_csr;
 
+`ifdef RISCV_FORMAL
+    /* execute -> mem debug control */
+    logic [4:0] execute_rs1;
+    logic [4:0] execute_rs2;
+
+    /* execute -> mem debug data */
+    logic [31:0] execute_pc;
+    logic [31:0] execute_next_pc;
+    logic [31:0] execute_instr;
+    logic [31:0] execute_rs1_value;
+`endif
+
     /* execute -> mem control */
     logic execute_branch_predicted_taken;
     logic execute_valid;
@@ -112,6 +138,24 @@ module rv32 #(
     logic [31:0] execute_result;
     logic [31:0] execute_rs2_value;
     logic [31:0] execute_branch_pc;
+
+`ifdef RISCV_FORMAL
+    /* mem -> writeback debug control */
+    logic [4:0] mem_rs1;
+    logic [4:0] mem_rs2;
+    logic [3:0] mem_read_mask;
+    logic [3:0] mem_write_mask;
+
+    /* mem -> writeback debug data */
+    logic [31:0] mem_pc;
+    logic [31:0] mem_next_pc;
+    logic [31:0] mem_instr;
+    logic [31:0] mem_rs1_value;
+    logic [31:0] mem_rs2_value;
+    logic [31:0] mem_address;
+    logic [31:0] mem_read_value;
+    logic [31:0] mem_write_value;
+`endif
 
     /* mem -> writeback control */
     logic mem_valid;
@@ -175,6 +219,11 @@ module rv32 #(
         .clk(clk),
         .reset(reset),
 
+`ifdef RISCV_FORMAL
+        /* debug data out */
+        .next_pc_out(fetch_next_pc),
+`endif
+
         /* control in (from hazard) */
         .pcgen_stall_in(pcgen_stall),
         .stall_in(fetch_stall),
@@ -207,6 +256,15 @@ module rv32 #(
     rv32_decode decode (
         .clk(clk),
         .reset(reset),
+
+`ifdef RISCV_FORMAL
+        /* debug data in */
+        .next_pc_in(fetch_next_pc),
+
+        /* debug data out */
+        .next_pc_out(decode_next_pc),
+        .instr_out(decode_instr),
+`endif
 
         /* control in (from hazard) */
         .stall_in(decode_stall),
@@ -269,6 +327,22 @@ module rv32 #(
     rv32_execute execute (
         .clk(clk),
         .reset(reset),
+
+`ifdef RISCV_FORMAL
+        /* debug data in */
+        .next_pc_in(decode_next_pc),
+        .instr_in(decode_instr),
+
+        /* debug control out */
+        .rs1_out(execute_rs1),
+        .rs2_out(execute_rs2),
+
+        /* debug data out */
+        .pc_out(execute_pc),
+        .next_pc_out(execute_next_pc),
+        .instr_out(execute_instr),
+        .rs1_value_out(execute_rs1_value),
+`endif
 
         /* control in (from hazard) */
         .stall_in(execute_stall),
@@ -339,6 +413,34 @@ module rv32 #(
         .clk(clk),
         .reset(reset),
 
+`ifdef RISCV_FORMAL
+        /* debug control in */
+        .rs1_in(execute_rs1),
+        .rs2_in(execute_rs2),
+
+        /* debug data in */
+        .pc_in(execute_pc),
+        .next_pc_in(execute_next_pc),
+        .instr_in(execute_instr),
+        .rs1_value_in(execute_rs1_value),
+
+        /* debug control out */
+        .rs1_out(mem_rs1),
+        .rs2_out(mem_rs2),
+        .read_mask_out(mem_read_mask),
+        .write_mask_out(mem_write_mask),
+
+        /* debug data out */
+        .pc_out(mem_pc),
+        .next_pc_out(mem_next_pc),
+        .instr_out(mem_instr),
+        .rs1_value_out(mem_rs1_value),
+        .rs2_value_out(mem_rs2_value),
+        .address_out(mem_address),
+        .read_value_out(mem_read_value),
+        .write_value_out(mem_write_value),
+`endif
+
         /* control in (from hazard) */
         .stall_in(mem_stall),
         .flush_in(mem_flush),
@@ -380,6 +482,39 @@ module rv32 #(
         /* data out (to memory bus) */
         .data_address_out(data_address_out),
         .data_write_value_out(data_write_value_out)
+    );
+
+    rv32_writeback writeback (
+        .clk(clk),
+        .reset(reset),
+
+`ifdef RISCV_FORMAL
+        `RVFI_CONN,
+
+        .rs1_in(mem_rs1),
+        .rs2_in(mem_rs2),
+        .mem_read_mask_in(mem_read_mask),
+        .mem_write_mask_in(mem_write_mask),
+        .pc_in(mem_pc),
+        .next_pc_in(mem_next_pc),
+        .instr_in(mem_instr),
+        .rs1_value_in(mem_rs1_value),
+        .rs2_value_in(mem_rs2_value),
+        .mem_address_in(mem_address),
+        .mem_read_value_in(mem_read_value),
+        .mem_write_value_in(mem_write_value),
+`endif
+
+        /* control in (from hazard) */
+        .flush_in(writeback_flush),
+
+        /* control in */
+        .valid_in(mem_valid),
+        .rd_in(mem_rd),
+        .rd_write_in(mem_rd_write),
+
+        /* data in */
+        .rd_value_in(mem_rd_value)
     );
 endmodule
 

@@ -9,6 +9,11 @@ module rv32_fetch #(
     input clk,
     input reset,
 
+`ifdef RISCV_FORMAL
+    /* debug data out */
+    output logic [31:0] next_pc_out,
+`endif
+
     /* control in (from hazard) */
     input pcgen_stall_in,
     input stall_in,
@@ -104,6 +109,9 @@ module rv32_fetch #(
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
             pc_out <= pc;
+`ifdef RISCV_FORMAL
+            next_pc_out <= next_pc;
+`endif
 
             if (flush_in || branch_mispredicted) begin
                 valid_out <= 0;

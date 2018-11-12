@@ -9,6 +9,22 @@ module rv32_execute (
     input clk,
     input reset,
 
+`ifdef RISCV_FORMAL
+    /* debug data in */
+    input [31:0] next_pc_in,
+    input [31:0] instr_in,
+
+    /* debug control out */
+    output logic [4:0] rs1_out,
+    output logic [4:0] rs2_out,
+
+    /* debug data out */
+    output logic [31:0] pc_out,
+    output logic [31:0] next_pc_out,
+    output logic [31:0] instr_out,
+    output logic [31:0] rs1_value_out,
+`endif
+
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
@@ -164,6 +180,15 @@ module rv32_execute (
 
     always_ff @(posedge clk) begin
         if (!stall_in) begin
+`ifdef RISCV_FORMAL
+            pc_out <= pc_in;
+            next_pc_out <= next_pc_in;
+            rs1_out <= rs1_in;
+            rs2_out <= rs2_in;
+            instr_out <= instr_in;
+            rs1_value_out <= rs1_value;
+`endif
+
             branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in;
             mem_read_out <= mem_read_in;
