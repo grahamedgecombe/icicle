@@ -156,6 +156,9 @@
 `define RV32_MCAUSE_STORE_FAULT_EXCEPTION      4'b0111
 `define RV32_MCAUSE_MACHINE_ECALL_EXCEPTION    4'b1011
 
+`define RV32_MTVEC_MODE_DIRECT   1'b0
+`define RV32_MTVEC_MODE_VECTORED 1'b1
+
 module rv32_csrs (
     input clk,
     input reset,
