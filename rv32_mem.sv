@@ -72,7 +72,7 @@ module rv32_mem (
     assign branch_mispredicted_out = branch_mispredicted && !flush_in;
 
     /* memory access unit */
-    logic [31:0] mem_read_value;
+    logic [31:0] read_value;
 
     assign data_read_out = read_in;
     assign data_write_out = write_in;
@@ -132,28 +132,28 @@ module rv32_mem (
         if (read_in) begin
             case (width_in)
                 `RV32_MEM_WIDTH_WORD: begin
-                    mem_read_value = data_read_value_in;
+                    read_value = data_read_value_in;
                 end
                 `RV32_MEM_WIDTH_HALF: begin
                     case (result_in[0])
-                        1'b0: mem_read_value = {{16{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:0]};
-                        1'b1: mem_read_value = {{16{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:16]};
+                        1'b0: read_value = {{16{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:0]};
+                        1'b1: read_value = {{16{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:16]};
                     endcase
                 end
                 `RV32_MEM_WIDTH_BYTE: begin
                     case (result_in[1:0])
-                        2'b00: mem_read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[7]}},  data_read_value_in[7:0]};
-                        2'b01: mem_read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:8]};
-                        2'b10: mem_read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[23]}}, data_read_value_in[23:16]};
-                        2'b11: mem_read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:24]};
+                        2'b00: read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[7]}},  data_read_value_in[7:0]};
+                        2'b01: read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:8]};
+                        2'b10: read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[23]}}, data_read_value_in[23:16]};
+                        2'b11: read_value = {{24{zero_extend_in ? 1'b0 : data_read_value_in[31]}}, data_read_value_in[31:24]};
                     endcase
                 end
                 default: begin
-                    mem_read_value = 32'bx;
+                    read_value = 32'bx;
                 end
             endcase
         end else begin
-            mem_read_value = 32'bx;
+            read_value = 32'bx;
         end
     end
 
@@ -164,7 +164,7 @@ module rv32_mem (
             rd_write_out <= rd_write_in;
 
             if (read_in)
-                rd_value_out <= mem_read_value;
+                rd_value_out <= read_value;
             else
                 rd_value_out <= result_in;
 
