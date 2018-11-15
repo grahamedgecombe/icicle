@@ -18,7 +18,6 @@ module rv32_execute (
     output logic [4:0] rs2_out,
 
     /* debug data out */
-    output logic [31:0] pc_out,
     output logic [31:0] next_pc_out,
     output logic [31:0] instr_out,
 `endif
@@ -49,6 +48,8 @@ module rv32_execute (
     input csr_src_in,
     input [1:0] branch_op_in,
     input branch_pc_src_in,
+    input ecall_in,
+    input ebreak_in,
     input mret_in,
     input [4:0] rd_in,
     input rd_write_in,
@@ -80,11 +81,14 @@ module rv32_execute (
     output logic [1:0] csr_write_op_out,
     output logic csr_src_out,
     output logic [1:0] branch_op_out,
+    output logic ecall_out,
+    output logic ebreak_out,
     output logic mret_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
 
     /* data out */
+    output logic [31:0] pc_out,
     output logic [31:0] result_out,
     output logic [31:0] rs1_value_out,
     output logic [31:0] rs2_value_out,
@@ -152,7 +156,6 @@ module rv32_execute (
     always_ff @(posedge clk) begin
         if (!stall_in) begin
 `ifdef RISCV_FORMAL
-            pc_out <= pc_in;
             next_pc_out <= next_pc_in;
             rs1_out <= rs1_in;
             rs2_out <= rs2_in;
@@ -171,9 +174,12 @@ module rv32_execute (
             csr_write_op_out <= csr_write_op_in;
             csr_src_out <= csr_src_in;
             branch_op_out <= branch_op_in;
+            ecall_out <= ecall_in;
+            ebreak_out <= ebreak_in;
             mret_out <= mret_in;
             rd_out <= rd_in;
             rd_write_out <= rd_write_in;
+            pc_out <= pc_in;
             rs1_value_out <= rs1_value;
             rs2_value_out <= rs2_value;
             imm_value_out <= imm_value_in;
@@ -189,6 +195,8 @@ module rv32_execute (
                 csr_read_out <= 0;
                 csr_write_out <= 0;
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
+                ecall_out <= 0;
+                ebreak_out <= 0;
                 mret_out <= 0;
                 rd_write_out <= 0;
             end
@@ -205,6 +213,8 @@ module rv32_execute (
             csr_read_out <= 0;
             csr_write_out <= 0;
             branch_op_out <= 0;
+            ecall_out <= 0;
+            ebreak_out <= 0;
             mret_out <= 0;
             rd_out <= 0;
             rd_write_out <= 0;

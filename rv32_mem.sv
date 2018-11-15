@@ -18,7 +18,6 @@ module rv32_mem (
     input [4:0] rs2_in,
 
     /* debug data in */
-    input [31:0] pc_in,
     input [31:0] next_pc_in,
     input [31:0] instr_in,
 
@@ -56,11 +55,14 @@ module rv32_mem (
     input [1:0] csr_write_op_in,
     input csr_src_in,
     input [1:0] branch_op_in,
+    input ecall_in,
+    input ebreak_in,
     input mret_in,
     input [4:0] rd_in,
     input rd_write_in,
 
     /* data in */
+    input [31:0] pc_in,
     input [31:0] result_in,
     input [31:0] rs1_value_in,
     input [31:0] rs2_value_in,
@@ -237,12 +239,15 @@ module rv32_mem (
         .write_in(csr_write_in),
         .write_op_in(csr_write_op_in),
         .src_in(csr_src_in),
+        .ecall_in(ecall_in),
+        .ebreak_in(ebreak_in),
         .mret_in(mret_in),
 
         /* control in (from writeback) */
         .instr_retired_in(valid_out),
 
         /* data in */
+        .pc_in(pc_in),
         .rs1_value_in(rs1_value_in),
         .imm_value_in(imm_value_in),
         .csr_in(csr_in),

@@ -100,6 +100,8 @@ module rv32 #(
     logic decode_csr_src;
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
+    logic decode_ecall;
+    logic decode_ebreak;
     logic decode_mret;
     logic [4:0] decode_rd;
     logic decode_rd_write;
@@ -117,7 +119,6 @@ module rv32 #(
     logic [4:0] execute_rs2;
 
     /* execute -> mem debug data */
-    logic [31:0] execute_pc;
     logic [31:0] execute_next_pc;
     logic [31:0] execute_instr;
 `endif
@@ -135,11 +136,14 @@ module rv32 #(
     logic [1:0] execute_csr_write_op;
     logic execute_csr_src;
     logic [1:0] execute_branch_op;
+    logic execute_ecall;
+    logic execute_ebreak;
     logic execute_mret;
     logic [4:0] execute_rd;
     logic execute_rd_write;
 
     /* execute -> mem data */
+    logic [31:0] execute_pc;
     logic [31:0] execute_result;
     logic [31:0] execute_rs1_value;
     logic [31:0] execute_rs2_value;
@@ -327,6 +331,8 @@ module rv32 #(
         .csr_src_out(decode_csr_src),
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
+        .ecall_out(decode_ecall),
+        .ebreak_out(decode_ebreak),
         .mret_out(decode_mret),
         .rd_out(decode_rd),
         .rd_write_out(decode_rd_write),
@@ -353,7 +359,6 @@ module rv32 #(
         .rs2_out(execute_rs2),
 
         /* debug data out */
-        .pc_out(execute_pc),
         .next_pc_out(execute_next_pc),
         .instr_out(execute_instr),
 `endif
@@ -384,6 +389,8 @@ module rv32 #(
         .csr_src_in(decode_csr_src),
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
+        .ecall_in(decode_ecall),
+        .ebreak_in(decode_ebreak),
         .mret_in(decode_mret),
         .rd_in(decode_rd),
         .rd_write_in(decode_rd_write),
@@ -415,11 +422,14 @@ module rv32 #(
         .csr_write_op_out(execute_csr_write_op),
         .csr_src_out(execute_csr_src),
         .branch_op_out(execute_branch_op),
+        .ecall_out(execute_ecall),
+        .ebreak_out(execute_ebreak),
         .mret_out(execute_mret),
         .rd_out(execute_rd),
         .rd_write_out(execute_rd_write),
 
         /* data out */
+        .pc_out(execute_pc),
         .result_out(execute_result),
         .rs1_value_out(execute_rs1_value),
         .rs2_value_out(execute_rs2_value),
@@ -438,7 +448,6 @@ module rv32 #(
         .rs2_in(execute_rs2),
 
         /* debug data in */
-        .pc_in(execute_pc),
         .next_pc_in(execute_next_pc),
         .instr_in(execute_instr),
 
@@ -476,11 +485,14 @@ module rv32 #(
         .csr_write_op_in(execute_csr_write_op),
         .csr_src_in(execute_csr_src),
         .branch_op_in(execute_branch_op),
+        .ecall_in(execute_ecall),
+        .ebreak_in(execute_ebreak),
         .mret_in(execute_mret),
         .rd_in(execute_rd),
         .rd_write_in(execute_rd_write),
 
         /* data in */
+        .pc_in(execute_pc),
         .result_in(execute_result),
         .rs1_value_in(execute_rs1_value),
         .rs2_value_in(execute_rs2_value),
