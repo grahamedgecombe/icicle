@@ -20,9 +20,11 @@ module rv32_fetch #(
     input flush_in,
 
     /* control in (from mem) */
+    input trap_in,
     input branch_mispredicted_in,
 
     /* data in (from mem) */
+    input [31:0] trap_pc_in,
     input [31:0] branch_pc_in,
 
     /* data in (from memory bus) */
@@ -45,8 +47,8 @@ module rv32_fetch #(
     logic [31:0] pc;
     logic [31:0] next_pc;
 
-    logic branch_mispredicted;
-    logic [31:0] branch_pc;
+    logic overwrite_pc;
+    logic [31:0] overwritten_pc;
 
     logic sign;
     logic [31:0] imm_j;
@@ -80,8 +82,10 @@ module rv32_fetch #(
             end
         endcase
 
-        if (branch_mispredicted)
-            next_pc = branch_pc;
+        if (overwrite_pc)
+            next_pc = overwritten_pc;
+        else if (trap_in)
+            next_pc = trap_pc_in;
         else if (branch_mispredicted_in)
             next_pc = branch_pc_in;
         else
@@ -95,12 +99,12 @@ module rv32_fetch #(
 
     always_ff @(posedge clk) begin
         if (pcgen_stall_in) begin
-            if (!branch_mispredicted && branch_mispredicted_in) begin
-                branch_mispredicted <= 1;
-                branch_pc <= branch_pc_in;
+            if (!overwrite_pc && (trap_in || branch_mispredicted_in)) begin
+                overwrite_pc <= 1;
+                overwritten_pc <= trap_in ? trap_pc_in : branch_pc_in;
             end
         end else begin
-            branch_mispredicted <= 0;
+            overwrite_pc <= 0;
             pc <= next_pc;
         end
 
@@ -113,7 +117,7 @@ module rv32_fetch #(
             next_pc_out <= next_pc;
 `endif
 
-            if (flush_in || branch_mispredicted) begin
+            if (flush_in || overwrite_pc) begin
                 valid_out <= 0;
                 branch_predicted_taken_out <= 0;
                 instr_out <= `RV32_INSTR_NOP;
@@ -122,7 +126,7 @@ module rv32_fetch #(
         end
 
         if (reset) begin
-            branch_mispredicted <= 0;
+            overwrite_pc <= 0;
             valid_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;

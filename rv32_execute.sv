@@ -49,6 +49,7 @@ module rv32_execute (
     input csr_src_in,
     input [1:0] branch_op_in,
     input branch_pc_src_in,
+    input mret_in,
     input [4:0] rd_in,
     input rd_write_in,
 
@@ -79,6 +80,7 @@ module rv32_execute (
     output logic [1:0] csr_write_op_out,
     output logic csr_src_out,
     output logic [1:0] branch_op_out,
+    output logic mret_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
 
@@ -169,6 +171,7 @@ module rv32_execute (
             csr_write_op_out <= csr_write_op_in;
             csr_src_out <= csr_src_in;
             branch_op_out <= branch_op_in;
+            mret_out <= mret_in;
             rd_out <= rd_in;
             rd_write_out <= rd_write_in;
             rs1_value_out <= rs1_value;
@@ -186,6 +189,7 @@ module rv32_execute (
                 csr_read_out <= 0;
                 csr_write_out <= 0;
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
+                mret_out <= 0;
                 rd_write_out <= 0;
             end
         end
@@ -201,6 +205,7 @@ module rv32_execute (
             csr_read_out <= 0;
             csr_write_out <= 0;
             branch_op_out <= 0;
+            mret_out <= 0;
             rd_out <= 0;
             rd_write_out <= 0;
             rs2_value_out <= 0;

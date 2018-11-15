@@ -64,6 +64,7 @@ module rv32_decode (
     output logic csr_src_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
+    output logic mret_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
 
@@ -123,6 +124,7 @@ module rv32_decode (
     logic csr_src;
     logic [1:0] branch_op;
     logic branch_pc_src;
+    logic mret;
     logic rd_write;
 
     assign rs1_read_unreg_out = rs1_read;
@@ -157,6 +159,7 @@ module rv32_decode (
         .csr_src_out(csr_src),
         .branch_op_out(branch_op),
         .branch_pc_src_out(branch_pc_src),
+        .mret_out(mret),
         .rd_write_out(rd_write)
     );
 
@@ -203,6 +206,7 @@ module rv32_decode (
             csr_src_out <= csr_src;
             branch_op_out <= branch_op;
             branch_pc_src_out <= branch_pc_src;
+            mret_out <= mret;
             rd_out <= rd;
             rd_write_out <= rd_write;
 
@@ -218,6 +222,7 @@ module rv32_decode (
                 csr_read_out <= 0;
                 csr_write_out <= 0;
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
+                mret_out <= 0;
                 rd_write_out <= 0;
             end
         end
@@ -242,6 +247,7 @@ module rv32_decode (
             csr_src_out <= 0;
             branch_op_out <= 0;
             branch_pc_src_out <= 0;
+            mret_out <= 0;
             rd_out <= 0;
             rd_write_out <= 0;
 

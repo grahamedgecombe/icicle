@@ -56,6 +56,7 @@ module rv32_mem (
     input [1:0] csr_write_op_in,
     input csr_src_in,
     input [1:0] branch_op_in,
+    input mret_in,
     input [4:0] rd_in,
     input rd_write_in,
 
@@ -72,6 +73,7 @@ module rv32_mem (
 
     /* control out */
     output logic valid_out,
+    output logic trap_out,
     output logic branch_mispredicted_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
@@ -83,6 +85,7 @@ module rv32_mem (
 
     /* data out */
     output logic [31:0] rd_value_out,
+    output logic [31:0] trap_pc_out,
     output logic [31:0] branch_pc_out,
 
     /* data out (to data memory bus) */
@@ -234,6 +237,7 @@ module rv32_mem (
         .write_in(csr_write_in),
         .write_op_in(csr_write_op_in),
         .src_in(csr_src_in),
+        .mret_in(mret_in),
 
         /* control in (from writeback) */
         .instr_retired_in(valid_out),
@@ -243,18 +247,35 @@ module rv32_mem (
         .imm_value_in(imm_value_in),
         .csr_in(csr_in),
 
+        /* control out */
+        .trap_out(trap_out),
+
         /* data out */
         .read_value_out(csr_read_value),
+        .trap_pc_out(trap_pc_out),
 
         /* data out (to timer) */
         .cycle_out(cycle_out)
     );
 
+    logic [31:0] next_pc;
+
+`ifdef RISCV_FORMAL
+    always_comb begin
+        if (trap_out)
+            next_pc = trap_pc_out;
+        else if (branch_mispredicted)
+            next_pc = branch_pc_in;
+        else
+            next_pc = next_pc_in;
+    end
+`endif
+
     always_ff @(posedge clk) begin
         if (!stall_in) begin
 `ifdef RISCV_FORMAL
             pc_out <= pc_in;
-            next_pc_out <= branch_mispredicted ? branch_pc_in : next_pc_in;
+            next_pc_out <= next_pc;
             rs1_out <= rs1_in;
             rs2_out <= rs2_in;
             instr_out <= instr_in;

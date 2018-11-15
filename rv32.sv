@@ -100,6 +100,7 @@ module rv32 #(
     logic decode_csr_src;
     logic [1:0] decode_branch_op;
     logic decode_branch_pc_src;
+    logic decode_mret;
     logic [4:0] decode_rd;
     logic decode_rd_write;
 
@@ -134,6 +135,7 @@ module rv32 #(
     logic [1:0] execute_csr_write_op;
     logic execute_csr_src;
     logic [1:0] execute_branch_op;
+    logic execute_mret;
     logic [4:0] execute_rd;
     logic execute_rd_write;
 
@@ -169,12 +171,14 @@ module rv32 #(
     logic mem_rd_write;
 
     /* mem -> fetch control */
+    logic mem_trap;
     logic mem_branch_mispredicted;
 
     /* mem -> writeback data */
     logic [31:0] mem_rd_value;
 
     /* mem -> fetch data */
+    logic [31:0] mem_trap_pc;
     logic [31:0] mem_branch_pc;
 
     rv32_hazard_unit hazard_unit (
@@ -193,6 +197,7 @@ module rv32 #(
 
         .execute_mem_fence_in(execute_mem_fence),
 
+        .mem_trap_in(mem_trap),
         .mem_branch_mispredicted_in(mem_branch_mispredicted),
 
         .instr_read_in(instr_read_out),
@@ -237,6 +242,7 @@ module rv32 #(
         .flush_in(fetch_flush),
 
         /* control in (from mem) */
+        .trap_in(mem_trap),
         .branch_mispredicted_in(mem_branch_mispredicted),
 
         /* control out (to memory bus) */
@@ -247,6 +253,7 @@ module rv32 #(
         .branch_predicted_taken_out(fetch_branch_predicted_taken),
 
         /* data in (from mem) */
+        .trap_pc_in(mem_trap_pc),
         .branch_pc_in(mem_branch_pc),
 
         /* data in (from memory bus) */
@@ -320,6 +327,7 @@ module rv32 #(
         .csr_src_out(decode_csr_src),
         .branch_op_out(decode_branch_op),
         .branch_pc_src_out(decode_branch_pc_src),
+        .mret_out(decode_mret),
         .rd_out(decode_rd),
         .rd_write_out(decode_rd_write),
 
@@ -376,6 +384,7 @@ module rv32 #(
         .csr_src_in(decode_csr_src),
         .branch_op_in(decode_branch_op),
         .branch_pc_src_in(decode_branch_pc_src),
+        .mret_in(decode_mret),
         .rd_in(decode_rd),
         .rd_write_in(decode_rd_write),
 
@@ -406,6 +415,7 @@ module rv32 #(
         .csr_write_op_out(execute_csr_write_op),
         .csr_src_out(execute_csr_src),
         .branch_op_out(execute_branch_op),
+        .mret_out(execute_mret),
         .rd_out(execute_rd),
         .rd_write_out(execute_rd_write),
 
@@ -466,6 +476,7 @@ module rv32 #(
         .csr_write_op_in(execute_csr_write_op),
         .csr_src_in(execute_csr_src),
         .branch_op_in(execute_branch_op),
+        .mret_in(execute_mret),
         .rd_in(execute_rd),
         .rd_write_in(execute_rd_write),
 
@@ -482,6 +493,7 @@ module rv32 #(
 
         /* control out */
         .valid_out(mem_valid),
+        .trap_out(mem_trap),
         .branch_mispredicted_out(mem_branch_mispredicted),
         .rd_out(mem_rd),
         .rd_write_out(mem_rd_write),
@@ -493,6 +505,7 @@ module rv32 #(
 
         /* data out */
         .rd_value_out(mem_rd_value),
+        .trap_pc_out(mem_trap_pc),
         .branch_pc_out(mem_branch_pc),
 
         /* data out (to memory bus) */

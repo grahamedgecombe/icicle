@@ -36,6 +36,7 @@ module rv32_control_unit (
     output logic csr_src_out,
     output logic [1:0] branch_op_out,
     output logic branch_pc_src_out,
+    output logic mret_out,
     output logic rd_write_out
 );
     always_comb begin
@@ -58,6 +59,7 @@ module rv32_control_unit (
         csr_src_out = 1'bx;
         branch_op_out = `RV32_BRANCH_OP_NEVER;
         branch_pc_src_out = 1'bx;
+        mret_out = 0;
         rd_write_out = 0;
 
         casez (instr_in)
@@ -473,7 +475,7 @@ module rv32_control_unit (
             end
             `RV32_INSTR_MRET: begin
                 valid_out = 1;
-                // TODO
+                mret_out = 1;
             end
             `RV32_INSTR_WFI: begin
                 valid_out = 1;

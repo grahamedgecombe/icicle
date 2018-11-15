@@ -17,6 +17,7 @@ module rv32_hazard_unit (
 
     input execute_mem_fence_in,
 
+    input mem_trap_in,
     input mem_branch_mispredicted_in,
 
     input instr_read_in,
@@ -60,13 +61,13 @@ module rv32_hazard_unit (
     assign pcgen_stall_out = fetch_stall_out || pcgen_wait_for_bus;
 
     assign fetch_stall_out = decode_stall_out || fetch_wait_for_mem_read || fetch_wait_for_mem_fence;
-    assign fetch_flush_out = pcgen_stall_out || mem_branch_mispredicted_in;
+    assign fetch_flush_out = pcgen_stall_out || mem_trap_in || mem_branch_mispredicted_in;
 
     assign decode_stall_out = execute_stall_out;
-    assign decode_flush_out = fetch_stall_out || mem_branch_mispredicted_in;
+    assign decode_flush_out = fetch_stall_out || mem_trap_in || mem_branch_mispredicted_in;
 
     assign execute_stall_out = mem_stall_out || execute_wait_for_bus;
-    assign execute_flush_out = decode_stall_out || mem_branch_mispredicted_in;
+    assign execute_flush_out = decode_stall_out || mem_trap_in || mem_branch_mispredicted_in;
 
     assign mem_stall_out = 0;
     assign mem_flush_out = execute_stall_out;

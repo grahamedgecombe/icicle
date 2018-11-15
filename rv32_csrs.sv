@@ -171,6 +171,7 @@ module rv32_csrs (
     input write_in,
     input [1:0] write_op_in,
     input src_in,
+    input mret_in,
 
     /* control in (from writeback) */
     input instr_retired_in,
@@ -180,8 +181,12 @@ module rv32_csrs (
     input [31:0] rs1_value_in,
     input [31:0] imm_value_in,
 
+    /* control out */
+    output logic trap_out,
+
     /* data out */
     output logic [31:0] read_value_out,
+    output logic [31:0] trap_pc_out,
     output logic [63:0] cycle_out
 );
     logic [31:0] write_value;
@@ -351,17 +356,36 @@ module rv32_csrs (
         endcase
     end
 
+    always_comb begin
+        trap_out = 0;
+        trap_pc_out = 32'bx;
+
+        if (!stall_in && !flush_in) begin
+            if (mret_in) begin
+                trap_out = 1;
+                trap_pc_out = {mepc, 2'b0};
+            end
+        end
+    end
+
     always_ff @(posedge clk) begin
-        if (!stall_in && !flush_in && write_in) begin
-            case (csr_in)
-                `RV32_CSR_MSTATUS:  {mstatus_mpie, mstatus_mie} <= {new_value[7], new_value[3]};
-                `RV32_CSR_MIE:      {mie_meie, mie_mtie, mie_msie} <= {new_value[11], new_value[7], new_value[3]};
-                `RV32_CSR_MTVEC:    {mtvec_base, mtvec_mode} <= {new_value[31:2], new_value[0]};
-                `RV32_CSR_MSCRATCH: mscratch <= new_value;
-                `RV32_CSR_MEPC:     mepc <= new_value[31:2];
-                `RV32_CSR_MCAUSE:   {mcause_interrupt, mcause_code} <= {new_value[31], new_value[3:0]};
-                `RV32_CSR_MTVAL:    mtval <= new_value;
-            endcase
+        if (!stall_in && !flush_in) begin
+            if (write_in) begin
+                case (csr_in)
+                    `RV32_CSR_MSTATUS:  {mstatus_mpie, mstatus_mie} <= {new_value[7], new_value[3]};
+                    `RV32_CSR_MIE:      {mie_meie, mie_mtie, mie_msie} <= {new_value[11], new_value[7], new_value[3]};
+                    `RV32_CSR_MTVEC:    {mtvec_base, mtvec_mode} <= {new_value[31:2], new_value[0]};
+                    `RV32_CSR_MSCRATCH: mscratch <= new_value;
+                    `RV32_CSR_MEPC:     mepc <= new_value[31:2];
+                    `RV32_CSR_MCAUSE:   {mcause_interrupt, mcause_code} <= {new_value[31], new_value[3:0]};
+                    `RV32_CSR_MTVAL:    mtval <= new_value;
+                endcase
+            end
+
+            if (mret_in) begin
+                mstatus_mie <= mstatus_mpie;
+                mstatus_mpie <= 1;
+            end
         end
 
         cycle <= cycle + 1;
