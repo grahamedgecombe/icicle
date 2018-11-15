@@ -2,6 +2,7 @@
 `define RV32_MEM
 
 `include "rv32_branch.sv"
+`include "rv32_csrs.sv"
 
 `define RV32_MEM_WIDTH_WORD 2'b00
 `define RV32_MEM_WIDTH_HALF 2'b01
@@ -20,7 +21,6 @@ module rv32_mem (
     input [31:0] pc_in,
     input [31:0] next_pc_in,
     input [31:0] instr_in,
-    input [31:0] rs1_value_in,
 
     /* debug control out */
     output logic [4:0] rs1_out,
@@ -42,6 +42,7 @@ module rv32_mem (
     /* control in (from hazard) */
     input stall_in,
     input flush_in,
+    input writeback_flush_in,
 
     /* control in */
     input branch_predicted_taken_in,
@@ -50,14 +51,21 @@ module rv32_mem (
     input write_in,
     input [1:0] width_in,
     input zero_extend_in,
+    input csr_read_in,
+    input csr_write_in,
+    input [1:0] csr_write_op_in,
+    input csr_src_in,
     input [1:0] branch_op_in,
     input [4:0] rd_in,
     input rd_write_in,
 
     /* data in */
     input [31:0] result_in,
+    input [31:0] rs1_value_in,
     input [31:0] rs2_value_in,
+    input [31:0] imm_value_in,
     input [31:0] branch_pc_in,
+    input [11:0] csr_in,
 
     /* data in (from data memory bus) */
     input [31:0] data_read_value_in,
@@ -79,7 +87,10 @@ module rv32_mem (
 
     /* data out (to data memory bus) */
     output logic [31:0] data_address_out,
-    output logic [31:0] data_write_value_out
+    output logic [31:0] data_write_value_out,
+
+    /* data out (to timer) */
+    output logic [63:0] cycle_out
 );
     logic branch_mispredicted;
 
@@ -207,6 +218,38 @@ module rv32_mem (
         end
     end
 
+    /* csr file */
+    logic [31:0] csr_read_value;
+    logic [63:0] cycle;
+
+    rv32_csrs csrs (
+        .clk(clk),
+        .reset(reset),
+        .stall_in(stall_in),
+        .flush_in(flush_in),
+        .writeback_flush_in(writeback_flush_in),
+
+        /* control in */
+        .read_in(csr_read_in),
+        .write_in(csr_write_in),
+        .write_op_in(csr_write_op_in),
+        .src_in(csr_src_in),
+
+        /* control in (from writeback) */
+        .instr_retired_in(valid_out),
+
+        /* data in */
+        .rs1_value_in(rs1_value_in),
+        .imm_value_in(imm_value_in),
+        .csr_in(csr_in),
+
+        /* data out */
+        .read_value_out(csr_read_value),
+
+        /* data out (to timer) */
+        .cycle_out(cycle_out)
+    );
+
     always_ff @(posedge clk) begin
         if (!stall_in) begin
 `ifdef RISCV_FORMAL
@@ -230,6 +273,8 @@ module rv32_mem (
 
             if (read_in)
                 rd_value_out <= read_value;
+            else if (csr_read_in)
+                rd_value_out <= csr_read_value;
             else
                 rd_value_out <= result_in;
 

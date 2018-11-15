@@ -11,6 +11,7 @@ module rv32_hazard_unit (
 
     input decode_mem_read_in,
     input decode_mem_fence_in,
+    input decode_csr_read_in,
     input [4:0] decode_rd_in,
     input decode_rd_write_in,
 
@@ -52,7 +53,7 @@ module rv32_hazard_unit (
     assign rs1_matches = decode_rs1_unreg_in == decode_rd_in && decode_rs1_read_unreg_in;
     assign rs2_matches = decode_rs2_unreg_in == decode_rd_in && decode_rs2_read_unreg_in;
     assign pcgen_wait_for_bus = instr_read_in && !instr_ready_in;
-    assign fetch_wait_for_mem_read = (rs1_matches || rs2_matches) && |decode_rd_in && decode_mem_read_in && decode_rd_write_in;
+    assign fetch_wait_for_mem_read = (rs1_matches || rs2_matches) && |decode_rd_in && (decode_mem_read_in || decode_csr_read_in) && decode_rd_write_in;
     assign fetch_wait_for_mem_fence = decode_mem_fence_unreg_in || decode_mem_fence_in || execute_mem_fence_in;
     assign execute_wait_for_bus = (data_read_in || data_write_in) && !data_ready_in;
 

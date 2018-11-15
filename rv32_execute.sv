@@ -3,7 +3,6 @@
 
 `include "rv32_alu.sv"
 `include "rv32_branch.sv"
-`include "rv32_csrs.sv"
 
 module rv32_execute (
     input clk,
@@ -22,7 +21,6 @@ module rv32_execute (
     output logic [31:0] pc_out,
     output logic [31:0] next_pc_out,
     output logic [31:0] instr_out,
-    output logic [31:0] rs1_value_out,
 `endif
 
     /* control in (from hazard) */
@@ -55,7 +53,6 @@ module rv32_execute (
     input rd_write_in,
 
     /* control in (from writeback) */
-    input writeback_valid_in,
     input [4:0] writeback_rd_in,
     input writeback_rd_write_in,
 
@@ -77,17 +74,21 @@ module rv32_execute (
     output logic [1:0] mem_width_out,
     output logic mem_zero_extend_out,
     output logic mem_fence_out,
+    output logic csr_read_out,
+    output logic csr_write_out,
+    output logic [1:0] csr_write_op_out,
+    output logic csr_src_out,
     output logic [1:0] branch_op_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
 
     /* data out */
     output logic [31:0] result_out,
+    output logic [31:0] rs1_value_out,
     output logic [31:0] rs2_value_out,
-    output logic [31:0] branch_pc_out,
-
-    /* data out (to timer) */
-    output logic [63:0] cycle_out
+    output logic [31:0] imm_value_out,
+    output logic [11:0] csr_out,
+    output logic [31:0] branch_pc_out
 );
     /* bypassing */
     logic [31:0] rs1_value;
@@ -129,38 +130,6 @@ module rv32_execute (
         .result_out(alu_result)
     );
 
-    /* csr file */
-    logic [31:0] csr_read_value;
-    logic [63:0] cycle;
-
-    rv32_csrs csrs (
-        .clk(clk),
-        .reset(reset),
-        .stall_in(stall_in),
-        .flush_in(flush_in),
-        .writeback_flush_in(writeback_flush_in),
-
-        /* control in */
-        .read_in(csr_read_in),
-        .write_in(csr_write_in),
-        .write_op_in(csr_write_op_in),
-        .src_in(csr_src_in),
-
-        /* control in (from writeback) */
-        .instr_retired_in(writeback_valid_in),
-
-        /* data in */
-        .rs1_value_in(rs1_value),
-        .imm_value_in(imm_value_in),
-        .csr_in(csr_in),
-
-        /* data out */
-        .read_value_out(csr_read_value),
-
-        /* data out (to timer) */
-        .cycle_out(cycle_out)
-    );
-
     /* branch target calculation */
     logic [31:0] branch_pc;
 
@@ -186,7 +155,6 @@ module rv32_execute (
             rs1_out <= rs1_in;
             rs2_out <= rs2_in;
             instr_out <= instr_in;
-            rs1_value_out <= rs1_value;
 `endif
 
             branch_predicted_taken_out <= branch_predicted_taken_in;
@@ -196,22 +164,27 @@ module rv32_execute (
             mem_width_out <= mem_width_in;
             mem_zero_extend_out <= mem_zero_extend_in;
             mem_fence_out <= mem_fence_in;
+            csr_read_out <= csr_read_in;
+            csr_write_out <= csr_write_in;
+            csr_write_op_out <= csr_write_op_in;
+            csr_src_out <= csr_src_in;
             branch_op_out <= branch_op_in;
             rd_out <= rd_in;
             rd_write_out <= rd_write_in;
+            rs1_value_out <= rs1_value;
             rs2_value_out <= rs2_value;
+            imm_value_out <= imm_value_in;
+            csr_out <= csr_in;
             branch_pc_out <= branch_pc;
-
-            if (csr_read_in)
-                result_out <= csr_read_value;
-            else
-                result_out <= alu_result;
+            result_out <= alu_result;
 
             if (flush_in) begin
                 branch_predicted_taken_out <= 0;
                 valid_out <= 0;
                 mem_read_out <= 0;
                 mem_write_out <= 0;
+                csr_read_out <= 0;
+                csr_write_out <= 0;
                 branch_op_out <= `RV32_BRANCH_OP_NEVER;
                 rd_write_out <= 0;
             end
@@ -225,6 +198,8 @@ module rv32_execute (
             mem_width_out <= 0;
             mem_zero_extend_out <= 0;
             mem_fence_out <= 0;
+            csr_read_out <= 0;
+            csr_write_out <= 0;
             branch_op_out <= 0;
             rd_out <= 0;
             rd_write_out <= 0;

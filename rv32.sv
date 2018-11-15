@@ -119,7 +119,6 @@ module rv32 #(
     logic [31:0] execute_pc;
     logic [31:0] execute_next_pc;
     logic [31:0] execute_instr;
-    logic [31:0] execute_rs1_value;
 `endif
 
     /* execute -> mem control */
@@ -130,13 +129,20 @@ module rv32 #(
     logic [1:0] execute_mem_width;
     logic execute_mem_zero_extend;
     logic execute_mem_fence;
+    logic execute_csr_read;
+    logic execute_csr_write;
+    logic [1:0] execute_csr_write_op;
+    logic execute_csr_src;
     logic [1:0] execute_branch_op;
     logic [4:0] execute_rd;
     logic execute_rd_write;
 
     /* execute -> mem data */
     logic [31:0] execute_result;
+    logic [31:0] execute_rs1_value;
     logic [31:0] execute_rs2_value;
+    logic [31:0] execute_imm_value;
+    logic [11:0] execute_csr;
     logic [31:0] execute_branch_pc;
 
 `ifdef RISCV_FORMAL
@@ -181,6 +187,7 @@ module rv32 #(
 
         .decode_mem_read_in(decode_mem_read),
         .decode_mem_fence_in(decode_mem_fence),
+        .decode_csr_read_in(decode_csr_read),
         .decode_rd_in(decode_rd),
         .decode_rd_write_in(decode_rd_write),
 
@@ -341,7 +348,6 @@ module rv32 #(
         .pc_out(execute_pc),
         .next_pc_out(execute_next_pc),
         .instr_out(execute_instr),
-        .rs1_value_out(execute_rs1_value),
 `endif
 
         /* control in (from hazard) */
@@ -374,7 +380,6 @@ module rv32 #(
         .rd_write_in(decode_rd_write),
 
         /* control in (from writeback) */
-        .writeback_valid_in(mem_valid),
         .writeback_rd_in(mem_rd),
         .writeback_rd_write_in(mem_rd_write),
 
@@ -396,17 +401,21 @@ module rv32 #(
         .mem_width_out(execute_mem_width),
         .mem_zero_extend_out(execute_mem_zero_extend),
         .mem_fence_out(execute_mem_fence),
+        .csr_read_out(execute_csr_read),
+        .csr_write_out(execute_csr_write),
+        .csr_write_op_out(execute_csr_write_op),
+        .csr_src_out(execute_csr_src),
         .branch_op_out(execute_branch_op),
         .rd_out(execute_rd),
         .rd_write_out(execute_rd_write),
 
         /* data out */
         .result_out(execute_result),
+        .rs1_value_out(execute_rs1_value),
         .rs2_value_out(execute_rs2_value),
-        .branch_pc_out(execute_branch_pc),
-
-        /* data out (to timer) */
-        .cycle_out(cycle_out)
+        .imm_value_out(execute_imm_value),
+        .csr_out(execute_csr),
+        .branch_pc_out(execute_branch_pc)
     );
 
     rv32_mem mem (
@@ -422,7 +431,6 @@ module rv32 #(
         .pc_in(execute_pc),
         .next_pc_in(execute_next_pc),
         .instr_in(execute_instr),
-        .rs1_value_in(execute_rs1_value),
 
         /* debug control out */
         .rs1_out(mem_rs1),
@@ -444,6 +452,7 @@ module rv32 #(
         /* control in (from hazard) */
         .stall_in(mem_stall),
         .flush_in(mem_flush),
+        .writeback_flush_in(writeback_flush),
 
         /* control in */
         .branch_predicted_taken_in(execute_branch_predicted_taken),
@@ -452,13 +461,20 @@ module rv32 #(
         .write_in(execute_mem_write),
         .width_in(execute_mem_width),
         .zero_extend_in(execute_mem_zero_extend),
+        .csr_read_in(execute_csr_read),
+        .csr_write_in(execute_csr_write),
+        .csr_write_op_in(execute_csr_write_op),
+        .csr_src_in(execute_csr_src),
         .branch_op_in(execute_branch_op),
         .rd_in(execute_rd),
         .rd_write_in(execute_rd_write),
 
         /* data in */
         .result_in(execute_result),
+        .rs1_value_in(execute_rs1_value),
         .rs2_value_in(execute_rs2_value),
+        .imm_value_in(execute_imm_value),
+        .csr_in(execute_csr),
         .branch_pc_in(execute_branch_pc),
 
         /* data in (from memory bus) */
@@ -481,7 +497,10 @@ module rv32 #(
 
         /* data out (to memory bus) */
         .data_address_out(data_address_out),
-        .data_write_value_out(data_write_value_out)
+        .data_write_value_out(data_write_value_out),
+
+        /* data out (to timer) */
+        .cycle_out(cycle_out)
     );
 
     rv32_writeback writeback (
