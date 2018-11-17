@@ -90,6 +90,7 @@ module top (
     logic instr_read;
     logic [31:0] instr_read_value;
     logic instr_ready;
+    logic instr_fault;
 
     /* data memory bus */
     logic [31:0] data_address;
@@ -99,6 +100,7 @@ module top (
     logic [3:0] data_write_mask;
     logic [31:0] data_write_value;
     logic data_ready;
+    logic data_fault;
 
     /* memory bus */
     logic [31:0] mem_address;
@@ -108,9 +110,10 @@ module top (
     logic [3:0] mem_write_mask;
     logic [31:0] mem_write_value;
     logic mem_ready;
+    logic mem_fault;
 
     assign mem_read_value = ram_read_value | leds_read_value | uart_read_value | timer_read_value | flash_read_value;
-    assign mem_ready = ram_ready | leds_ready | uart_ready | timer_ready | flash_ready;
+    assign mem_ready = ram_ready | leds_ready | uart_ready | timer_ready | flash_ready | mem_fault;
 
     bus_arbiter bus_arbiter (
         .clk(pll_clk),
@@ -121,6 +124,7 @@ module top (
         .instr_read_in(instr_read),
         .instr_read_value_out(instr_read_value),
         .instr_ready_out(instr_ready),
+        .instr_fault_out(instr_fault),
 
         /* data memory bus */
         .data_address_in(data_address),
@@ -130,6 +134,7 @@ module top (
         .data_write_mask_in(data_write_mask),
         .data_write_value_in(data_write_value),
         .data_ready_out(data_ready),
+        .data_fault_out(data_fault),
 
         /* common memory bus */
         .address_out(mem_address),
@@ -138,7 +143,8 @@ module top (
         .read_value_in(mem_read_value),
         .write_mask_out(mem_write_mask),
         .write_value_out(mem_write_value),
-        .ready_in(mem_ready)
+        .ready_in(mem_ready),
+        .fault_in(mem_fault)
     );
 
     logic [63:0] cycle;
@@ -154,6 +160,7 @@ module top (
         .instr_read_out(instr_read),
         .instr_read_value_in(instr_read_value),
         .instr_ready_in(instr_ready),
+        .instr_fault_in(instr_fault),
 
         /* data memory bus */
         .data_address_out(data_address),
@@ -163,6 +170,7 @@ module top (
         .data_write_mask_out(data_write_mask),
         .data_write_value_out(data_write_value),
         .data_ready_in(data_ready),
+        .data_fault_in(data_fault),
 
         /* timer */
         .cycle_out(cycle)
@@ -180,6 +188,7 @@ module top (
         uart_sel = 0;
         timer_sel = 0;
         flash_sel = 0;
+        mem_fault = 0;
 
         casez (mem_address)
             32'b00000000_00000000_????????_????????: ram_sel = 1;
@@ -187,6 +196,7 @@ module top (
             32'b00000000_00000010_00000000_0000????: uart_sel = 1;
             32'b00000000_00000011_00000000_0000????: timer_sel = 1;
             32'b00000001_????????_????????_????????: flash_sel = 1;
+            default:                                 mem_fault = 1;
         endcase
     end
 

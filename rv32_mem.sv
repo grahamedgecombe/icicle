@@ -22,6 +22,7 @@ module rv32_mem (
     input [31:0] instr_in,
 
     /* debug control out */
+    output logic trap_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
     output logic [3:0] read_mask_out,
@@ -45,7 +46,10 @@ module rv32_mem (
 
     /* control in */
     input branch_predicted_taken_in,
+    input branch_misaligned_in,
     input valid_in,
+    input exception_in,
+    input [3:0] exception_cause_in,
     input read_in,
     input write_in,
     input [1:0] width_in,
@@ -61,6 +65,9 @@ module rv32_mem (
     input [4:0] rd_in,
     input rd_write_in,
 
+    /* control in (from data memory bus) */
+    input data_fault_in,
+
     /* data in */
     input [31:0] pc_in,
     input [31:0] result_in,
@@ -75,7 +82,7 @@ module rv32_mem (
 
     /* control out */
     output logic valid_out,
-    output logic trap_out,
+    output logic trap_unreg_out,
     output logic branch_mispredicted_out,
     output logic [4:0] rd_out,
     output logic rd_write_out,
@@ -98,6 +105,7 @@ module rv32_mem (
     output logic [63:0] cycle_out
 );
     logic branch_mispredicted;
+    logic branch_taken;
 
     /* branch unit */
     rv32_branch_unit branch_unit (
@@ -109,6 +117,7 @@ module rv32_mem (
         .result_in(result_in),
 
         /* control out */
+        .taken_out(branch_taken),
         .mispredicted_out(branch_mispredicted)
     );
 
@@ -116,14 +125,24 @@ module rv32_mem (
     assign branch_mispredicted_out = branch_mispredicted && !flush_in;
 
     /* memory access unit */
+    logic mem_misaligned;
+
     logic [31:0] read_value;
     logic [3:0] read_mask;
 
-    assign data_read_out = read_in;
-    assign data_write_out = write_in;
+    assign data_read_out = read_in && !mem_misaligned;
+    assign data_write_out = write_in && !mem_misaligned;
     assign data_address_out = result_in;
 
     always_comb begin
+        /* alignment check */
+        case (width_in)
+            `RV32_MEM_WIDTH_WORD: mem_misaligned = result_in[1:0] != 0;
+            `RV32_MEM_WIDTH_HALF: mem_misaligned = result_in[0] != 0;
+            `RV32_MEM_WIDTH_BYTE: mem_misaligned = 0;
+            default:              mem_misaligned = 1'bx;
+        endcase
+
         /* write port */
         if (write_in) begin
             case (width_in)
@@ -223,6 +242,48 @@ module rv32_mem (
         end
     end
 
+    /* traps */
+    logic exception;
+    logic [3:0] exception_cause;
+    logic mem_exception;
+
+    always_comb begin
+        exception = 0;
+        exception_cause = 4'bx;
+        mem_exception = 0;
+
+        if (exception_in) begin
+            exception = 1;
+            exception_cause = exception_cause_in;
+        end else if (branch_taken && branch_misaligned_in) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_INSTR_MISALIGNED_EXCEPTION;
+            mem_exception = 1;
+        end else if (read_in && mem_misaligned) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_LOAD_MISALIGNED_EXCEPTION;
+            mem_exception = 1;
+        end else if (write_in && mem_misaligned) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_STORE_MISALIGNED_EXCEPTION;
+            mem_exception = 1;
+        end else if (read_in && data_fault_in) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_LOAD_FAULT_EXCEPTION;
+            mem_exception = 1;
+        end else if (write_in && data_fault_in) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_STORE_FAULT_EXCEPTION;
+            mem_exception = 1;
+        end else if (ecall_in) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_MACHINE_ECALL_EXCEPTION;
+        end else if (ebreak_in) begin
+            exception = 1;
+            exception_cause = `RV32_MCAUSE_BREAKPOINT_EXCEPTION;
+        end
+    end
+
     /* csr file */
     logic [31:0] csr_read_value;
     logic [63:0] cycle;
@@ -235,12 +296,12 @@ module rv32_mem (
         .writeback_flush_in(writeback_flush_in),
 
         /* control in */
+        .exception_in(exception),
+        .exception_cause_in(exception_cause),
         .read_in(csr_read_in),
         .write_in(csr_write_in),
         .write_op_in(csr_write_op_in),
         .src_in(csr_src_in),
-        .ecall_in(ecall_in),
-        .ebreak_in(ebreak_in),
         .mret_in(mret_in),
 
         /* control in (from writeback) */
@@ -253,7 +314,7 @@ module rv32_mem (
         .csr_in(csr_in),
 
         /* control out */
-        .trap_out(trap_out),
+        .trap_out(trap_unreg_out),
 
         /* data out */
         .read_value_out(csr_read_value),
@@ -267,7 +328,7 @@ module rv32_mem (
 
 `ifdef RISCV_FORMAL
     always_comb begin
-        if (trap_out)
+        if (trap_unreg_out)
             next_pc = trap_pc_out;
         else if (branch_mispredicted)
             next_pc = branch_pc_in;
@@ -281,6 +342,7 @@ module rv32_mem (
 `ifdef RISCV_FORMAL
             pc_out <= pc_in;
             next_pc_out <= next_pc;
+            trap_out <= trap_unreg_out;
             rs1_out <= rs1_in;
             rs2_out <= rs2_in;
             instr_out <= instr_in;
@@ -304,13 +366,21 @@ module rv32_mem (
             else
                 rd_value_out <= result_in;
 
-            if (flush_in) begin
+`ifdef RISCV_FORMAL
+            if (flush_in)
+                trap_out <= 0;
+`endif
+
+            if (flush_in || mem_exception) begin
                 valid_out <= 0;
                 rd_write_out <= 0;
             end
         end
 
         if (reset) begin
+`ifdef RISCV_FORMAL
+            trap_out <= 0;
+`endif
             valid_out <= 0;
             rd_out <= 0;
             rd_write_out <= 0;

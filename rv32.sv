@@ -23,6 +23,7 @@ module rv32 #(
     output logic instr_read_out,
     input [31:0] instr_read_value_in,
     input instr_ready_in,
+    input instr_fault_in,
 
     /* data memory bus */
     output logic [31:0] data_address_out,
@@ -32,6 +33,7 @@ module rv32 #(
     output logic [3:0] data_write_mask_out,
     output logic [31:0] data_write_value_out,
     input data_ready_in,
+    input data_fault_in,
 
     /* timer */
     output logic [63:0] cycle_out
@@ -61,6 +63,8 @@ module rv32 #(
 
     /* fetch -> decode control */
     logic fetch_valid;
+    logic fetch_exception;
+    logic [3:0] fetch_exception_cause;
     logic fetch_branch_predicted_taken;
 
     /* fetch -> decode data */
@@ -83,6 +87,8 @@ module rv32 #(
     /* decode -> execute control */
     logic decode_branch_predicted_taken;
     logic decode_valid;
+    logic decode_exception;
+    logic [3:0] decode_exception_cause;
     logic [4:0] decode_rs1;
     logic [4:0] decode_rs2;
     logic [2:0] decode_alu_op;
@@ -125,7 +131,10 @@ module rv32 #(
 
     /* execute -> mem control */
     logic execute_branch_predicted_taken;
+    logic execute_branch_misaligned;
     logic execute_valid;
+    logic execute_exception;
+    logic [3:0] execute_exception_cause;
     logic execute_mem_read;
     logic execute_mem_write;
     logic [1:0] execute_mem_width;
@@ -153,6 +162,7 @@ module rv32 #(
 
 `ifdef RISCV_FORMAL
     /* mem -> writeback debug control */
+    logic mem_trap;
     logic [4:0] mem_rs1;
     logic [4:0] mem_rs2;
     logic [3:0] mem_read_mask;
@@ -175,7 +185,7 @@ module rv32 #(
     logic mem_rd_write;
 
     /* mem -> fetch control */
-    logic mem_trap;
+    logic mem_trap_unreg;
     logic mem_branch_mispredicted;
 
     /* mem -> writeback data */
@@ -201,7 +211,7 @@ module rv32 #(
 
         .execute_mem_fence_in(execute_mem_fence),
 
-        .mem_trap_in(mem_trap),
+        .mem_trap_in(mem_trap_unreg),
         .mem_branch_mispredicted_in(mem_branch_mispredicted),
 
         .instr_read_in(instr_read_out),
@@ -246,14 +256,19 @@ module rv32 #(
         .flush_in(fetch_flush),
 
         /* control in (from mem) */
-        .trap_in(mem_trap),
+        .trap_in(mem_trap_unreg),
         .branch_mispredicted_in(mem_branch_mispredicted),
+
+        /* control in (from memory bus) */
+        .instr_fault_in(instr_fault_in),
 
         /* control out (to memory bus) */
         .instr_read_out(instr_read_out),
 
         /* control out */
         .valid_out(fetch_valid),
+        .exception_out(fetch_exception),
+        .exception_cause_out(fetch_exception_cause),
         .branch_predicted_taken_out(fetch_branch_predicted_taken),
 
         /* data in (from mem) */
@@ -291,6 +306,8 @@ module rv32 #(
 
         /* control in (from fetch) */
         .valid_in(fetch_valid),
+        .exception_in(fetch_exception),
+        .exception_cause_in(fetch_exception_cause),
         .branch_predicted_taken_in(fetch_branch_predicted_taken),
 
         /* control in (from writeback) */
@@ -314,6 +331,8 @@ module rv32 #(
         /* control out */
         .branch_predicted_taken_out(decode_branch_predicted_taken),
         .valid_out(decode_valid),
+        .exception_out(decode_exception),
+        .exception_cause_out(decode_exception_cause),
         .rs1_out(decode_rs1),
         .rs2_out(decode_rs2),
         .alu_op_out(decode_alu_op),
@@ -372,6 +391,8 @@ module rv32 #(
         /* control in */
         .branch_predicted_taken_in(decode_branch_predicted_taken),
         .valid_in(decode_valid),
+        .exception_in(decode_exception),
+        .exception_cause_in(decode_exception_cause),
         .rs1_in(decode_rs1),
         .rs2_in(decode_rs2),
         .alu_op_in(decode_alu_op),
@@ -411,7 +432,10 @@ module rv32 #(
 
         /* control out */
         .branch_predicted_taken_out(execute_branch_predicted_taken),
+        .branch_misaligned_out(execute_branch_misaligned),
         .valid_out(execute_valid),
+        .exception_out(execute_exception),
+        .exception_cause_out(execute_exception_cause),
         .mem_read_out(execute_mem_read),
         .mem_write_out(execute_mem_write),
         .mem_width_out(execute_mem_width),
@@ -452,6 +476,7 @@ module rv32 #(
         .instr_in(execute_instr),
 
         /* debug control out */
+        .trap_out(mem_trap),
         .rs1_out(mem_rs1),
         .rs2_out(mem_rs2),
         .read_mask_out(mem_read_mask),
@@ -475,7 +500,10 @@ module rv32 #(
 
         /* control in */
         .branch_predicted_taken_in(execute_branch_predicted_taken),
+        .branch_misaligned_in(execute_branch_misaligned),
         .valid_in(execute_valid),
+        .exception_in(execute_exception),
+        .exception_cause_in(execute_exception_cause),
         .read_in(execute_mem_read),
         .write_in(execute_mem_write),
         .width_in(execute_mem_width),
@@ -491,6 +519,9 @@ module rv32 #(
         .rd_in(execute_rd),
         .rd_write_in(execute_rd_write),
 
+        /* control in (from memory bus) */
+        .data_fault_in(data_fault_in),
+
         /* data in */
         .pc_in(execute_pc),
         .result_in(execute_result),
@@ -505,7 +536,7 @@ module rv32 #(
 
         /* control out */
         .valid_out(mem_valid),
-        .trap_out(mem_trap),
+        .trap_unreg_out(mem_trap_unreg),
         .branch_mispredicted_out(mem_branch_mispredicted),
         .rd_out(mem_rd),
         .rd_write_out(mem_rd_write),
@@ -535,6 +566,7 @@ module rv32 #(
 `ifdef RISCV_FORMAL
         `RVFI_CONN,
 
+        .trap_in(mem_trap),
         .rs1_in(mem_rs1),
         .rs2_in(mem_rs2),
         .mem_read_mask_in(mem_read_mask),

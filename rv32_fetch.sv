@@ -1,6 +1,7 @@
 `ifndef RV32_FETCH
 `define RV32_FETCH
 
+`include "rv32_csrs.sv"
 `include "rv32_opcodes.sv"
 
 module rv32_fetch #(
@@ -23,6 +24,9 @@ module rv32_fetch #(
     input trap_in,
     input branch_mispredicted_in,
 
+    /* control in (from memory bus) */
+    input instr_fault_in,
+
     /* data in (from mem) */
     input [31:0] trap_pc_in,
     input [31:0] branch_pc_in,
@@ -35,6 +39,8 @@ module rv32_fetch #(
 
     /* control out */
     output logic valid_out,
+    output logic exception_out,
+    output logic [3:0] exception_cause_out,
     output logic branch_predicted_taken_out,
 
     /* data out */
@@ -110,6 +116,7 @@ module rv32_fetch #(
 
         if (!stall_in) begin
             valid_out <= 1;
+            exception_out <= 0;
             branch_predicted_taken_out <= branch_predicted_taken;
             instr_out <= instr_read_value_in;
             pc_out <= pc;
@@ -117,8 +124,17 @@ module rv32_fetch #(
             next_pc_out <= next_pc;
 `endif
 
+            if (instr_fault_in) begin
+                valid_out <= 0;
+                exception_out <= 1;
+                exception_cause_out <= `RV32_MCAUSE_INSTR_FAULT_EXCEPTION;
+                branch_predicted_taken_out <= 0;
+                instr_out <= `RV32_INSTR_NOP;
+            end
+
             if (flush_in || overwrite_pc) begin
                 valid_out <= 0;
+                exception_out <= 0;
                 branch_predicted_taken_out <= 0;
                 instr_out <= `RV32_INSTR_NOP;
                 pc_out <= 0;
@@ -128,6 +144,7 @@ module rv32_fetch #(
         if (reset) begin
             overwrite_pc <= 0;
             valid_out <= 0;
+            exception_out <= 0;
             branch_predicted_taken_out <= 0;
             instr_out <= `RV32_INSTR_NOP;
             pc <= RESET_VECTOR;

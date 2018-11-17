@@ -19,19 +19,23 @@ module rv32_branch_pc_mux (
     input [31:0] rs1_value_in,
     input [31:0] imm_value_in,
 
+    /* control out */
+    output logic misaligned_out,
+
     /* data out */
     output logic [31:0] pc_out
 );
+    logic [31:0] taken_pc;
+    logic [31:0] not_taken_pc;
     logic [31:0] pc;
 
-    always_comb begin
-        if (predicted_taken_in)
-            pc = pc_in + 32'd4;
-        else
-            pc = (pc_src_in ? rs1_value_in : pc_in) + imm_value_in;
-    end
+    assign taken_pc = (pc_src_in ? rs1_value_in : pc_in) + imm_value_in;
+    assign not_taken_pc = pc_in + 32'd4;
 
+    assign pc = predicted_taken_in ? not_taken_pc : taken_pc;
     assign pc_out = {pc[31:1], 1'b0};
+
+    assign misaligned_out = taken_pc[1] != 0;
 endmodule
 
 module rv32_branch_unit (
@@ -43,22 +47,22 @@ module rv32_branch_unit (
     input [31:0] result_in,
 
     /* control out */
+    output logic taken_out,
     output logic mispredicted_out
 );
     logic alu_non_zero;
-    logic taken;
 
     always_comb begin
         alu_non_zero = |result_in;
 
         case (op_in)
-            `RV32_BRANCH_OP_NEVER:    taken = 0;
-            `RV32_BRANCH_OP_ZERO:     taken = ~alu_non_zero;
-            `RV32_BRANCH_OP_NON_ZERO: taken = alu_non_zero;
-            `RV32_BRANCH_OP_ALWAYS:   taken = 1;
+            `RV32_BRANCH_OP_NEVER:    taken_out = 0;
+            `RV32_BRANCH_OP_ZERO:     taken_out = ~alu_non_zero;
+            `RV32_BRANCH_OP_NON_ZERO: taken_out = alu_non_zero;
+            `RV32_BRANCH_OP_ALWAYS:   taken_out = 1;
         endcase
 
-        mispredicted_out = taken != predicted_taken_in;
+        mispredicted_out = taken_out != predicted_taken_in;
     end
 endmodule
 

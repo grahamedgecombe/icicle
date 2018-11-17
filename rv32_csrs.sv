@@ -167,12 +167,12 @@ module rv32_csrs (
     input writeback_flush_in,
 
     /* control in */
+    input exception_in,
+    input [3:0] exception_cause_in,
     input read_in,
     input write_in,
     input [1:0] write_op_in,
     input src_in,
-    input ecall_in,
-    input ebreak_in,
     input mret_in,
 
     /* control in (from writeback) */
@@ -364,7 +364,7 @@ module rv32_csrs (
         trap_pc_out = 32'bx;
 
         if (!stall_in && !flush_in) begin
-            if (ecall_in || ebreak_in) begin
+            if (exception_in) begin
                 trap_out = 1;
                 trap_pc_out = {mtvec_base, 2'b0};
             end else if (mret_in) begin
@@ -388,13 +388,10 @@ module rv32_csrs (
                 endcase
             end
 
-            if (ecall_in || ebreak_in) begin
+            if (exception_in) begin
                 mepc <= pc_in[31:2];
                 mcause_interrupt <= 0;
-                if (ecall_in)
-                    mcause_code <= `RV32_MCAUSE_MACHINE_ECALL_EXCEPTION;
-                else
-                    mcause_code <= `RV32_MCAUSE_BREAKPOINT_EXCEPTION;
+                mcause_code <= exception_cause_in;
             end else if (mret_in) begin
                 mstatus_mie <= mstatus_mpie;
                 mstatus_mpie <= 1;

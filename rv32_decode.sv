@@ -2,6 +2,7 @@
 `define RV32_DECODE
 
 `include "rv32_control.sv"
+`include "rv32_csrs.sv"
 `include "rv32_regs.sv"
 
 module rv32_decode (
@@ -24,6 +25,8 @@ module rv32_decode (
 
     /* control in (from fetch) */
     input valid_in,
+    input exception_in,
+    input [3:0] exception_cause_in,
     input branch_predicted_taken_in,
 
     /* control in (from writeback) */
@@ -47,6 +50,8 @@ module rv32_decode (
     /* control out */
     output logic branch_predicted_taken_out,
     output logic valid_out,
+    output logic exception_out,
+    output logic [3:0] exception_cause_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
     output logic [2:0] alu_op_out,
@@ -195,6 +200,13 @@ module rv32_decode (
 
             branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in && valid;
+            if (!exception_in && !valid) begin
+                exception_out <= 1;
+                exception_cause_out <= `RV32_MCAUSE_INSTR_ILLEGAL_EXCEPTION;
+            end else begin
+                exception_out <= exception_in;
+                exception_cause_out <= exception_cause_in;
+            end
             rs1_out <= rs1;
             rs2_out <= rs2;
             alu_op_out <= alu_op;
@@ -225,6 +237,7 @@ module rv32_decode (
             if (flush_in) begin
                 branch_predicted_taken_out <= 0;
                 valid_out <= 0;
+                exception_out <= 0;
                 mem_read_out <= 0;
                 mem_write_out <= 0;
                 csr_read_out <= 0;
@@ -240,6 +253,7 @@ module rv32_decode (
         if (reset) begin
             branch_predicted_taken_out <= 0;
             valid_out <= 0;
+            exception_out <= 0;
             rs1_out <= 0;
             rs2_out <= 0;
             alu_op_out <= 0;

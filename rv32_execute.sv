@@ -31,6 +31,8 @@ module rv32_execute (
     /* control in */
     input branch_predicted_taken_in,
     input valid_in,
+    input exception_in,
+    input [3:0] exception_cause_in,
     input [4:0] rs1_in,
     input [4:0] rs2_in,
     input [2:0] alu_op_in,
@@ -70,7 +72,10 @@ module rv32_execute (
 
     /* control out */
     output logic branch_predicted_taken_out,
+    output logic branch_misaligned_out,
     output logic valid_out,
+    output logic exception_out,
+    output logic [3:0] exception_cause_out,
     output logic mem_read_out,
     output logic mem_write_out,
     output logic [1:0] mem_width_out,
@@ -137,6 +142,7 @@ module rv32_execute (
     );
 
     /* branch target calculation */
+    logic branch_misaligned;
     logic [31:0] branch_pc;
 
     rv32_branch_pc_mux branch_pc_mux (
@@ -148,6 +154,9 @@ module rv32_execute (
         .pc_in(pc_in),
         .rs1_value_in(rs1_value),
         .imm_value_in(imm_value_in),
+
+        /* control out */
+        .misaligned_out(branch_misaligned),
 
         /* data out */
         .pc_out(branch_pc)
@@ -163,7 +172,10 @@ module rv32_execute (
 `endif
 
             branch_predicted_taken_out <= branch_predicted_taken_in;
+            branch_misaligned_out <= branch_misaligned;
             valid_out <= valid_in;
+            exception_out <= exception_in;
+            exception_cause_out <= exception_cause_in;
             mem_read_out <= mem_read_in;
             mem_write_out <= mem_write_in;
             mem_width_out <= mem_width_in;
@@ -190,6 +202,7 @@ module rv32_execute (
             if (flush_in) begin
                 branch_predicted_taken_out <= 0;
                 valid_out <= 0;
+                exception_out <= 0;
                 mem_read_out <= 0;
                 mem_write_out <= 0;
                 csr_read_out <= 0;
@@ -205,6 +218,7 @@ module rv32_execute (
         if (reset) begin
             branch_predicted_taken_out <= 0;
             valid_out <= 0;
+            exception_out <= 0;
             mem_read_out <= 0;
             mem_write_out <= 0;
             mem_width_out <= 0;

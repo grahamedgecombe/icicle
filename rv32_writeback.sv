@@ -7,6 +7,7 @@ module rv32_writeback (
 
 `ifdef RISCV_FORMAL
     /* debug control in */
+    input trap_in,
     input [4:0] rs1_in,
     input [4:0] rs2_in,
     input [3:0] mem_read_mask_in,
@@ -58,11 +59,11 @@ module rv32_writeback (
 );
 `ifdef RISCV_FORMAL
     always_ff @(posedge clk) begin
-        if (!flush_in && valid_in) begin
+        if (!flush_in && (valid_in || trap_in)) begin
             rvfi_valid <= 1;
             rvfi_order <= rvfi_order + 1;
             rvfi_insn <= instr_in;
-            rvfi_trap <= 0;
+            rvfi_trap <= trap_in;
             rvfi_halt <= 0;
             rvfi_intr <= 0;
             rvfi_mode <= 3;
