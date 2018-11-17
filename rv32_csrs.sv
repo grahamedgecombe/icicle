@@ -407,6 +407,9 @@ module rv32_csrs (
         if (reset) begin
             cycle <= 0;
             instret <= 0;
+            mstatus_mie <= 0;
+            mcause_interrupt <= 0;
+            mcause_code <= 0;
         end
     end
 endmodule
