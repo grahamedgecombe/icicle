@@ -9,7 +9,7 @@ module bus_arbiter (
     input [31:0] instr_address_in,
     input instr_read_in,
     output logic [31:0] instr_read_value_out,
-    output logic instr_ready,
+    output logic instr_ready_out,
 
     /* data memory bus */
     input [31:0] data_address_in,
@@ -18,7 +18,7 @@ module bus_arbiter (
     output logic [31:0] data_read_value_out,
     input [3:0] data_write_mask_in,
     input [31:0] data_write_value_in,
-    output logic data_ready,
+    output logic data_ready_out,
 
     /* common memory bus */
     output logic [31:0] address_out,
@@ -43,8 +43,8 @@ module bus_arbiter (
             data_read_value_out = read_value_in;
             write_mask_out = data_write_mask_in;
             write_value_out = data_write_value_in;
-            instr_ready = 1'b0;
-            data_ready = ready_in;
+            instr_ready_out = 1'b0;
+            data_ready_out = ready_in;
         end else if (instr_read_in) begin
             address_out = instr_address_in;
             read_out = instr_read_in;
@@ -53,8 +53,8 @@ module bus_arbiter (
             data_read_value_out = 32'bx;
             write_mask_out = 4'b0;
             write_value_out = 32'bx;
-            instr_ready = ready_in;
-            data_ready = 1'b0;
+            instr_ready_out = ready_in;
+            data_ready_out = 1'b0;
         end else begin
             address_out = 32'bx;
             read_out = 1'b0;
@@ -63,8 +63,8 @@ module bus_arbiter (
             data_read_value_out = 32'bx;
             write_mask_out = 4'b0;
             write_value_out = 32'bx;
-            instr_ready = 1'b0;
-            data_ready = 1'b0;
+            instr_ready_out = 1'b0;
+            data_ready_out = 1'b0;
         end
     end
 

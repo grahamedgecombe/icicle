@@ -120,7 +120,7 @@ module top (
         .instr_address_in(instr_address),
         .instr_read_in(instr_read),
         .instr_read_value_out(instr_read_value),
-        .instr_ready(instr_ready),
+        .instr_ready_out(instr_ready),
 
         /* data memory bus */
         .data_address_in(data_address),
@@ -129,7 +129,7 @@ module top (
         .data_read_value_out(data_read_value),
         .data_write_mask_in(data_write_mask),
         .data_write_value_in(data_write_value),
-        .data_ready(data_ready),
+        .data_ready_out(data_ready),
 
         /* common memory bus */
         .address_out(mem_address),
