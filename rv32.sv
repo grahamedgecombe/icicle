@@ -58,11 +58,13 @@ module rv32 #(
     /* hazard -> writeback control */
     logic writeback_flush;
 
+`ifdef RISCV_FORMAL
     /* fetch -> decode debug control */
     logic fetch_intr;
 
     /* fetch -> decode debug data */
     logic [31:0] fetch_next_pc;
+`endif
 
     /* fetch -> decode control */
     logic fetch_valid;
