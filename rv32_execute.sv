@@ -9,11 +9,15 @@ module rv32_execute (
     input reset,
 
 `ifdef RISCV_FORMAL
+    /* debug control in */
+    input intr_in,
+
     /* debug data in */
     input [31:0] next_pc_in,
     input [31:0] instr_in,
 
     /* debug control out */
+    output logic intr_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
 
@@ -165,6 +169,7 @@ module rv32_execute (
     always_ff @(posedge clk) begin
         if (!stall_in) begin
 `ifdef RISCV_FORMAL
+            intr_out <= intr_in;
             next_pc_out <= next_pc_in;
             rs1_out <= rs1_in;
             rs2_out <= rs2_in;

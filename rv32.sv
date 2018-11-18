@@ -58,6 +58,9 @@ module rv32 #(
     /* hazard -> writeback control */
     logic writeback_flush;
 
+    /* fetch -> decode debug control */
+    logic fetch_intr;
+
     /* fetch -> decode debug data */
     logic [31:0] fetch_next_pc;
 
@@ -79,6 +82,9 @@ module rv32 #(
     logic decode_mem_fence_unreg;
 
 `ifdef RISCV_FORMAL
+    /* decode -> execute debug control */
+    logic decode_intr;
+
     /* decode -> execute debug data */
     logic [31:0] decode_next_pc;
     logic [31:0] decode_instr;
@@ -121,6 +127,7 @@ module rv32 #(
 
 `ifdef RISCV_FORMAL
     /* execute -> mem debug control */
+    logic execute_intr;
     logic [4:0] execute_rs1;
     logic [4:0] execute_rs2;
 
@@ -162,6 +169,7 @@ module rv32 #(
 
 `ifdef RISCV_FORMAL
     /* mem -> writeback debug control */
+    logic mem_intr;
     logic mem_trap;
     logic [4:0] mem_rs1;
     logic [4:0] mem_rs2;
@@ -246,6 +254,9 @@ module rv32 #(
         .reset(reset),
 
 `ifdef RISCV_FORMAL
+        /* debug control out */
+        .intr_out(fetch_intr),
+
         /* debug data out */
         .next_pc_out(fetch_next_pc),
 `endif
@@ -291,10 +302,14 @@ module rv32 #(
         .reset(reset),
 
 `ifdef RISCV_FORMAL
+        /* debug control in */
+        .intr_in(fetch_intr),
+
         /* debug data in */
         .next_pc_in(fetch_next_pc),
 
         /* debug data out */
+        .intr_out(decode_intr),
         .next_pc_out(decode_next_pc),
         .instr_out(decode_instr),
 `endif
@@ -369,11 +384,15 @@ module rv32 #(
         .reset(reset),
 
 `ifdef RISCV_FORMAL
+        /* debug control in */
+        .intr_in(decode_intr),
+
         /* debug data in */
         .next_pc_in(decode_next_pc),
         .instr_in(decode_instr),
 
         /* debug control out */
+        .intr_out(execute_intr),
         .rs1_out(execute_rs1),
         .rs2_out(execute_rs2),
 
@@ -468,6 +487,7 @@ module rv32 #(
 
 `ifdef RISCV_FORMAL
         /* debug control in */
+        .intr_in(execute_intr),
         .rs1_in(execute_rs1),
         .rs2_in(execute_rs2),
 
@@ -476,6 +496,7 @@ module rv32 #(
         .instr_in(execute_instr),
 
         /* debug control out */
+        .intr_out(mem_intr),
         .trap_out(mem_trap),
         .rs1_out(mem_rs1),
         .rs2_out(mem_rs2),
@@ -566,6 +587,7 @@ module rv32 #(
 `ifdef RISCV_FORMAL
         `RVFI_CONN,
 
+        .intr_in(mem_intr),
         .trap_in(mem_trap),
         .rs1_in(mem_rs1),
         .rs2_in(mem_rs2),

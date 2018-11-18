@@ -14,6 +14,7 @@ module rv32_mem (
 
 `ifdef RISCV_FORMAL
     /* debug control in */
+    input intr_in,
     input [4:0] rs1_in,
     input [4:0] rs2_in,
 
@@ -22,6 +23,7 @@ module rv32_mem (
     input [31:0] instr_in,
 
     /* debug control out */
+    output logic intr_out,
     output logic trap_out,
     output logic [4:0] rs1_out,
     output logic [4:0] rs2_out,
@@ -340,6 +342,7 @@ module rv32_mem (
     always_ff @(posedge clk) begin
         if (!stall_in) begin
 `ifdef RISCV_FORMAL
+            intr_out <= intr_in;
             pc_out <= pc_in;
             next_pc_out <= next_pc;
             trap_out <= trap_unreg_out;

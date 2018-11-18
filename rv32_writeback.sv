@@ -7,6 +7,7 @@ module rv32_writeback (
 
 `ifdef RISCV_FORMAL
     /* debug control in */
+    input intr_in,
     input trap_in,
     input [4:0] rs1_in,
     input [4:0] rs2_in,
@@ -65,7 +66,7 @@ module rv32_writeback (
             rvfi_insn <= instr_in;
             rvfi_trap <= trap_in;
             rvfi_halt <= 0;
-            rvfi_intr <= 0;
+            rvfi_intr <= intr_in;
             rvfi_mode <= 3;
             rvfi_rs1_addr <= rs1_in;
             rvfi_rs2_addr <= rs2_in;

@@ -11,6 +11,9 @@ module rv32_fetch #(
     input reset,
 
 `ifdef RISCV_FORMAL
+    /* debug control out */
+    output logic intr_out,
+
     /* debug data out */
     output logic [31:0] next_pc_out,
 `endif
@@ -54,6 +57,7 @@ module rv32_fetch #(
     logic [31:0] next_pc;
 
     logic overwrite_pc;
+    logic trap;
     logic [31:0] overwritten_pc;
 
     logic sign;
@@ -107,10 +111,12 @@ module rv32_fetch #(
         if (pcgen_stall_in) begin
             if (!overwrite_pc && (trap_in || branch_mispredicted_in)) begin
                 overwrite_pc <= 1;
+                trap <= trap_in;
                 overwritten_pc <= trap_in ? trap_pc_in : branch_pc_in;
             end
         end else begin
             overwrite_pc <= 0;
+            trap <= 0;
             pc <= next_pc;
         end
 
@@ -121,6 +127,7 @@ module rv32_fetch #(
             instr_out <= instr_read_value_in;
             pc_out <= pc;
 `ifdef RISCV_FORMAL
+            intr_out <= trap || trap_in;
             next_pc_out <= next_pc;
 `endif
 
