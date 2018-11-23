@@ -136,7 +136,7 @@ module rv32_fetch #(
                 exception_out <= 1;
                 exception_cause_out <= `RV32_MCAUSE_INSTR_FAULT_EXCEPTION;
                 branch_predicted_taken_out <= 0;
-                instr_out <= `RV32_INSTR_NOP;
+                instr_out <= 0;
             end
 
             if (flush_in || overwrite_pc) begin
