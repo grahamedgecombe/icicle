@@ -134,7 +134,7 @@ module rv32_mem (
 
     assign data_read_out = read_in && !mem_misaligned;
     assign data_write_out = write_in && !mem_misaligned;
-    assign data_address_out = result_in;
+    assign data_address_out = {result_in[31:2], 2'b0};
 
     always_comb begin
         /* alignment check */
