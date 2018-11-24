@@ -9,6 +9,7 @@
 *.rpt
 *.stat
 /checks
+/disasm.s
 /pll.sv
 /defines.sv
 /progmem
