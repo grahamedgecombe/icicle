@@ -351,7 +351,7 @@ module rv32_mem (
             instr_out <= instr_in;
             rs1_value_out <= rs1_value_in;
             rs2_value_out <= rs2_value_in;
-            address_out <= result_in;
+            address_out <= data_address_out;
             read_mask_out <= read_mask;
             write_mask_out <= data_write_mask_out;
             read_value_out <= data_read_value_in;
