@@ -50,4 +50,6 @@ module rvfi_wrapper (
         /* timer */
         .cycle_out(cycle)
     );
+
+    assign data_fault = !`RISCV_FORMAL_VALIDADDR(data_address);
 endmodule
