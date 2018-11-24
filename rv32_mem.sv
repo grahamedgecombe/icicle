@@ -153,7 +153,7 @@ module rv32_mem (
                     data_write_mask_out = 4'b1111;
                 end
                 `RV32_MEM_WIDTH_HALF: begin
-                    case (result_in[0])
+                    case (result_in[1])
                         1'b0: begin
                             data_write_value_out = {16'bx, rs2_value_in[15:0]};
                             data_write_mask_out = 4'b0011;
@@ -202,7 +202,7 @@ module rv32_mem (
                     read_mask = 4'b1111;
                 end
                 `RV32_MEM_WIDTH_HALF: begin
-                    case (result_in[0])
+                    case (result_in[1])
                         1'b0: begin
                             read_value = {{16{zero_extend_in ? 1'b0 : data_read_value_in[15]}}, data_read_value_in[15:0]};
                             read_mask = 4'b0011;
