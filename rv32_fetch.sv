@@ -37,6 +37,9 @@ module rv32_fetch #(
     /* data in (from memory bus) */
     input [31:0] instr_read_value_in,
 
+    /* control out (to hazard) */
+    output logic overwrite_pc_out,
+
     /* control out (to memory bus) */
     output logic instr_read_out,
 
@@ -67,6 +70,8 @@ module rv32_fetch #(
 
     logic branch_predicted_taken;
     logic [31:0] branch_offset;
+
+    assign overwrite_pc_out = overwrite_pc;
 
     assign instr_read_out = 1;
     assign instr_address_out = pc;
@@ -139,7 +144,7 @@ module rv32_fetch #(
                 instr_out <= 0;
             end
 
-            if (flush_in || overwrite_pc) begin
+            if (flush_in) begin
                 valid_out <= 0;
                 exception_out <= 0;
                 branch_predicted_taken_out <= 0;

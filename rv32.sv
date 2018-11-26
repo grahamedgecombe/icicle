@@ -66,6 +66,9 @@ module rv32 #(
     logic [31:0] fetch_next_pc;
 `endif
 
+    /* fetch -> hazard */
+    logic fetch_overwrite_pc;
+
     /* fetch -> decode control */
     logic fetch_valid;
     logic fetch_exception;
@@ -219,6 +222,8 @@ module rv32 #(
         .decode_rd_in(decode_rd),
         .decode_rd_write_in(decode_rd_write),
 
+        .fetch_overwrite_pc_in(fetch_overwrite_pc),
+
         .execute_mem_fence_in(execute_mem_fence),
 
         .mem_trap_in(mem_trap_unreg),
@@ -274,6 +279,9 @@ module rv32 #(
 
         /* control in (from memory bus) */
         .instr_fault_in(instr_fault_in),
+
+        /* control out (to hazard) */
+        .overwrite_pc_out(fetch_overwrite_pc),
 
         /* control out (to memory bus) */
         .instr_read_out(instr_read_out),
