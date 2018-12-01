@@ -1,3 +1,4 @@
+ARCH     = ice40
 SPEED    = up
 DEVICE   = 5k
 PACKAGE  = sg48

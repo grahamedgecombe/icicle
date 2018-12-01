@@ -1,10 +1,12 @@
+.DEFAULT_GOAL = all
+
 QUIET    = -q
 PLL      = pll.sv
 SRC      = $(sort $(wildcard *.sv) $(PLL))
 TOP      = top
 SV       = $(TOP).sv
-YS       = $(TOP).ys
-YS_ICE40 = `yosys-config --datdir/ice40/cells_sim.v`
+YS       = $(ARCH).ys
+YS_ICE40 = `yosys-config --datdir/$(ARCH)/cells_sim.v`
 BLIF     = $(TOP).blif
 JSON     = $(TOP).json
 ASC_SYN  = $(TOP)_syn.asc
@@ -13,7 +15,6 @@ BIN      = $(TOP).bin
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
 BOARD   ?= ice40hx8k-b-evn
-PNR     ?= nextpnr
 PCF      = boards/$(BOARD).pcf
 FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
@@ -26,6 +27,7 @@ CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)00
 OBJCOPY  = $(TARGET)-objcopy
 
 include boards/$(BOARD).mk
+include arch/$(ARCH).mk
 
 .PHONY: all clean syntax time stat flash
 
@@ -43,12 +45,6 @@ progmem.hex: progmem.bin
 progmem: progmem.o start.o progmem.lds
 	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
 
-progmem_syn.hex:
-	icebram -g 32 2048 > $@
-
-$(PLL):
-	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
-
 $(BLIF) $(JSON): $(YS) $(SRC) progmem_syn.hex defines.sv
 	yosys $(QUIET) $<
 
@@ -64,41 +60,11 @@ start.s: start-$(PROGMEM).s
 progmem.lds: progmem-$(PROGMEM).lds
 	cp $< $@
 
-ifeq ($(PNR),arachne-pnr)
-$(ASC_SYN): $(BLIF) $(PCF)
-	arachne-pnr $(QUIET) -d $(DEVICE) -P $(PACKAGE) -o $@ -p $(PCF) $<
-else
-$(ASC_SYN): $(JSON) $(PCF)
-	nextpnr-ice40 $(QUIET) --$(SPEED)$(DEVICE) --package $(PACKAGE) --json $< --pcf $(PCF) --freq $(FREQ_PLL) --asc $@
-endif
-
-$(TIME_RPT): $(ASC_SYN) $(PCF)
-	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) -r $@ $<
-
-$(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
-ifeq ($(PROGMEM),ram)
-	icebram progmem_syn.hex progmem.hex < $< > $@
-else
-	cp $< $@
-endif
-
-$(BIN): $(ASC)
-	icepack $< $@
-
 time: $(TIME_RPT)
 	cat $<
 
-$(STAT): $(ASC_SYN)
-	icebox_stat $< > $@
-
 stat: $(STAT)
 	cat $<
-
-flash: $(BIN) progmem.bin $(TIME_RPT)
-	iceprog $<
-ifeq ($(PROGMEM),flash)
-	iceprog -o 1M progmem.bin
-endif
 
 # Flash to BlackIce-II board
 dfu-flash: $(BIN) $(TIME_RPT)
