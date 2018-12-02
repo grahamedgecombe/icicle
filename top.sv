@@ -35,16 +35,6 @@ module top (
     output logic uart_tx
 );
 
-`ifdef SPI_FLASH
-    logic flash_io0_en;
-    logic flash_io0_in;
-    logic flash_io0_out;
-
-    logic flash_io1_en;
-    logic flash_io1_in;
-    logic flash_io1_out;
-`endif
-
 `ifdef INTERNAL_OSC
     logic clk;
     SB_HFOSC inthosc (
@@ -55,6 +45,14 @@ module top (
 `endif
 
 `ifdef SPI_FLASH
+    logic flash_io0_en;
+    logic flash_io0_in;
+    logic flash_io0_out;
+
+    logic flash_io1_en;
+    logic flash_io1_in;
+    logic flash_io1_out;
+
 `ifdef ICE40
     SB_IO #(
         .PIN_TYPE(6'b1010_01)
