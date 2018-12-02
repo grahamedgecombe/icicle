@@ -8,6 +8,7 @@
 *.o
 *.rpt
 *.stat
+*.svf
 /checks
 /disasm.s
 /pll.sv

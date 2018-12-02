@@ -55,6 +55,7 @@ module top (
 `endif
 
 `ifdef SPI_FLASH
+`ifdef ICE40
     SB_IO #(
         .PIN_TYPE(6'b1010_01)
     ) flash_io [1:0] (
@@ -63,6 +64,16 @@ module top (
         .D_IN_0({flash_io1_in, flash_io0_in}),
         .D_OUT_0({flash_io1_out, flash_io0_out})
     );
+`elsif ECP5
+    TRELLIS_IO #(
+        .DIR("BIDIR")
+    ) flash_io [1:0] (
+        .B({flash_io1, flash_io0}),
+        .T({flash_io1_en, flash_io0_en}),
+        .I({flash_io1_in, flash_io0_in}),
+        .O({flash_io1_out, flash_io0_out})
+    );
+`endif
 `endif
 
     logic pll_clk;

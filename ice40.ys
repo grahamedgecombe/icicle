@@ -1,4 +1,4 @@
-read_verilog -noautowire -sv top.sv
+read_verilog -DICE40 -noautowire -sv top.sv
 proc
 opt -full
 alumacc

@@ -1,4 +1,6 @@
-PNR ?= nextpnr
+PNR     ?= nextpnr
+PCF      = boards/$(BOARD).pcf
+FREQ_PLL = 24
 
 progmem_syn.hex:
 	icebram -g 32 2048 > $@

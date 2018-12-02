@@ -12,11 +12,10 @@ JSON     = $(TOP).json
 ASC_SYN  = $(TOP)_syn.asc
 ASC      = $(TOP).asc
 BIN      = $(TOP).bin
+SVF      = $(TOP).svf
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
 BOARD   ?= ice40hx8k-b-evn
-PCF      = boards/$(BOARD).pcf
-FREQ_PLL = 24
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
@@ -34,7 +33,7 @@ include arch/$(ARCH).mk
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.bin progmem.o start.o start.s progmem progmem.lds defines.sv
+	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(SVF) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.bin progmem.o start.o start.s progmem progmem.lds defines.sv
 
 progmem.bin: progmem
 	$(OBJCOPY) -O binary $< $@
@@ -45,11 +44,11 @@ progmem.hex: progmem.bin
 progmem: progmem.o start.o progmem.lds
 	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
 
-$(BLIF) $(JSON): $(YS) $(SRC) progmem_syn.hex defines.sv
+$(BLIF) $(JSON): $(YS) $(SRC) progmem_syn.hex progmem.hex defines.sv
 	yosys $(QUIET) $<
 
 syntax: $(SRC) progmem_syn.hex defines.sv
-	iverilog -Wall -t null -g2012 $(YS_ICE40) $(SV)
+	iverilog -D$(shell echo $(ARCH) | tr 'a-z' 'A-Z') -Wall -t null -g2012 $(YS_ICE40) $(SV)
 
 defines.sv: boards/$(BOARD)-defines.sv
 	cp boards/$(BOARD)-defines.sv defines.sv
