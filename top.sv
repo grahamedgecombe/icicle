@@ -37,6 +37,7 @@ module top (
 
 `ifdef INTERNAL_OSC
     logic clk;
+
     SB_HFOSC inthosc (
         .CLKHFPU(1'b1),
         .CLKHFEN(1'b1),
