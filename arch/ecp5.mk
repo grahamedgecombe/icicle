@@ -9,7 +9,7 @@ $(PLL): dummy-pll.sv
 	cp $< $@
 
 $(ASC_SYN): $(JSON) $(LPF)
-	nextpnr-ecp5 $(QUIET) --$(DEVICE) --basecfg $(TRELLIS)/misc/basecfgs/empty_$(BASECFG).config --json $< --lpf $(LPF) --freq $(FREQ_PLL) --textcfg $@
+	nextpnr-ecp5 $(QUIET) --$(DEVICE) --speed $(SPEED) --package $(PACKAGE) --basecfg $(TRELLIS)/misc/basecfgs/empty_$(BASECFG).config --json $< --lpf $(LPF) --freq $(FREQ_PLL) --textcfg $@
 
 $(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
 	cp $< $@
