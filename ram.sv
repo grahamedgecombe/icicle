@@ -15,6 +15,7 @@ module ram (
 );
     logic [31:0] mem [2047:0];
     logic [31:0] read_value;
+    logic ready;
 
 `ifndef SPI_FLASH
 `ifdef ICE40
@@ -27,12 +28,14 @@ module ram (
 `endif
 
     assign read_value_out = sel_in ? read_value : 0;
-    assign ready_out = sel_in;
+    assign ready_out = sel_in ? ready : 0;
 
-    always_ff @(negedge clk) begin
+    always_ff @(posedge clk) begin
         read_value <= {mem[address_in[31:2]][7:0], mem[address_in[31:2]][15:8], mem[address_in[31:2]][23:16], mem[address_in[31:2]][31:24]};
 
         if (sel_in && !reset) begin
+            ready <= !ready;
+
             if (write_mask_in[3])
                 mem[address_in[31:2]][7:0] <= write_value_in[31:24];
 
@@ -44,6 +47,8 @@ module ram (
 
             if (write_mask_in[0])
                 mem[address_in[31:2]][31:24] <= write_value_in[7:0];
+        end else begin
+            ready <= 0;
         end
     end
 endmodule
