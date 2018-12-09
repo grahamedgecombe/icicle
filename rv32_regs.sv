@@ -20,6 +20,8 @@ module rv32_regs (
     output logic [31:0] rs2_value_out
 );
     logic [31:0] regs [31:0];
+    logic [4:0] rs1;
+    logic [4:0] rs2;
 
     generate
         genvar i;
@@ -29,10 +31,13 @@ module rv32_regs (
         end
     endgenerate
 
+    assign rs1_value_out = regs[rs1];
+    assign rs2_value_out = regs[rs2];
+
     always_ff @(posedge clk) begin
         if (!stall_in) begin
-            rs1_value_out <= regs[rs1_in];
-            rs2_value_out <= regs[rs2_in];
+            rs1 <= rs1_in;
+            rs2 <= rs2_in;
         end
 
         if (!writeback_flush_in && rd_write_in && |rd_in)
