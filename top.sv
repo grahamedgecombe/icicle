@@ -87,7 +87,24 @@ module top (
     logic pll_locked;
     logic reset;
 
-    assign reset = ~pll_locked;
+    logic [3:0] reset_count;
+
+    initial
+        reset_count <= 0;
+
+    always_ff @(posedge pll_clk) begin
+        if (&reset_count) begin
+            if (pll_locked) begin
+                reset <= 0;
+            end else begin
+                reset <= 1;
+                reset_count <= 0;
+            end
+        end else begin
+            reset <= 1;
+            reset_count <= reset_count + pll_locked;
+        end
+    end
 
     sync sync (
         .clk(pll_clk),
