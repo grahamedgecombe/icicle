@@ -215,6 +215,7 @@ module top (
 
     ram ram (
         .clk(pll_clk),
+        .reset(reset),
 
         /* memory bus */
         .address_in(mem_address),

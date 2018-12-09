@@ -3,6 +3,7 @@
 
 module ram (
     input clk,
+    input reset,
 
     /* memory bus */
     input [31:0] address_in,
@@ -31,7 +32,7 @@ module ram (
     always_ff @(negedge clk) begin
         read_value <= {mem[address_in[31:2]][7:0], mem[address_in[31:2]][15:8], mem[address_in[31:2]][23:16], mem[address_in[31:2]][31:24]};
 
-        if (sel_in) begin
+        if (sel_in && !reset) begin
             if (write_mask_in[3])
                 mem[address_in[31:2]][7:0] <= write_value_in[31:24];
 
