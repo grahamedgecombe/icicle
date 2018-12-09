@@ -207,7 +207,7 @@ module rv32_decode (
 
             branch_predicted_taken_out <= branch_predicted_taken_in;
             valid_out <= valid_in && valid;
-            if (!exception_in && !valid) begin
+            if (!exception_in && valid_in && !valid) begin
                 exception_out <= 1;
                 exception_cause_out <= `RV32_MCAUSE_INSTR_ILLEGAL_EXCEPTION;
             end else begin
