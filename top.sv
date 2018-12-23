@@ -324,6 +324,6 @@ module top (
     );
 `else
     assign flash_read_value = 0;
-    assign flash_ready = 1;
+    assign flash_ready = flash_sel;
 `endif
 endmodule
