@@ -14,11 +14,8 @@ $(ASC_SYN): $(JSON) $(LPF)
 $(ASC): $(ASC_SYN) progmem_syn.hex progmem.hex
 	cp $< $@
 
-$(BIN): $(ASC)
-	ecppack $< $@
-
-$(SVF): $(BIN)
-	$(TRELLIS)/tools/bit_to_svf.py $< $@
+$(BIN) $(SVF): $(ASC)
+	ecppack --svf $(SVF) $< $@
 
 $(TIME_RPT):
 	touch $@
