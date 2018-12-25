@@ -25,7 +25,7 @@ development boards.
 * [nextpnr][nextpnr] or [arachne-pnr][arachne-pnr]
 * [Project IceStorm][icestorm] or [Project Trellis][trellis]
 * [vim][vim] (for `xxd`)
-* [Yosys][yosys]
+* [Yosys][yosys] (`master` branch)
 
 ## Building and testing
 
