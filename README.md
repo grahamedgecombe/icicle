@@ -11,8 +11,7 @@ development boards.
 
 * RV32I core with a [classic 5-stage RISC pipeline][classic-risc], static branch
   prediction, bypassing and interlocking. It currently implements the entire
-  [user ISA][riscv-user] (except `ECALL` and `EBREAK`) and parts of the
-  [privileged ISA][riscv-priv].
+  [user ISA][riscv-user] parts of the [privileged ISA][riscv-priv].
 * Shared instruction and data memory (8 KiB, implemented with FPGA block RAM).
 * Memory-mapped UART and LEDs.
 * Memory-mapped SPI flash.
