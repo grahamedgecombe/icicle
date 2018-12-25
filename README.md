@@ -2,10 +2,10 @@
 
 ## Introduction
 
-Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40] and
-[iCE40 UP5K][ice40-up5k] FPGAs. It can be built with the open-source
-[Project IceStorm][icestorm] toolchain and currently targets several development
-boards.
+Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40],
+[iCE40 UP5K][ice40-up5k] and [ECP5][ecp5] FPGAs. It can be built with the
+open-source [Symbiflow][symbiflow] toolchain and currently targets several
+development boards.
 
 ## Current features
 
@@ -23,7 +23,7 @@ boards.
 * [GNU RISC-V toolchain][riscv-gnu]
 * [Icarus Verilog][iverilog] (`master` branch)
 * [nextpnr][nextpnr] or [arachne-pnr][arachne-pnr]
-* [Project IceStorm][icestorm]
+* [Project IceStorm][icestorm] or [Project Trellis][trellis]
 * [vim][vim] (for `xxd`)
 * [Yosys][yosys]
 
@@ -34,6 +34,7 @@ boards.
 Icicle supports several development boards:
 
 * `blackice-ii`: [BlackIce II][blackice-ii-board]
+* `ecp5-evn`: [ECP5 evaluation board][ecp5-evn]
 * `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
 * `upduino`: [UPduino][upduino]
 
@@ -57,6 +58,15 @@ board).
 * Configure jumper on board for [DFU Mode][dfu-mode] and connect both USB1 and
   USB2 on the board to host USB ports.
 * Run `make BOARD=blackice-ii dfu-flash` to flash the bitstream.
+
+#### ECP5 evaluation board
+
+* Remove R22, R23 and R24 to disconnect the channel B of the FTDI chip from the
+  I2C bus.
+* Populate R34 and R35 with zero-ohm resistors to connect channel B of the FTDI
+  chip to the UART RX and TX pins.
+* Optionally populate R21 with a zero-ohm resistor to enable the UART TX
+  indicator LED.
 
 #### iCE40-HX8K breakout board
 
@@ -123,6 +133,8 @@ information and licensing terms.
 [blackice-ii-board]: https://github.com/mystorm-org/BlackIce-II
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [dfu-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
+[ecp5-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/ECP5EvaluationBoard.aspx
+[ecp5]: https://www.latticesemi.com/Products/FPGAandCPLD/ECP5.aspx
 [ice40-hx8k-breakout]: http://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
 [ice40-up5k]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40Ultra.aspx
 [ice40]: http://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
@@ -134,6 +146,8 @@ information and licensing terms.
 [riscv-priv]: https://riscv.org/specifications/privileged-isa/
 [riscv-user]: https://riscv.org/specifications/
 [riscv]: https://riscv.org/risc-v-isa/
+[symbiflow]: https://symbiflow.github.io/
+[trellis]: https://github.com/SymbiFlow/prjtrellis#readme
 [upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
 [vim]: http://www.vim.org/
 [yosys]: http://www.clifford.at/yosys/
