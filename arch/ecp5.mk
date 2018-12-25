@@ -1,11 +1,11 @@
 TRELLIS  ?= /usr/share/trellis
 LPF       = boards/$(BOARD).lpf
-FREQ_PLL  = $(FREQ_OSC)
+FREQ_PLL  = 50
 
 progmem_syn.hex:
 	touch $@
 
-$(PLL): dummy-pll.sv
+$(PLL): ecp5-pll.sv
 	cp $< $@
 
 $(ASC_SYN): $(JSON) $(LPF)
