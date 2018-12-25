@@ -4,7 +4,7 @@
 
 Icicle is a 32-bit [RISC-V][riscv] system on chip for [iCE40 HX8K][ice40],
 [iCE40 UP5K][ice40-up5k] and [ECP5][ecp5] FPGAs. It can be built with the
-open-source [Symbiflow][symbiflow] toolchain and currently targets several
+open-source [SymbiFlow][symbiflow] toolchain and currently targets several
 development boards.
 
 ## Current features
