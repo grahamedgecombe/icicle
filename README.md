@@ -112,11 +112,11 @@ instead of [nextpnr][nextpnr] (the default) - e.g. `make PNR=arachne-pnr`.
 
 ## Size and performance
 
-The entire system on chip currently occupies around 2,500 LUTs on an iCE40 when
+The entire system on chip currently occupies around 3,000 LUTs on an iCE40 when
 synthesized with [Yosys][yosys].
 
-It's currently clocked at 24 MHz but `icetime` estimates it could be clocked at
-~30-35 MHz (depending on how lucky [arachne-pnr][arachne-pnr] is).
+It's currently clocked at 24 MHz but [nextpnr][nextpnr] estimates it could be
+clocked at ~30-35 MHz on a HX series device.
 
 The core is capable of issuing and retiring one instruction per clock cycle,
 although the actual number of instructions per cycle will be slightly less than
