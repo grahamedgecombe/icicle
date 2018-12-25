@@ -10,6 +10,11 @@ module sync #(
 );
     logic [BITS-1:0] metastable;
 
+    initial begin
+        metastable <= 0;
+        out <= 0;
+    end
+
     always_ff @(posedge clk) begin
         metastable <= in;
         out <= metastable;
