@@ -33,8 +33,8 @@ boards.
 
 Icicle supports several development boards:
 
-* `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
 * `blackice-ii`: [BlackIce II][blackice-ii-board]
+* `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
 * `upduino`: [UPduino][upduino]
 
 `<board>` should be replaced with the internal name of your development board in
@@ -52,16 +52,16 @@ board).
 
 ### Programming
 
-#### iCE40-HX8K breakout board
-
-* Configure the jumpers for flash programming.
-* Run `make BOARD=ice40hx8k-b-evn flash` to flash the bitstream.
-
 #### BlackIce II
 
 * Configure jumper on board for [DFU Mode][dfu-mode] and connect both USB1 and
   USB2 on the board to host USB ports.
 * Run `make BOARD=blackice-ii dfu-flash` to flash the bitstream.
+
+#### iCE40-HX8K breakout board
+
+* Configure the jumpers for flash programming.
+* Run `make BOARD=ice40hx8k-b-evn flash` to flash the bitstream.
 
 ### Testing
 
