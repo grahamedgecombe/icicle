@@ -141,7 +141,11 @@ module rv32_fetch #(
                 exception_out <= 1;
                 exception_cause_out <= `RV32_MCAUSE_INSTR_FAULT_EXCEPTION;
                 branch_predicted_taken_out <= 0;
+`ifdef RISCV_FORMAL
                 instr_out <= 0;
+`else
+                instr_out <= `RV32_INSTR_NOP;
+`endif
             end
 
             if (flush_in) begin
