@@ -129,8 +129,8 @@ This project is available under the terms of the ISC license, which is similar
 to the 2-clause BSD license. See the `LICENSE` file for the copyright
 information and licensing terms.
 
-[arachne-pnr]: https://github.com/cseed/arachne-pnr
-[blackice-ii-board]: https://github.com/mystorm-org/BlackIce-II
+[arachne-pnr]: https://github.com/cseed/arachne-pnr#readme
+[blackice-ii-board]: https://github.com/mystorm-org/BlackIce-II#readme
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [dfu-mode]: https://github.com/mystorm-org/BlackIce-II/wiki/DFU-operations-on-the-BlackIce-II
 [ecp5-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/ECP5EvaluationBoard.aspx
@@ -141,8 +141,8 @@ information and licensing terms.
 [icestorm]: http://www.clifford.at/icestorm/
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/
-[nextpnr]: https://github.com/YosysHQ/nextpnr
-[riscv-gnu]: https://github.com/riscv/riscv-gnu-toolchain
+[nextpnr]: https://github.com/YosysHQ/nextpnr#readme
+[riscv-gnu]: https://github.com/riscv/riscv-gnu-toolchain#readme
 [riscv-priv]: https://riscv.org/specifications/privileged-isa/
 [riscv-user]: https://riscv.org/specifications/
 [riscv]: https://riscv.org/risc-v-isa/
