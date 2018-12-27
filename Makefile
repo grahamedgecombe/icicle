@@ -16,13 +16,16 @@ SVF      = $(TOP).svf
 TIME_RPT = $(TOP).rpt
 STAT     = $(TOP).stat
 BOARD   ?= ice40hx8k-b-evn
+PROGRAM ?= hello
+C_SRC    = $(wildcard programs/$(PROGRAM)/*.c)
+OBJ      = $(sort $(addsuffix .o, $(basename $(C_SRC))) start.o)
 TARGET   = riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-gcc
 LDFLAGS  = $(CFLAGS) -Wl,-Tprogmem.lds
 CC       = $(TARGET)-gcc
-CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -Os -ffreestanding -nostartfiles -g
+CFLAGS   = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -Os -ffreestanding -nostartfiles -g -Iprograms/$(PROGRAM)
 OBJCOPY  = $(TARGET)-objcopy
 
 include boards/$(BOARD).mk
@@ -33,7 +36,7 @@ include arch/$(ARCH).mk
 all: $(BIN)
 
 clean:
-	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(SVF) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.bin progmem.o start.o start.s progmem progmem.lds defines.sv
+	$(RM) $(BLIF) $(JSON) $(ASC_SYN) $(ASC) $(BIN) $(SVF) $(PLL) $(TIME_RPT) $(STAT) $(OBJ) progmem_syn.hex progmem.hex progmem.bin start.o start.s progmem progmem.lds defines.sv
 
 progmem.bin: progmem
 	$(OBJCOPY) -O binary $< $@
@@ -41,8 +44,8 @@ progmem.bin: progmem
 progmem.hex: progmem.bin
 	xxd -p -c 4 < $< > $@
 
-progmem: progmem.o start.o progmem.lds
-	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
+progmem: $(OBJ) progmem.lds
+	$(LD) $(LDFLAGS) -o $@ $(OBJ)
 
 $(BLIF) $(JSON): $(YS) $(SRC) progmem_syn.hex progmem.hex defines.sv
 	yosys $(QUIET) $<
