@@ -1,7 +1,9 @@
 `ifndef RAM
 `define RAM
 
-module ram (
+module ram #(
+    parameter SIZE = 2048
+) (
     input clk,
     input reset,
 
@@ -13,7 +15,7 @@ module ram (
     input [31:0] write_value_in,
     output logic ready_out
 );
-    logic [31:0] mem [2047:0];
+    logic [31:0] mem [SIZE-1:0];
     logic [31:0] read_value;
     logic ready;
 
