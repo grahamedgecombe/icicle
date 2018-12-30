@@ -5,6 +5,12 @@
 `include "timer.sv"
 `include "uart.sv"
 
+`ifdef ECP5
+`define RAM_SIZE 8192
+`else
+`define RAM_SIZE 2048
+`endif
+
 `ifdef SPI_FLASH
 `define RESET_VECTOR 32'h01100000
 `else
@@ -154,7 +160,9 @@ module icicle (
     logic [31:0] ram_read_value;
     logic ram_ready;
 
-    ram ram (
+    ram #(
+        .SIZE(`RAM_SIZE)
+    ) ram (
         .clk(clk),
         .reset(reset),
 

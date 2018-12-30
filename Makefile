@@ -59,7 +59,7 @@ defines.sv: boards/$(BOARD)-defines.sv
 start.s: start-$(PROGMEM).s
 	cp $< $@
 
-progmem.lds: progmem-$(PROGMEM).lds
+progmem.lds: arch/$(ARCH)-$(PROGMEM).lds
 	cp $< $@
 
 time: $(TIME_RPT)
