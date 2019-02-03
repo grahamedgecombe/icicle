@@ -67,8 +67,13 @@ module top (
     logic pll_locked_async;
 
     pll pll (
+`ifdef ECP5
+        .clki(clk),
+        .clko(pll_clk),
+`else
         .clock_in(clk),
         .clock_out(pll_clk),
+`endif
         .locked(pll_locked_async)
     );
 

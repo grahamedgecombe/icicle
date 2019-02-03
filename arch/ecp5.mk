@@ -1,12 +1,12 @@
 TRELLIS  ?= /usr/share/trellis
 LPF       = boards/$(BOARD).lpf
-FREQ_PLL  = 50
+FREQ_PLL  = 48
 
 progmem_syn.hex:
 	touch $@
 
-$(PLL): ecp5-pll.sv
-	cp $< $@
+$(PLL):
+	ecppll -i $(FREQ_OSC) -o $(FREQ_PLL) -f $@
 
 $(ASC_SYN): $(JSON) $(LPF)
 	nextpnr-ecp5 $(QUIET) --$(DEVICE) --speed $(SPEED) --package $(PACKAGE) --basecfg $(TRELLIS)/misc/basecfgs/empty_$(BASECFG).config --json $< --lpf $(LPF) --freq $(FREQ_PLL) --textcfg $@
