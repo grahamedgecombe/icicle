@@ -91,6 +91,18 @@ The `Makefile` runs the [IceStorm][icestorm] toolchain in quiet mode. Unset the
 Set the `PNR` variable to `arachne-pnr` to use [arachne-pnr][arachne-pnr]
 instead of [nextpnr][nextpnr] (the default) - e.g. `make PNR=arachne-pnr`.
 
+## Formal verification
+
+Icicle supports the RISC-V Formal Interface (RVFI), allowing it to be formally
+verified with [SymbiYosys][symbiyosys] and [riscv-formal][riscv-formal]:
+
+* Run `git clone https://github.com/SymbioticEDA/riscv-formal` to clone
+  riscv-formal.
+* Run `cd riscv-formal/cores && git clone https://github.com/grahamedgecombe/icicle`
+  to clone Icicle in the `cores` subdirectory.
+* Run ``cd icicle && python ../../checks/genchecks.py && make -C checks -j `nproc```
+  to verify the core.
+
 ## Planned features
 
 * Use remaining block RAM tiles to eke out as much memory as possible.
@@ -141,11 +153,13 @@ information and licensing terms.
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/
 [nextpnr]: https://github.com/YosysHQ/nextpnr#readme
+[riscv-formal]: https://github.com/SymbioticEDA/riscv-formal
 [riscv-gnu]: https://github.com/riscv/riscv-gnu-toolchain#readme
 [riscv-priv]: https://riscv.org/specifications/privileged-isa/
 [riscv-user]: https://riscv.org/specifications/
 [riscv]: https://riscv.org/risc-v-isa/
 [symbiflow]: https://symbiflow.github.io/
+[symbiyosys]: https://symbiyosys.readthedocs.io/
 [trellis]: https://github.com/SymbiFlow/prjtrellis#readme
 [upduino]: http://gnarlygrey.atspace.cc/development-platform.html#upduino
 [vim]: https://www.vim.org/
