@@ -9,7 +9,9 @@
 `include "rv32_writeback.sv"
 
 module rv32 #(
-    parameter RESET_VECTOR = 32'b0
+    parameter RESET_VECTOR = 32'b0,
+    parameter BYPASSING = 1,
+    parameter BRANCH_PREDICTION = 1
 ) (
     input clk,
     input reset,
@@ -208,7 +210,9 @@ module rv32 #(
     logic [31:0] mem_trap_pc;
     logic [31:0] mem_branch_pc;
 
-    rv32_hazard_unit hazard_unit (
+    rv32_hazard_unit #(
+        .BYPASSING(BYPASSING)
+    ) hazard_unit (
         /* control in */
         .decode_rs1_unreg_in(decode_rs1_unreg),
         .decode_rs1_read_unreg_in(decode_rs1_read_unreg),
@@ -224,8 +228,10 @@ module rv32 #(
 
         .fetch_overwrite_pc_in(fetch_overwrite_pc),
 
+        .execute_rd_in(execute_rd),
         .execute_mem_fence_in(execute_mem_fence),
 
+        .mem_rd_in(mem_rd),
         .mem_trap_in(mem_trap_unreg),
         .mem_branch_mispredicted_in(mem_branch_mispredicted),
 
@@ -255,7 +261,8 @@ module rv32 #(
     );
 
     rv32_fetch #(
-        .RESET_VECTOR(RESET_VECTOR)
+        .RESET_VECTOR(RESET_VECTOR),
+        .BRANCH_PREDICTION(BRANCH_PREDICTION)
     ) fetch (
         .clk(clk),
         .reset(reset),
@@ -389,7 +396,9 @@ module rv32 #(
         .csr_out(decode_csr)
     );
 
-    rv32_execute execute (
+    rv32_execute #(
+        .BYPASSING(BYPASSING)
+    ) execute (
         .clk(clk),
         .reset(reset),
 

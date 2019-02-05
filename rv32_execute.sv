@@ -4,7 +4,9 @@
 `include "rv32_alu.sv"
 `include "rv32_branch.sv"
 
-module rv32_execute (
+module rv32_execute #(
+    parameter BYPASSING = 0
+) (
     input clk,
     input reset,
 
@@ -109,21 +111,28 @@ module rv32_execute (
     logic [31:0] rs1_value;
     logic [31:0] rs2_value;
 
-    always_comb begin
-        if (rd_write_out && !mem_flush_in && rd_out == rs1_in && |rs1_in)
-            rs1_value = result_out;
-        else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs1_in && |rs1_in)
-            rs1_value = writeback_rd_value_in;
-        else
-            rs1_value = rs1_value_in;
+    generate
+        if (BYPASSING) begin
+            always_comb begin
+                if (rd_write_out && !mem_flush_in && rd_out == rs1_in && |rs1_in)
+                    rs1_value = result_out;
+                else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs1_in && |rs1_in)
+                    rs1_value = writeback_rd_value_in;
+                else
+                    rs1_value = rs1_value_in;
 
-        if (rd_write_out && !mem_flush_in && rd_out == rs2_in && |rs2_in)
-            rs2_value = result_out;
-        else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs2_in && |rs2_in)
-            rs2_value = writeback_rd_value_in;
-        else
-            rs2_value = rs2_value_in;
-    end
+                if (rd_write_out && !mem_flush_in && rd_out == rs2_in && |rs2_in)
+                    rs2_value = result_out;
+                else if (writeback_rd_write_in && !writeback_flush_in && writeback_rd_in == rs2_in && |rs2_in)
+                    rs2_value = writeback_rd_value_in;
+                else
+                    rs2_value = rs2_value_in;
+            end
+        end else begin
+            assign rs1_value = rs1_value_in;
+            assign rs2_value = rs2_value_in;
+        end
+    endgenerate
 
     /* ALU */
     logic [31:0] alu_result;

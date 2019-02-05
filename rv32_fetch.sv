@@ -5,7 +5,8 @@
 `include "rv32_opcodes.sv"
 
 module rv32_fetch #(
-    parameter RESET_VECTOR = 32'b0
+    parameter RESET_VECTOR = 32'b0,
+    parameter BRANCH_PREDICTION = 0
 ) (
     input clk,
     input reset,
@@ -81,22 +82,31 @@ module rv32_fetch #(
     assign imm_b = {{20{sign}}, instr_read_value_in[7],     instr_read_value_in[30:25], instr_read_value_in[11:8],  1'b0};
     assign opcode = instr_read_value_in[6:0];
 
-    always_comb begin
-        casez ({opcode, sign})
-            {`RV32_OPCODE_JAL, 1'b?}: begin
-                branch_predicted_taken = 1;
-                branch_offset = imm_j;
+    generate
+        if (BRANCH_PREDICTION) begin
+            always_comb begin
+                casez ({opcode, sign})
+                    {`RV32_OPCODE_JAL, 1'b?}: begin
+                        branch_predicted_taken = 1;
+                        branch_offset = imm_j;
+                    end
+                    {`RV32_OPCODE_BRANCH, 1'b1}: begin
+                        branch_predicted_taken = 1;
+                        branch_offset = imm_b;
+                    end
+                    default: begin
+                        branch_predicted_taken = 0;
+                        branch_offset = 32'd4;
+                    end
+                endcase
             end
-            {`RV32_OPCODE_BRANCH, 1'b1}: begin
-                branch_predicted_taken = 1;
-                branch_offset = imm_b;
-            end
-            default: begin
-                branch_predicted_taken = 0;
-                branch_offset = 32'd4;
-            end
-        endcase
+        end else begin
+            assign branch_predicted_taken = 0;
+            assign branch_offset = 32'd4;
+        end
+    endgenerate
 
+    always_comb begin
         if (overwrite_pc)
             next_pc = overwritten_pc;
         else if (trap_in)
