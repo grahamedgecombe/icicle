@@ -1,6 +1,10 @@
 PNR     ?= nextpnr
 PCF      = boards/$(BOARD).pcf
+ifeq ($(SPEED),up)
+FREQ_PLL = 16
+else
 FREQ_PLL = 24
+endif
 
 progmem_syn.hex:
 	icebram -g 32 2048 > $@
