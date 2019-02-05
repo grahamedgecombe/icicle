@@ -1,6 +1,6 @@
 TRELLIS  ?= /usr/share/trellis
 LPF       = boards/$(BOARD).lpf
-FREQ_PLL  = 48
+FREQ_PLL  = 80
 
 progmem_syn.hex:
 	touch $@
