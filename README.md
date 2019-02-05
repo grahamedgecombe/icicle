@@ -126,8 +126,9 @@ verified with [SymbiYosys][symbiyosys] and [riscv-formal][riscv-formal]:
 The entire system on chip currently occupies around 3,000 LUTs on an iCE40 when
 synthesized with [Yosys][yosys].
 
-It's currently clocked at 24 MHz but [nextpnr][nextpnr] estimates it could be
-clocked at ~30-35 MHz on a HX series device.
+If bypassing and branch prediction are disabled [nextpnr][nextpnr] estimates it
+can be clocked at around 50 MHz on a HX series device and 20 MHz on a UP series
+device.
 
 The core is capable of issuing and retiring one instruction per clock cycle,
 although the actual number of instructions per cycle will be slightly less than
