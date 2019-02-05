@@ -10,8 +10,8 @@
 
 module rv32 #(
     parameter RESET_VECTOR = 32'b0,
-    parameter BYPASSING = 1,
-    parameter BRANCH_PREDICTION = 1
+    parameter BYPASSING = 0,
+    parameter BRANCH_PREDICTION = 0
 ) (
     input clk,
     input reset,
