@@ -2,6 +2,5 @@ ARCH     = ecp5
 SPEED    = 8
 DEVICE   = um5g-85k
 PACKAGE  = CABGA381
-BASECFG  = lfe5um5g-85f
 FREQ_OSC = 12
 PROGMEM  = ram
