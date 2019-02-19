@@ -19,7 +19,7 @@ BOARD   ?= ice40hx8k-b-evn
 PROGRAM ?= hello
 C_SRC    = $(filter-out programs/uip/fsdata.c, $(wildcard programs/$(PROGRAM)/*.c))
 OBJ      = $(sort $(addsuffix .o, $(basename $(C_SRC))) start.o)
-TARGET   = riscv64-unknown-elf
+TARGET  ?= riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-gcc
