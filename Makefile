@@ -67,7 +67,3 @@ time: $(TIME_RPT)
 
 stat: $(STAT)
 	cat $<
-
-# Flash to BlackIce-II board
-dfu-flash: $(BIN) $(TIME_RPT)
-	dfu-util -d 0483:df11 --alt 0 --dfuse-address 0x0801F000 -D $(BIN)
