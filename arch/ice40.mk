@@ -28,7 +28,12 @@ else
 endif
 
 $(BIN): $(ASC)
+ifeq ($(PROGMEM),flash)
+	icepack -s $< $@
+else
 	icepack $< $@
+endif
+
 
 $(TIME_RPT): $(ASC_SYN) $(PCF)
 	icetime -t -m -d $(SPEED)$(DEVICE) -P $(PACKAGE) -p $(PCF) -c $(FREQ_PLL) -r $@ $<
