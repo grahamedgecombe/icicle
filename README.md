@@ -36,6 +36,7 @@ Icicle supports several development boards:
 * `ecp5-evn`: [ECP5 evaluation board][ecp5-evn]
 * `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
 * `upduino`: [UPduino][upduino]
+* `icebreaker`: [iCEBreaker][icebreaker]
 
 `<board>` should be replaced with the internal name of your development board in
 the rest of the instructions (e.g. `ice40hx8k-b-evn` for the iCE40-HX8K breakout
@@ -150,6 +151,7 @@ information and licensing terms.
 [ice40-hx8k-breakout]: https://www.latticesemi.com/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
 [ice40-up5k]: https://www.latticesemi.com/Products/FPGAandCPLD/iCE40Ultra.aspx
 [ice40]: https://www.latticesemi.com/Products/FPGAandCPLD/iCE40.aspx
+[icebreaker]: https://github.com/icebreaker-fpga/
 [icestorm]: http://www.clifford.at/icestorm/
 [iverilog]: http://iverilog.icarus.com/
 [make]: https://www.gnu.org/software/make/

@@ -19,7 +19,7 @@ BOARD   ?= ice40hx8k-b-evn
 PROGRAM ?= hello
 C_SRC    = $(filter-out programs/uip/fsdata.c, $(wildcard programs/$(PROGRAM)/*.c))
 OBJ      = $(sort $(addsuffix .o, $(basename $(C_SRC))) start.o)
-TARGET   = riscv64-unknown-elf
+TARGET  ?= riscv64-unknown-elf
 AS       = $(TARGET)-as
 ASFLAGS  = -march=rv32i -mabi=ilp32
 LD       = $(TARGET)-gcc
@@ -67,7 +67,3 @@ time: $(TIME_RPT)
 
 stat: $(STAT)
 	cat $<
-
-# Flash to BlackIce-II board
-dfu-flash: $(BIN) $(TIME_RPT)
-	dfu-util -d 0483:df11 --alt 0 --dfuse-address 0x0801F000 -D $(BIN)
