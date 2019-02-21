@@ -35,8 +35,8 @@ Icicle supports several development boards:
 * `blackice-ii`: [BlackIce II][blackice-ii-board]
 * `ecp5-evn`: [ECP5 evaluation board][ecp5-evn]
 * `ice40hx8k-b-evn`: [iCE40-HX8K breakout board][ice40-hx8k-breakout]
-* `upduino`: [UPduino][upduino]
 * `icebreaker`: [iCEBreaker][icebreaker]
+* `upduino`: [UPduino][upduino]
 
 `<board>` should be replaced with the internal name of your development board in
 the rest of the instructions (e.g. `ice40hx8k-b-evn` for the iCE40-HX8K breakout
