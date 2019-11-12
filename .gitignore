@@ -1,0 +1,5 @@
+*.egg-info
+*~
+.*
+!.gitignore
+__pycache__
