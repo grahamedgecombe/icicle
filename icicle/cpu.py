@@ -16,13 +16,15 @@ class CPU(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
+        regs = Memory(width=32, depth=32)
+
         m.submodules.pipeline = Pipeline(
             pcgen=PCGen(self.reset_vector),
             fetch=Fetch(),
-            decode=Decode(),
+            decode=Decode(regs),
             execute=Execute(),
             mem=MemoryAccess(),
-            writeback=Writeback()
+            writeback=Writeback(regs)
         )
 
         return m
