@@ -10,11 +10,14 @@ from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
+    def __init__(self, reset_vector):
+        self.reset_vector = reset_vector
+
     def elaborate(self, platform):
         m = Module()
 
         m.submodules.pipeline = Pipeline(
-            pcgen=PCGen(),
+            pcgen=PCGen(self.reset_vector),
             fetch=Fetch(),
             decode=Decode(),
             execute=Execute(),

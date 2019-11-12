@@ -1,4 +1,6 @@
-PF_LAYOUT = []
+PF_LAYOUT = [
+    ("pc", 32)
+]
 
 FD_LAYOUT = []
 
