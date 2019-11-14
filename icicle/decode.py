@@ -36,6 +36,7 @@ class Decode(Stage):
 
         with m.If(~self.stall):
             m.d.sync += [
+                self.wdata.pc.eq(self.rdata.pc),
                 self.wdata.rd.eq(control.rd),
                 self.wdata.rd_wen.eq(control.rd_wen),
                 self.wdata.rs1.eq(control.rs1),

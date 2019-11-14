@@ -3,10 +3,12 @@ PF_LAYOUT = [
 ]
 
 FD_LAYOUT = [
+    ("pc", 32),
     ("insn", 32)
 ]
 
 DX_LAYOUT = [
+    ("pc", 32),
     ("rd", 5),
     ("rd_wen", 1),
     ("rs1", 5),
