@@ -10,7 +10,7 @@ from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
-    def __init__(self, reset_vector):
+    def __init__(self, reset_vector=0):
         self.reset_vector = reset_vector
 
     def elaborate(self, platform):
