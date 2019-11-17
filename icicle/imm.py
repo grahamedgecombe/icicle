@@ -28,7 +28,7 @@ class ImmediateDecoder(Elaboratable):
         ]
 
         with m.Switch(self.fmt):
-            with m.Case(Format.I, Format.Z):
+            with m.Case(Format.I):
                 m.d.comb += self.imm.eq(imm_i)
             with m.Case(Format.S):
                 m.d.comb += self.imm.eq(imm_s)

@@ -51,19 +51,19 @@ class Control(Elaboratable):
             with m.Case(Opcode.MISC_MEM):
                 m.d.comb += self.fmt.eq(Format.I)
             with m.Case(Opcode.SYSTEM):
-                with m.If(funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI)):
-                    m.d.comb += self.fmt.eq(Format.Z)
-                with m.Else():
-                    m.d.comb += self.fmt.eq(Format.I)
+                m.d.comb += self.fmt.eq(Format.I)
             with m.Default():
                 m.d.comb += self.illegal.eq(1)
+
+        zimm = Signal()
+        m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
 
         def format_in(*list):
             return reduce(or_, (self.fmt == f for f in list), 0)
 
         m.d.comb += [
-            self.rd_wen.eq((self.rd != 0) & format_in(Format.R, Format.I, Format.U, Format.J, Format.Z)),
-            self.rs1_ren.eq((self.rs1 != 0) & format_in(Format.R, Format.I, Format.S, Format.B)),
+            self.rd_wen.eq((self.rd != 0) & format_in(Format.R, Format.I, Format.U, Format.J)),
+            self.rs1_ren.eq((self.rs1 != 0) & format_in(Format.R, Format.I, Format.S, Format.B) & ~zimm),
             self.rs2_ren.eq((self.rs2 != 0) & format_in(Format.R, Format.S, Format.B))
         ]
 

@@ -40,11 +40,6 @@ class ControlTestCase(FHDLTestCase):
                 yield m.insn.eq(Cat(C(Opcode.JAL, 7), C(3, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
                 yield Delay()
                 self.assertEqual((yield m.fmt), Format.J.value)
-
-                # Z
-                yield m.insn.eq(Cat(C(Opcode.SYSTEM, 7), C(3, 5), C(Funct3.CSRRWI), C(1, 5), C(2, 5), C(0, 7)))
-                yield Delay()
-                self.assertEqual((yield m.fmt), Format.Z.value)
             sim.add_process(process)
             sim.run()
 

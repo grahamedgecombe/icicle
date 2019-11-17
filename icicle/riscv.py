@@ -76,4 +76,3 @@ class Format(Enum):
     B = 3
     U = 4
     J = 5
-    Z = 6
