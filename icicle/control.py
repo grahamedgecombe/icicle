@@ -26,6 +26,9 @@ class Control(Elaboratable):
         funct7 = Signal(7)
         m.d.comb += Cat(opcode, self.rd, funct3, self.rs1, self.rs2, funct7).eq(self.insn)
 
+        funct12 = Signal(12)
+        m.d.comb += funct12.eq(Cat(self.rs2, funct7))
+
         with m.Switch(opcode):
             with m.Case(Opcode.LUI):
                 m.d.comb += self.fmt.eq(Format.U)
