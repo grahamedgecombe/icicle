@@ -144,3 +144,21 @@ class ControlTestCase(FHDLTestCase):
                 self.assertEqual((yield m.rs2_ren), 0)
             sim.add_process(process)
             sim.run()
+
+    def test_illegal(self):
+        m = Control()
+        with Simulator(m) as sim:
+            def process():
+                yield m.insn.eq(Cat(C(Opcode.OP, 7), C(3, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
+                yield Delay()
+                self.assertEqual((yield m.illegal), 0)
+
+                yield m.insn.eq(Repl(0, 32))
+                yield Delay()
+                self.assertEqual((yield m.illegal), 1)
+
+                yield m.insn.eq(Repl(1, 32))
+                yield Delay()
+                self.assertEqual((yield m.illegal), 1)
+            sim.add_process(process)
+            sim.run()

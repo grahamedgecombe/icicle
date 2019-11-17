@@ -16,6 +16,7 @@ class Control(Elaboratable):
         self.rs2 = Signal(5)
         self.rs2_ren = Signal()
         self.fmt = Signal(Format)
+        self.illegal = Signal()
 
     def elaborate(self, platform):
         m = Module()
@@ -51,6 +52,8 @@ class Control(Elaboratable):
                     m.d.comb += self.fmt.eq(Format.Z)
                 with m.Else():
                     m.d.comb += self.fmt.eq(Format.I)
+            with m.Default():
+                m.d.comb += self.illegal.eq(1)
 
         def format_in(*list):
             return reduce(or_, (self.fmt == f for f in list), 0)
