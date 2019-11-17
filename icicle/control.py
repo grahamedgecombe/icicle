@@ -3,7 +3,7 @@ from operator import or_
 
 from nmigen import *
 
-from icicle.riscv import Format, Opcode
+from icicle.riscv import Format, Opcode, Funct3
 
 
 class Control(Elaboratable):
@@ -47,17 +47,16 @@ class Control(Elaboratable):
             with m.Case(Opcode.MISC_MEM):
                 m.d.comb += self.fmt.eq(Format.I)
             with m.Case(Opcode.SYSTEM):
-                # TODO(gpe): the CSRR[WSC]I instructions are a special case:
-                # the rs1 bits can be non-zero (they are used as zimm) but we
-                # still enable rs1_ren, so we'll needlessly bypass or interlock
-                # in the future - should we add a special Format.Z type?
-                m.d.comb += self.fmt.eq(Format.I)
+                with m.If(funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI)):
+                    m.d.comb += self.fmt.eq(Format.Z)
+                with m.Else():
+                    m.d.comb += self.fmt.eq(Format.I)
 
         def format_in(*list):
             return reduce(or_, (self.fmt == f for f in list), 0)
 
         m.d.comb += [
-            self.rd_wen.eq((self.rd != 0) & format_in(Format.R, Format.I, Format.U, Format.J)),
+            self.rd_wen.eq((self.rd != 0) & format_in(Format.R, Format.I, Format.U, Format.J, Format.Z)),
             self.rs1_ren.eq((self.rs1 != 0) & format_in(Format.R, Format.I, Format.S, Format.B)),
             self.rs2_ren.eq((self.rs2 != 0) & format_in(Format.R, Format.S, Format.B))
         ]

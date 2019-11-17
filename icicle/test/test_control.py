@@ -3,7 +3,7 @@ from nmigen.back.pysim import Delay, Simulator
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.control import Control
-from icicle.riscv import Format, Opcode
+from icicle.riscv import Format, Opcode, Funct3
 
 
 class ControlTestCase(FHDLTestCase):
@@ -40,6 +40,11 @@ class ControlTestCase(FHDLTestCase):
                 yield m.insn.eq(Cat(C(Opcode.JAL, 7), C(3, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
                 yield Delay()
                 self.assertEqual((yield m.fmt), Format.J.value)
+
+                # Z
+                yield m.insn.eq(Cat(C(Opcode.SYSTEM, 7), C(3, 5), C(Funct3.CSRRWI), C(1, 5), C(2, 5), C(0, 7)))
+                yield Delay()
+                self.assertEqual((yield m.fmt), Format.Z.value)
             sim.add_process(process)
             sim.run()
 
@@ -94,6 +99,14 @@ class ControlTestCase(FHDLTestCase):
 
                 # J
                 yield m.insn.eq(Cat(C(Opcode.JAL, 7), C(3, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
+                yield Delay()
+                self.assertEqual((yield m.rd), 3)
+                self.assertEqual((yield m.rd_wen), 1)
+                self.assertEqual((yield m.rs1_ren), 0)
+                self.assertEqual((yield m.rs2_ren), 0)
+
+                # Z
+                yield m.insn.eq(Cat(C(Opcode.SYSTEM, 7), C(3, 5), C(Funct3.CSRRWI), C(1, 5), C(2, 5), C(0, 7)))
                 yield Delay()
                 self.assertEqual((yield m.rd), 3)
                 self.assertEqual((yield m.rd_wen), 1)

@@ -3,7 +3,7 @@ from nmigen.back.pysim import Delay, Simulator
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.imm import ImmediateDecoder
-from icicle.riscv import Format, Opcode
+from icicle.riscv import Format, Opcode, Funct3
 
 
 class ImmediateDecoderTestCase(FHDLTestCase):
@@ -85,5 +85,16 @@ class ImmediateDecoderTestCase(FHDLTestCase):
                 yield m.fmt.eq(Format.J)
                 yield Delay()
                 self.assertEqual((yield m.imm), 0b111111111111_11100_100_1_111110_1111_0)
+
+                # Z
+                yield m.insn.eq(Cat(C(Opcode.SYSTEM, 7), C(0b11000, 5), C(Funct3.CSRRWI, 3), C(0b11100, 5), C(0b11110, 5), C(0b111110, 6), C(0b0, 1)))
+                yield m.fmt.eq(Format.I)
+                yield Delay()
+                self.assertEqual((yield m.imm), 0b000000000000000000000_111110_11110)
+
+                yield m.insn.eq(Cat(C(Opcode.SYSTEM, 7), C(0b11000, 5), C(Funct3.CSRRWI, 3), C(0b11100, 5), C(0b11110, 5), C(0b111110, 6), C(0b1, 1)))
+                yield m.fmt.eq(Format.I)
+                yield Delay()
+                self.assertEqual((yield m.imm), 0b111111111111111111111_111110_11110)
             sim.add_process(process)
             sim.run()

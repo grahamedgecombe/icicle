@@ -15,6 +15,15 @@ class Opcode:
     SYSTEM   = 0b1110011
 
 
+class Funct3:
+    CSRRW  = 0b001
+    CSRRS  = 0b010
+    CSRRC  = 0b011
+    CSRRWI = 0b101
+    CSRRSI = 0b110
+    CSRRCI = 0b111
+
+
 class Format(Enum):
     R = 0
     I = 1
@@ -22,3 +31,4 @@ class Format(Enum):
     B = 3
     U = 4
     J = 5
+    Z = 6
