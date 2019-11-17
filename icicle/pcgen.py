@@ -5,7 +5,7 @@ from icicle.pipeline_regs import PF_LAYOUT
 class PCGen(Stage):
     def __init__(self, reset_vector):
         super().__init__(wdata_layout=PF_LAYOUT)
-        self.wdata.pc.reset = reset_vector
+        self.wdata.pc.reset = reset_vector - 4
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
