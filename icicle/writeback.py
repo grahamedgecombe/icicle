@@ -2,24 +2,23 @@ from nmigen import *
 
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import MW_LAYOUT
+from icicle.regs import REG_FILE_PORT_LAYOUT
 from icicle.rvfi import RVFI_LAYOUT
 
 
 class Writeback(Stage):
-    def __init__(self, regs):
+    def __init__(self):
         super().__init__(rdata_layout=MW_LAYOUT)
-        self.regs = regs
+        self.rd_port = Record(REG_FILE_PORT_LAYOUT)
         self.rvfi = Record(RVFI_LAYOUT)
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        rd_port = m.submodules.rd_port = self.regs.write_port()
-
         m.d.comb += [
-            rd_port.en.eq(~self.stall & self.valid & self.rdata.rd_wen),
-            rd_port.addr.eq(self.rdata.rd),
-            rd_port.data.eq(self.rdata.rd_wdata)
+            self.rd_port.en.eq(~self.stall & self.valid & self.rdata.rd_wen),
+            self.rd_port.addr.eq(self.rdata.rd),
+            self.rd_port.data.eq(self.rdata.rd_wdata)
         ]
 
         with m.If(~self.stall & self.valid):

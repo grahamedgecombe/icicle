@@ -19,14 +19,34 @@ class CPU(Elaboratable):
         m = Module()
 
         regs = Memory(width=32, depth=32)
+        rs1_port = m.submodules.rs1_port = regs.read_port(transparent=False)
+        rs2_port = m.submodules.rs2_port = regs.read_port(transparent=False)
+        rd_port = m.submodules.rd_port = regs.write_port()
 
-        writeback = Writeback(regs)
-        m.d.comb += writeback.rvfi.connect(self.rvfi)
+        decode = Decode()
+        m.d.comb += [
+            rs1_port.en.eq(decode.rs1_port.en),
+            rs1_port.addr.eq(decode.rs1_port.addr),
+            decode.rs1_port.data.eq(rs1_port.data),
+
+            rs2_port.en.eq(decode.rs2_port.en),
+            rs2_port.addr.eq(decode.rs2_port.addr),
+            decode.rs2_port.data.eq(rs2_port.data)
+        ]
+
+        writeback = Writeback()
+        m.d.comb += [
+            rd_port.en.eq(writeback.rd_port.en),
+            rd_port.addr.eq(writeback.rd_port.addr),
+            rd_port.data.eq(writeback.rd_port.data),
+
+            writeback.rvfi.connect(self.rvfi)
+        ]
 
         m.submodules.pipeline = Pipeline(
             pcgen=PCGen(self.reset_vector),
             fetch=Fetch(),
-            decode=Decode(regs),
+            decode=decode,
             execute=Execute(),
             mem=MemoryAccess(),
             writeback=writeback
