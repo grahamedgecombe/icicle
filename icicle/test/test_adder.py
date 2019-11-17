@@ -19,9 +19,9 @@ class AdderTestCase(FHDLTestCase):
                 self.assertEqual((yield m.carry), 0)
 
                 yield m.a.eq(0x80000000)
-                yield m.b.eq(0x7fffffff)
+                yield m.b.eq(0x7FFFFFFF)
                 yield Delay()
-                self.assertEqual((yield m.result), 0xffffffff)
+                self.assertEqual((yield m.result), 0xFFFFFFFF)
                 self.assertEqual((yield m.carry), 0)
 
                 yield m.a.eq(0x80000000)
