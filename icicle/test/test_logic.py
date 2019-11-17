@@ -1,4 +1,5 @@
-from nmigen.back.pysim import Simulator, Delay
+from nmigen.back.pysim import Simulator
+from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.logic import Logic, LogicOp

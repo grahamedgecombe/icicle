@@ -1,4 +1,5 @@
-from nmigen.back.pysim import Delay, Simulator
+from nmigen.back.pysim import Simulator
+from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.adder import Adder
