@@ -4,14 +4,14 @@ from icicle.control import Control
 from icicle.imm import ImmediateDecoder
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import FD_LAYOUT, DX_LAYOUT
-from icicle.regs import REG_FILE_PORT_LAYOUT
+from icicle.regs import RS_PORT_LAYOUT
 
 
 class Decode(Stage):
     def __init__(self):
         super().__init__(rdata_layout=FD_LAYOUT, wdata_layout=DX_LAYOUT)
-        self.rs1_port = Record(REG_FILE_PORT_LAYOUT)
-        self.rs2_port = Record(REG_FILE_PORT_LAYOUT)
+        self.rs1_port = Record(RS_PORT_LAYOUT)
+        self.rs2_port = Record(RS_PORT_LAYOUT)
 
     def elaborate(self, platform):
         m = super().elaborate(platform)

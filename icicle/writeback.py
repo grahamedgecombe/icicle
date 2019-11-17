@@ -2,14 +2,14 @@ from nmigen import *
 
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import MW_LAYOUT
-from icicle.regs import REG_FILE_PORT_LAYOUT
+from icicle.regs import RD_PORT_LAYOUT
 from icicle.rvfi import RVFI_LAYOUT
 
 
 class Writeback(Stage):
     def __init__(self):
         super().__init__(rdata_layout=MW_LAYOUT)
-        self.rd_port = Record(REG_FILE_PORT_LAYOUT)
+        self.rd_port = Record(RD_PORT_LAYOUT)
         self.rvfi = Record(RVFI_LAYOUT)
 
     def elaborate(self, platform):
