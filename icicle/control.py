@@ -1,6 +1,3 @@
-from functools import reduce
-from operator import or_
-
 from nmigen import *
 
 from icicle.riscv import Format, Opcode, Funct3
@@ -58,13 +55,10 @@ class Control(Elaboratable):
         zimm = Signal()
         m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
 
-        def format_in(*list):
-            return reduce(or_, (self.fmt == f for f in list), 0)
-
         m.d.comb += [
-            self.rd_wen.eq((self.rd != 0) & format_in(Format.R, Format.I, Format.U, Format.J)),
-            self.rs1_ren.eq((self.rs1 != 0) & format_in(Format.R, Format.I, Format.S, Format.B) & ~zimm),
-            self.rs2_ren.eq((self.rs2 != 0) & format_in(Format.R, Format.S, Format.B))
+            self.rd_wen.eq((self.rd != 0) & self.fmt.matches(Format.R, Format.I, Format.U, Format.J)),
+            self.rs1_ren.eq((self.rs1 != 0) & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~zimm),
+            self.rs2_ren.eq((self.rs2 != 0) & self.fmt.matches(Format.R, Format.S, Format.B))
         ]
 
         return m
