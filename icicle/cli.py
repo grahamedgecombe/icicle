@@ -6,7 +6,11 @@ from icicle.cpu import CPU
 
 
 def main():
-    nmigen_main(CPU())
+    cpu = CPU()
+    ports = []
+    for (name, shape, dir) in cpu.rvfi.layout:
+        ports.append(cpu.rvfi[name])
+    nmigen_main(cpu, name="icicle", ports=ports)
 
 
 if __name__ == "__main__":
