@@ -1,4 +1,5 @@
 from nmigen import *
+from nmigen.hdl.ast import AnySeq
 from nmigen.hdl.rec import *
 
 RS_PORT_LAYOUT = [
@@ -40,6 +41,23 @@ class RegisterFile(Elaboratable):
             rd_port.en.eq(self.rd_port.en),
             rd_port.addr.eq(self.rd_port.addr),
             rd_port.data.eq(self.rd_port.data)
+        ]
+
+        return m
+
+
+class BlackBoxRegisterFile(Elaboratable):
+    def __init__(self):
+        self.rs1_port = Record(RS_PORT_LAYOUT)
+        self.rs2_port = Record(RS_PORT_LAYOUT)
+        self.rd_port = Record(RD_PORT_LAYOUT)
+
+    def elaborate(self, platform):
+        m = Module()
+
+        m.d.comb += [
+            self.rs1_port.data.eq(AnySeq(32)),
+            self.rs2_port.data.eq(AnySeq(32))
         ]
 
         return m

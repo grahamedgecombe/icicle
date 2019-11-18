@@ -6,20 +6,21 @@ from icicle.fetch import Fetch
 from icicle.mem import MemoryAccess
 from icicle.pcgen import PCGen
 from icicle.pipeline import Pipeline
-from icicle.regs import RegisterFile
+from icicle.regs import RegisterFile, BlackBoxRegisterFile
 from icicle.rvfi import RVFI_LAYOUT
 from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
-    def __init__(self, reset_vector):
+    def __init__(self, reset_vector, rvfi_blackbox_regs=False):
         self.reset_vector = reset_vector
+        self.rvfi_blackbox_regs = rvfi_blackbox_regs
         self.rvfi = Record(RVFI_LAYOUT)
 
     def elaborate(self, platform):
         m = Module()
 
-        regs = m.submodules.regs = RegisterFile()
+        regs = m.submodules.regs = BlackBoxRegisterFile() if self.rvfi_blackbox_regs else RegisterFile()
 
         decode = Decode()
         m.d.comb += [

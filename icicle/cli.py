@@ -21,11 +21,19 @@ def main():
         action="store_true",
         help="enable RISC-V Formal Interface"
     )
+    parser.add_argument("--rvfi-blackbox-regs",
+        default=False,
+        action="store_true",
+        help="replace the register file with a black box"
+    )
     main_parser(parser)
 
     args = parser.parse_args()
 
-    cpu = CPU(reset_vector=args.reset_vector)
+    cpu = CPU(
+        reset_vector=args.reset_vector,
+        rvfi_blackbox_regs=args.rvfi_blackbox_regs
+    )
 
     ports = []
     if args.rvfi:
