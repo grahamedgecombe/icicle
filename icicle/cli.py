@@ -16,6 +16,11 @@ def main():
         default="0x00000000",
         help="set program counter to ADDRESS at reset (default: %(default)s)"
     )
+    parser.add_argument("--rvfi",
+        default=False,
+        action="store_true",
+        help="enable RISC-V Formal Interface"
+    )
     main_parser(parser)
 
     args = parser.parse_args()
@@ -23,8 +28,9 @@ def main():
     cpu = CPU(reset_vector=args.reset_vector)
 
     ports = []
-    for (name, shape, dir) in cpu.rvfi.layout:
-        ports.append(cpu.rvfi[name])
+    if args.rvfi:
+        for (name, shape, dir) in cpu.rvfi.layout:
+            ports.append(cpu.rvfi[name])
 
     main_runner(parser, args, cpu, name="icicle", ports=ports)
 
