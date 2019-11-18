@@ -12,7 +12,7 @@ from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
-    def __init__(self, reset_vector=0):
+    def __init__(self, reset_vector):
         self.reset_vector = reset_vector
         self.rvfi = Record(RVFI_LAYOUT)
 
