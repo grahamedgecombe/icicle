@@ -64,4 +64,10 @@ class Stage(Elaboratable):
             with m.If(self.flush):
                 m.d.sync += self.wdata.valid.eq(0)
 
+        if self.rdata is not None and self.wdata is not None:
+            with m.If(~self.stall):
+                for (name, shape, dir) in self.wdata.layout:
+                    if name != "valid" and name in self.rdata.layout.fields:
+                        m.d.sync += self.wdata[name].eq(self.rdata[name])
+
         return m

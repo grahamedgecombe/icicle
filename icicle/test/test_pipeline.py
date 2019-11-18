@@ -24,12 +24,6 @@ class MiddleStage(Stage):
     def __init__(self):
         super().__init__(rdata_layout=LAYOUT, wdata_layout=LAYOUT)
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-        with m.If(~self.stall):
-            m.d.sync += self.wdata.counter.eq(self.rdata.counter)
-        return m
-
 
 class LastStage(Stage):
     def __init__(self):
