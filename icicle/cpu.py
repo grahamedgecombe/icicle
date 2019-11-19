@@ -33,6 +33,9 @@ class CPU(Elaboratable):
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)
 
+        if hasattr(self, 'rvfi'):
+            m.d.comb += writeback.rvfi.connect(self.rvfi)
+
         m.submodules.pipeline = Pipeline(
             pcgen=PCGen(self.reset_vector),
             fetch=Fetch(),
