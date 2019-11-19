@@ -37,6 +37,7 @@ def main():
 
     cpu = CPU(
         reset_vector=args.reset_vector,
+        rvfi=args.rvfi,
         rvfi_blackbox_alu=args.rvfi_blackbox_alu,
         rvfi_blackbox_regs=args.rvfi_blackbox_regs
     )

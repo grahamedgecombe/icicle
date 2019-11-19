@@ -12,11 +12,12 @@ from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
-    def __init__(self, reset_vector=0, rvfi_blackbox_alu=False, rvfi_blackbox_regs=False):
+    def __init__(self, reset_vector=0, rvfi=False, rvfi_blackbox_alu=False, rvfi_blackbox_regs=False):
         self.reset_vector = reset_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
-        self.rvfi = RVFI()
+        if rvfi:
+            self.rvfi = RVFI()
 
     def elaborate(self, platform):
         m = Module()

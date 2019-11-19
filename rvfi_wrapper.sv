@@ -4,6 +4,7 @@ module rvfi_wrapper (
     `RVFI_OUTPUTS
 );
     \icicle.cpu.CPU #(
+        .rvfi(1),
 `ifdef `RISCV_FORMAL_BLACKBOX_ALU
         .rvfi_blackbox_alu(1),
 `endif
