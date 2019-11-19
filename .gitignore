@@ -2,4 +2,5 @@
 *~
 .*
 !.gitignore
+/checks
 __pycache__
