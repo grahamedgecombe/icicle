@@ -21,6 +21,11 @@ def main():
         action="store_true",
         help="enable RISC-V Formal Interface"
     )
+    parser.add_argument("--rvfi-blackbox-alu",
+        default=False,
+        action="store_true",
+        help="replace the ALU with a black box"
+    )
     parser.add_argument("--rvfi-blackbox-regs",
         default=False,
         action="store_true",
@@ -32,6 +37,7 @@ def main():
 
     cpu = CPU(
         reset_vector=args.reset_vector,
+        rvfi_blackbox_alu=args.rvfi_blackbox_alu,
         rvfi_blackbox_regs=args.rvfi_blackbox_regs
     )
 
