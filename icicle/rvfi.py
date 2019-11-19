@@ -30,3 +30,12 @@ RVFI_LAYOUT = [
     ("mem_rdata", 32, DIR_FANOUT),
     ("mem_wdata", 32, DIR_FANOUT)
 ]
+
+
+class RVFI(Record):
+    def __init__(self):
+        super().__init__(RVFI_LAYOUT, name="rvfi")
+
+        # adjust the flattened field names for RVFI compliance
+        for (name, field) in self.fields.items():
+            field.name = "rvfi_{}".format(name)

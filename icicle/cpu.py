@@ -7,7 +7,7 @@ from icicle.mem import MemoryAccess
 from icicle.pcgen import PCGen
 from icicle.pipeline import Pipeline
 from icicle.regs import RegisterFile, BlackBoxRegisterFile
-from icicle.rvfi import RVFI_LAYOUT
+from icicle.rvfi import RVFI
 from icicle.writeback import Writeback
 
 
@@ -15,7 +15,7 @@ class CPU(Elaboratable):
     def __init__(self, reset_vector=0, rvfi_blackbox_regs=False):
         self.reset_vector = reset_vector
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
-        self.rvfi = Record(RVFI_LAYOUT)
+        self.rvfi = RVFI()
 
     def elaborate(self, platform):
         m = Module()
