@@ -1,3 +1,5 @@
+from nmigen.hdl.ast import AnySeq
+
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import PF_LAYOUT, FD_LAYOUT
 
@@ -10,6 +12,9 @@ class Fetch(Stage):
         m = super().elaborate(platform)
 
         with m.If(~self.stall):
-            m.d.sync += self.wdata.pc.eq(self.rdata.pc)
+            m.d.sync += [
+                self.wdata.pc.eq(self.rdata.pc),
+                self.wdata.insn.eq(AnySeq(32))
+            ]
 
         return m
