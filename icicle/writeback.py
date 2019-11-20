@@ -38,7 +38,7 @@ class Writeback(Stage):
                 self.rvfi.rd_addr.eq(Mux(self.rdata.rd_wen, self.rdata.rd, 0)),
                 self.rvfi.rd_wdata.eq(Mux(self.rdata.rd_wen, self.rdata.rd_wdata, 0)),
                 self.rvfi.pc_rdata.eq(self.rdata.pc),
-                self.rvfi.pc_wdata.eq(0),
+                self.rvfi.pc_wdata.eq(self.rdata.pc + 4),
                 self.rvfi.mem_addr.eq(0),
                 self.rvfi.mem_rmask.eq(0),
                 self.rvfi.mem_wmask.eq(0),
