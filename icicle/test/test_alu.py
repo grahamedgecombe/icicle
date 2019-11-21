@@ -11,10 +11,15 @@ class SrcMuxTestCase(FHDLTestCase):
         with Simulator(m) as sim:
             def process():
                 yield m.rs1_rdata.eq(1)
+                yield m.pc.eq(2)
 
                 yield m.a_src.eq(ASrc.RS1)
                 yield Delay()
                 self.assertEqual((yield m.a), 1)
+
+                yield m.a_src.eq(ASrc.PC)
+                yield Delay()
+                self.assertEqual((yield m.a), 2)
             sim.add_process(process)
             sim.run()
 

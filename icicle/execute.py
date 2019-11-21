@@ -18,6 +18,7 @@ class Execute(Stage):
         m.d.comb += [
             src_mux.a_src.eq(self.rdata.a_src),
             src_mux.b_src.eq(self.rdata.b_src),
+            src_mux.pc.eq(self.rdata.pc),
             src_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
             src_mux.rs2_rdata.eq(self.rdata.rs2_rdata),
             src_mux.imm.eq(self.rdata.imm)

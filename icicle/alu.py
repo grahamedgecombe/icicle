@@ -6,6 +6,7 @@ from nmigen.hdl.ast import AnySeq
 
 class ASrc(Enum):
     RS1 = 0
+    PC  = 1
 
 
 class BSrc(Enum):
@@ -17,6 +18,7 @@ class SrcMux(Elaboratable):
     def __init__(self):
         self.a_src = Signal(ASrc)
         self.b_src = Signal(BSrc)
+        self.pc = Signal(32)
         self.rs1_rdata = Signal(32)
         self.rs2_rdata = Signal(32)
         self.imm = Signal(32)
@@ -29,6 +31,8 @@ class SrcMux(Elaboratable):
         with m.Switch(self.a_src):
             with m.Case(ASrc.RS1):
                 m.d.comb += self.a.eq(self.rs1_rdata)
+            with m.Case(ASrc.PC):
+                m.d.comb += self.a.eq(self.pc)
 
         with m.Switch(self.b_src):
             with m.Case(BSrc.RS2):
