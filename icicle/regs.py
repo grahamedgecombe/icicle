@@ -55,9 +55,10 @@ class BlackBoxRegisterFile(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        m.d.comb += [
-            self.rs1_port.data.eq(AnySeq(32)),
-            self.rs2_port.data.eq(AnySeq(32))
-        ]
+        with m.If(self.rs1_port.en):
+            m.d.sync += self.rs1_port.data.eq(Mux(self.rs1_port.addr != 0, AnySeq(32), 0))
+
+        with m.If(self.rs2_port.en):
+            m.d.sync += self.rs2_port.data.eq(Mux(self.rs2_port.addr != 0, AnySeq(32), 0))
 
         return m
