@@ -70,6 +70,13 @@ class Control(Elaboratable):
         ]
 
         with m.Switch(opcode):
+            with m.Case(Opcode.AUIPC):
+                m.d.comb += [
+                    self.a_src.eq(ASrc.PC),
+                    self.b_src.eq(BSrc.IMM),
+                    self.result_src.eq(ResultSrc.ADDER)
+                ]
+
             with m.Case(Opcode.OP_IMM, Opcode.OP):
                 m.d.comb += [
                     self.a_src.eq(ASrc.RS1),
