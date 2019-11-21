@@ -11,8 +11,9 @@ class ASrc(Enum):
 
 
 class BSrc(Enum):
-    RS2 = 0
-    IMM = 1
+    RS2  = 0
+    IMM  = 1
+    FOUR = 2
 
 
 class SrcMux(Elaboratable):
@@ -42,6 +43,8 @@ class SrcMux(Elaboratable):
                 m.d.comb += self.b.eq(self.rs2_rdata)
             with m.Case(BSrc.IMM):
                 m.d.comb += self.b.eq(self.imm)
+            with m.Case(BSrc.FOUR):
+                m.d.comb += self.b.eq(4)
 
         return m
 

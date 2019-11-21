@@ -41,6 +41,10 @@ class SrcMuxTestCase(FHDLTestCase):
                 yield m.b_src.eq(BSrc.IMM)
                 yield Delay()
                 self.assertEqual((yield m.b), 2)
+
+                yield m.b_src.eq(BSrc.FOUR)
+                yield Delay()
+                self.assertEqual((yield m.b), 4)
             sim.add_process(process)
             sim.run()
 
