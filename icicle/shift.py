@@ -13,14 +13,14 @@ class BarrelShifter(Elaboratable):
         m = Module()
 
         # reverse input of left shifts
-        a = Signal(32)
-        m.d.comb += a.eq(Mux(self.left, self.a[::-1], self.a))
+        a_reverse = Signal(32)
+        m.d.comb += a_reverse.eq(Mux(self.left, self.a[::-1], self.a))
 
         # shift right
-        result = Signal(32)
-        m.d.comb += result.eq(Cat(a, Mux(self.sign_extend, a[31], 0)) >> self.shamt)
+        result_reverse = Signal(32)
+        m.d.comb += result_reverse.eq(Cat(a_reverse, Mux(self.sign_extend, a_reverse[31], 0)) >> self.shamt)
 
         # reverse output of left shifts
-        m.d.comb += self.result.eq(Mux(self.left, result[::-1], result))
+        m.d.comb += self.result.eq(Mux(self.left, result_reverse[::-1], result_reverse))
 
         return m
