@@ -5,10 +5,10 @@ module rvfi_wrapper (
 );
     \icicle.cpu.CPU #(
         .rvfi(1),
-`ifdef `RISCV_FORMAL_BLACKBOX_ALU
+`ifdef RISCV_FORMAL_BLACKBOX_ALU
         .rvfi_blackbox_alu(1),
 `endif
-`ifdef `RISCV_FORMAL_BLACKBOX_REGS
+`ifdef RISCV_FORMAL_BLACKBOX_REGS
         .rvfi_blackbox_regs(1),
 `endif
     ) uut (
