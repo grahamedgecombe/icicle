@@ -5,8 +5,9 @@ from nmigen.hdl.ast import AnySeq
 
 
 class ASrc(Enum):
-    RS1 = 0
-    PC  = 1
+    RS1  = 0
+    PC   = 1
+    ZERO = 2
 
 
 class BSrc(Enum):
@@ -33,6 +34,8 @@ class SrcMux(Elaboratable):
                 m.d.comb += self.a.eq(self.rs1_rdata)
             with m.Case(ASrc.PC):
                 m.d.comb += self.a.eq(self.pc)
+            with m.Case(ASrc.ZERO):
+                m.d.comb += self.a.eq(0)
 
         with m.Switch(self.b_src):
             with m.Case(BSrc.RS2):
