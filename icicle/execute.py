@@ -34,7 +34,7 @@ class Execute(Stage):
         logic = m.submodules.logic = Logic()
         m.d.comb += [
             logic.op.eq(self.rdata.logic_op),
-            logic.a.eq(src_mux.a),
+            logic.a.eq(self.rdata.rs1_rdata),
             logic.b.eq(src_mux.b)
         ]
 
@@ -42,7 +42,7 @@ class Execute(Stage):
         m.d.comb += [
             shift.right.eq(self.rdata.shift_right),
             shift.arithmetic.eq(self.rdata.shift_arithmetic),
-            shift.a.eq(src_mux.a),
+            shift.a.eq(self.rdata.rs1_rdata),
             shift.shamt.eq(src_mux.b)
         ]
 
