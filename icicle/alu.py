@@ -36,3 +36,35 @@ class SrcMux(Elaboratable):
                 m.d.comb += self.b.eq(self.imm)
 
         return m
+
+
+class ResultSrc(Enum):
+    ADDER = 0
+    SLT   = 1
+    LOGIC = 2
+    SHIFT = 3
+
+
+class ResultMux(Elaboratable):
+    def __init__(self):
+        self.src = Signal(ResultSrc)
+        self.add_result = Signal(32)
+        self.add_carry = Signal()
+        self.logic_result = Signal(32)
+        self.shift_result = Signal(32)
+        self.result = Signal(32)
+
+    def elaborate(self, platform):
+        m = Module()
+
+        with m.Switch(self.src):
+            with m.Case(ResultSrc.ADDER):
+                m.d.comb += self.result.eq(self.add_result)
+            with m.Case(ResultSrc.SLT):
+                m.d.comb += self.result.eq(self.add_carry)
+            with m.Case(ResultSrc.LOGIC):
+                m.d.comb += self.result.eq(self.logic_result)
+            with m.Case(ResultSrc.SHIFT):
+                m.d.comb += self.result.eq(self.shift_result)
+
+        return m
