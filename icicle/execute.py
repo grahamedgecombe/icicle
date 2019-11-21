@@ -1,4 +1,4 @@
-from icicle.adder import Adder
+from icicle.adder import Adder, BlackBoxAdder
 from icicle.alu import SrcMux
 from icicle.logic import Logic
 from icicle.pipeline import Stage
@@ -7,8 +7,9 @@ from icicle.shift import BarrelShifter
 
 
 class Execute(Stage):
-    def __init__(self):
+    def __init__(self, rvfi_blackbox_alu=False):
         super().__init__(rdata_layout=DX_LAYOUT, wdata_layout=XM_LAYOUT)
+        self.rvfi_blackbox_alu = rvfi_blackbox_alu
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
@@ -22,7 +23,7 @@ class Execute(Stage):
             src_mux.imm.eq(self.rdata.imm)
         ]
 
-        add = m.submodules.add = Adder()
+        add = m.submodules.add = BlackBoxAdder() if self.rvfi_blackbox_alu else Adder()
         m.d.comb += [
             add.sub.eq(self.rdata.add_sub),
             add.signed_compare.eq(self.rdata.add_signed_compare),

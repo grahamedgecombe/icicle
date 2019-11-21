@@ -1,6 +1,7 @@
 from enum import Enum
 
 from nmigen import *
+from nmigen.hdl.ast import AnySeq
 
 
 class ASrc(Enum):
@@ -66,5 +67,22 @@ class ResultMux(Elaboratable):
                 m.d.comb += self.result.eq(self.logic_result)
             with m.Case(ResultSrc.SHIFT):
                 m.d.comb += self.result.eq(self.shift_result)
+
+        return m
+
+
+class BlackBoxResultMux(Elaboratable):
+    def __init__(self):
+        self.src = Signal(ResultSrc)
+        self.add_result = Signal(32)
+        self.add_carry = Signal()
+        self.logic_result = Signal(32)
+        self.shift_result = Signal(32)
+        self.result = Signal(32)
+
+    def elaborate(self, platform):
+        m = Module()
+
+        m.d.comb += self.result.eq(AnySeq(32))
 
         return m

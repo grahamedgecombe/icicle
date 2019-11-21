@@ -40,8 +40,8 @@ class CPU(Elaboratable):
             pcgen=PCGen(self.reset_vector),
             fetch=Fetch(),
             decode=decode,
-            execute=Execute(),
-            mem=MemoryAccess(),
+            execute=Execute(self.rvfi_blackbox_alu),
+            mem=MemoryAccess(self.rvfi_blackbox_alu),
             writeback=writeback
         )
 

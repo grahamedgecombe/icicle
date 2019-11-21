@@ -1,16 +1,17 @@
-from icicle.alu import ResultMux
+from icicle.alu import ResultMux, BlackBoxResultMux
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import XM_LAYOUT, MW_LAYOUT
 
 
 class MemoryAccess(Stage):
-    def __init__(self):
+    def __init__(self, rvfi_blackbox_alu=False):
         super().__init__(rdata_layout=XM_LAYOUT, wdata_layout=MW_LAYOUT)
+        self.rvfi_blackbox_alu = rvfi_blackbox_alu
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        result_mux = m.submodules.result_mux = ResultMux()
+        result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()
         m.d.comb += [
             result_mux.src.eq(self.rdata.result_src),
             result_mux.add_result.eq(self.rdata.add_result),

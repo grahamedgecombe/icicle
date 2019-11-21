@@ -1,4 +1,5 @@
 from nmigen import *
+from nmigen.hdl.ast import AnySeq
 
 
 class Adder(Elaboratable):
@@ -23,5 +24,25 @@ class Adder(Elaboratable):
         ]
 
         m.d.comb += Cat(self.result, self.carry).eq(Mux(self.sub, a - b, a + b))
+
+        return m
+
+
+class BlackBoxAdder(Elaboratable):
+    def __init__(self):
+        self.sub = Signal()
+        self.signed_compare = Signal()
+        self.a = Signal(32)
+        self.b = Signal(32)
+        self.result = Signal(32)
+        self.carry = Signal()
+
+    def elaborate(self, platform):
+        m = Module()
+
+        m.d.comb += [
+            self.result.eq(AnySeq(32)),
+            self.carry.eq(AnySeq(1))
+        ]
 
         return m
