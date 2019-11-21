@@ -16,9 +16,13 @@ class BarrelShifter(Elaboratable):
         a_reverse = Signal(32)
         m.d.comb += a_reverse.eq(Mux(self.left, self.a[::-1], self.a))
 
+        # convert a to a signed value for arithmetic right shift support
+        a_signed = Signal(signed(33))
+        m.d.comb += a_signed.eq(Cat(a_reverse, Mux(self.sign_extend, a_reverse[31], 0)))
+
         # shift right
         result_reverse = Signal(32)
-        m.d.comb += result_reverse.eq(Cat(a_reverse, Mux(self.sign_extend, a_reverse[31], 0)) >> self.shamt)
+        m.d.comb += result_reverse.eq(a_signed >> self.shamt)
 
         # reverse output of left shifts
         m.d.comb += self.result.eq(Mux(self.left, result_reverse[::-1], result_reverse))
