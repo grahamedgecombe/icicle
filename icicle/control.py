@@ -1,5 +1,7 @@
 from nmigen import *
 
+from icicle.alu import ASrc, BSrc, ResultSrc
+from icicle.logic import LogicOp
 from icicle.riscv import Format, Opcode, Funct3
 
 
@@ -13,6 +15,14 @@ class Control(Elaboratable):
         self.rs2 = Signal(5)
         self.rs2_ren = Signal()
         self.fmt = Signal(Format)
+        self.a_src = Signal(ASrc)
+        self.b_src = Signal(BSrc)
+        self.add_sub = Signal()
+        self.add_signed_compare = Signal()
+        self.logic_op = Signal(LogicOp)
+        self.shift_right = Signal()
+        self.shift_arithmetic = Signal()
+        self.result_src = Signal(ResultSrc)
         self.illegal = Signal()
 
     def elaborate(self, platform):
@@ -49,8 +59,6 @@ class Control(Elaboratable):
                 m.d.comb += self.fmt.eq(Format.I)
             with m.Case(Opcode.SYSTEM):
                 m.d.comb += self.fmt.eq(Format.I)
-            with m.Default():
-                m.d.comb += self.illegal.eq(1)
 
         zimm = Signal()
         m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
@@ -59,6 +67,47 @@ class Control(Elaboratable):
             self.rd_wen.eq((self.rd != 0) & self.fmt.matches(Format.R, Format.I, Format.U, Format.J)),
             self.rs1_ren.eq((self.rs1 != 0) & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~zimm),
             self.rs2_ren.eq((self.rs2 != 0) & self.fmt.matches(Format.R, Format.S, Format.B))
+        ]
+
+        with m.Switch(opcode):
+            with m.Case(Opcode.OP_IMM, Opcode.OP):
+                m.d.comb += [
+                    self.a_src.eq(ASrc.RS1),
+                    self.b_src.eq(Mux(opcode == Opcode.OP, BSrc.RS2, BSrc.IMM))
+                ]
+
+                with m.Switch(funct3):
+                    with m.Case(Funct3.ADD_SUB):
+                        m.d.comb += [
+                            self.result_src.eq(ResultSrc.ADDER),
+                            self.add_sub.eq(Mux(opcode == Opcode.OP, funct7[5], 0))
+                        ]
+                    with m.Case(Funct3.SLT, Funct3.SLTU):
+                        m.d.comb += [
+                            self.result_src.eq(ResultSrc.SLT),
+                            self.add_sub.eq(1),
+                            self.add_signed_compare.eq(funct3 == Funct3.SLT)
+                        ]
+                    with m.Case(Funct3.XOR, Funct3.OR, Funct3.AND):
+                        m.d.comb += self.result_src.eq(ResultSrc.LOGIC)
+                        # XXX(gpe): we set logic_op unconditionally below, as
+                        # its encoding was chosen to always match funct3[0:2].
+                        # If nMigen adds support for "don't care" bits we could
+                        # tidy this up.
+                    with m.Case(Funct3.SLL, Funct3.SRL_SRA):
+                        m.d.comb += self.result_src.eq(ResultSrc.SHIFT)
+                        # XXX(gpe): we set shift_right and shift_arithmetic
+                        # below as they always occupy the same bits in funct3
+                        # and funct7. As above, this could be tidied up with
+                        # "don't care" bits.
+
+            with m.Default():
+                m.d.comb += self.illegal.eq(1)
+
+        m.d.comb += [
+            self.logic_op.eq(funct3[0:2]),
+            self.shift_right.eq(funct3[2]),
+            self.shift_arithmetic.eq(funct7[5])
         ]
 
         return m
