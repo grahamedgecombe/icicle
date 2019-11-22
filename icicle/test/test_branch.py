@@ -10,7 +10,7 @@ class BranchTargetMuxTestCase(FHDLTestCase):
         m = BranchTargetMux()
         with Simulator(m) as sim:
             def process():
-                yield m.pc.eq(0x10000000)
+                yield m.pc_rdata.eq(0x10000000)
                 yield m.rs1_rdata.eq(0x20000000)
 
                 # check expected input

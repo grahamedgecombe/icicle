@@ -11,7 +11,7 @@ class BranchTargetSel(Enum):
 class BranchTargetMux(Elaboratable):
     def __init__(self):
         self.sel = Signal(BranchTargetSel)
-        self.pc = Signal(32)
+        self.pc_rdata = Signal(32)
         self.rs1_rdata = Signal(32)
         self.imm = Signal(32)
         self.target = Signal(32)
@@ -21,7 +21,7 @@ class BranchTargetMux(Elaboratable):
         m = Module()
 
         target = Signal(32)
-        m.d.comb += target.eq(Mux(self.sel == BranchTargetSel.PC, self.pc, self.rs1_rdata) + self.imm)
+        m.d.comb += target.eq(Mux(self.sel == BranchTargetSel.PC, self.pc_rdata, self.rs1_rdata) + self.imm)
 
         m.d.comb += [
             self.target.eq(Cat(C(0, 1), target[1:32])),
