@@ -13,7 +13,7 @@ class MemoryAccess(Stage):
 
         result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()
         m.d.comb += [
-            result_mux.src.eq(self.rdata.result_src),
+            result_mux.sel.eq(self.rdata.result_sel),
             result_mux.add_result.eq(self.rdata.add_result),
             result_mux.add_carry.eq(self.rdata.add_carry),
             result_mux.logic_result.eq(self.rdata.logic_result),

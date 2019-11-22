@@ -1,6 +1,6 @@
 from nmigen import *
 
-from icicle.alu import ASrc, BSrc, ResultSrc
+from icicle.alu import ASel, BSel, ResultSel
 from icicle.logic import LogicOp
 from icicle.riscv import Format, Opcode, Funct3
 
@@ -15,14 +15,14 @@ class Control(Elaboratable):
         self.rs2 = Signal(5)
         self.rs2_ren = Signal()
         self.fmt = Signal(Format)
-        self.a_src = Signal(ASrc)
-        self.b_src = Signal(BSrc)
+        self.a_sel = Signal(ASel)
+        self.b_sel = Signal(BSel)
         self.add_sub = Signal()
         self.add_signed_compare = Signal()
         self.logic_op = Signal(LogicOp)
         self.shift_right = Signal()
         self.shift_arithmetic = Signal()
-        self.result_src = Signal(ResultSrc)
+        self.result_sel = Signal(ResultSel)
         self.illegal = Signal()
 
     def elaborate(self, platform):
@@ -72,44 +72,44 @@ class Control(Elaboratable):
         with m.Switch(opcode):
             with m.Case(Opcode.LUI):
                 m.d.comb += [
-                    self.a_src.eq(ASrc.ZERO),
-                    self.b_src.eq(BSrc.IMM),
-                    self.result_src.eq(ResultSrc.ADDER)
+                    self.a_sel.eq(ASel.ZERO),
+                    self.b_sel.eq(BSel.IMM),
+                    self.result_sel.eq(ResultSel.ADDER)
                 ]
 
             with m.Case(Opcode.AUIPC):
                 m.d.comb += [
-                    self.a_src.eq(ASrc.PC),
-                    self.b_src.eq(BSrc.IMM),
-                    self.result_src.eq(ResultSrc.ADDER)
+                    self.a_sel.eq(ASel.PC),
+                    self.b_sel.eq(BSel.IMM),
+                    self.result_sel.eq(ResultSel.ADDER)
                 ]
 
             with m.Case(Opcode.OP_IMM, Opcode.OP):
                 m.d.comb += [
-                    self.a_src.eq(ASrc.RS1),
-                    self.b_src.eq(Mux(opcode == Opcode.OP, BSrc.RS2, BSrc.IMM))
+                    self.a_sel.eq(ASel.RS1),
+                    self.b_sel.eq(Mux(opcode == Opcode.OP, BSel.RS2, BSel.IMM))
                 ]
 
                 with m.Switch(funct3):
                     with m.Case(Funct3.ADD_SUB):
                         m.d.comb += [
-                            self.result_src.eq(ResultSrc.ADDER),
+                            self.result_sel.eq(ResultSel.ADDER),
                             self.add_sub.eq(Mux(opcode == Opcode.OP, funct7[5], 0))
                         ]
                     with m.Case(Funct3.SLT, Funct3.SLTU):
                         m.d.comb += [
-                            self.result_src.eq(ResultSrc.SLT),
+                            self.result_sel.eq(ResultSel.SLT),
                             self.add_sub.eq(1),
                             self.add_signed_compare.eq(funct3 == Funct3.SLT)
                         ]
                     with m.Case(Funct3.XOR, Funct3.OR, Funct3.AND):
-                        m.d.comb += self.result_src.eq(ResultSrc.LOGIC)
+                        m.d.comb += self.result_sel.eq(ResultSel.LOGIC)
                         # XXX(gpe): we set logic_op unconditionally below, as
                         # its encoding was chosen to always match funct3[0:2].
                         # If nMigen adds support for "don't care" bits we could
                         # tidy this up.
                     with m.Case(Funct3.SLL, Funct3.SRL_SRA):
-                        m.d.comb += self.result_src.eq(ResultSrc.SHIFT)
+                        m.d.comb += self.result_sel.eq(ResultSel.SHIFT)
                         # XXX(gpe): we set shift_right and shift_arithmetic
                         # below as they always occupy the same bits in funct3
                         # and funct7. As above, this could be tidied up with

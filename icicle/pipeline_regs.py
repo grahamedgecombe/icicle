@@ -1,4 +1,4 @@
-from icicle.alu import ASrc, BSrc, ResultSrc
+from icicle.alu import ASel, BSel, ResultSel
 from icicle.logic import LogicOp
 
 PF_LAYOUT = [
@@ -22,14 +22,14 @@ DX_LAYOUT = [
     ("rs2_ren",            1),
     ("rs2_rdata",         32),
     ("imm",               32),
-    ("a_src",           ASrc),
-    ("b_src",           BSrc),
+    ("a_sel",           ASel),
+    ("b_sel",           BSel),
     ("add_sub",            1),
     ("add_signed_compare", 1),
     ("logic_op",     LogicOp),
     ("shift_right",        1),
     ("shift_arithmetic",   1),
-    ("result_src", ResultSrc)
+    ("result_sel", ResultSel)
 ]
 
 XM_LAYOUT = [
@@ -47,7 +47,7 @@ XM_LAYOUT = [
     ("add_carry",          1),
     ("logic_result",      32),
     ("shift_result",      32),
-    ("result_src", ResultSrc)
+    ("result_sel", ResultSel)
 ]
 
 MW_LAYOUT = [

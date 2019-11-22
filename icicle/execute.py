@@ -1,5 +1,5 @@
 from icicle.adder import Adder, BlackBoxAdder
-from icicle.alu import SrcMux
+from icicle.alu import OperandMux
 from icicle.logic import Logic
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import DX_LAYOUT, XM_LAYOUT
@@ -14,29 +14,29 @@ class Execute(Stage):
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        src_mux = m.submodules.src_mux = SrcMux()
+        operand_mux = m.submodules.operand_mux = OperandMux()
         m.d.comb += [
-            src_mux.a_src.eq(self.rdata.a_src),
-            src_mux.b_src.eq(self.rdata.b_src),
-            src_mux.pc.eq(self.rdata.pc),
-            src_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
-            src_mux.rs2_rdata.eq(self.rdata.rs2_rdata),
-            src_mux.imm.eq(self.rdata.imm)
+            operand_mux.a_sel.eq(self.rdata.a_sel),
+            operand_mux.b_sel.eq(self.rdata.b_sel),
+            operand_mux.pc.eq(self.rdata.pc),
+            operand_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
+            operand_mux.rs2_rdata.eq(self.rdata.rs2_rdata),
+            operand_mux.imm.eq(self.rdata.imm)
         ]
 
         add = m.submodules.add = BlackBoxAdder() if self.rvfi_blackbox_alu else Adder()
         m.d.comb += [
             add.sub.eq(self.rdata.add_sub),
             add.signed_compare.eq(self.rdata.add_signed_compare),
-            add.a.eq(src_mux.a),
-            add.b.eq(src_mux.b)
+            add.a.eq(operand_mux.a),
+            add.b.eq(operand_mux.b)
         ]
 
         logic = m.submodules.logic = Logic()
         m.d.comb += [
             logic.op.eq(self.rdata.logic_op),
             logic.a.eq(self.rdata.rs1_rdata),
-            logic.b.eq(src_mux.b)
+            logic.b.eq(operand_mux.b)
         ]
 
         shift = m.submodules.shift = BarrelShifter()
@@ -44,7 +44,7 @@ class Execute(Stage):
             shift.right.eq(self.rdata.shift_right),
             shift.arithmetic.eq(self.rdata.shift_arithmetic),
             shift.a.eq(self.rdata.rs1_rdata),
-            shift.shamt.eq(src_mux.b)
+            shift.shamt.eq(operand_mux.b)
         ]
 
         with m.If(~self.stall):
