@@ -51,7 +51,9 @@ class Decode(Stage):
                 self.wdata.logic_op.eq(control.logic_op),
                 self.wdata.shift_right.eq(control.shift_right),
                 self.wdata.shift_arithmetic.eq(control.shift_arithmetic),
-                self.wdata.result_sel.eq(control.result_sel)
+                self.wdata.result_sel.eq(control.result_sel),
+                self.wdata.branch_target_sel.eq(control.branch_target_sel),
+                self.wdata.branch_op.eq(control.branch_op)
             ]
 
         return m

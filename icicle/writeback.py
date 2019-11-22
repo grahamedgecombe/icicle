@@ -26,7 +26,7 @@ class Writeback(Stage):
                 self.rvfi.valid.eq(1),
                 self.rvfi.order.eq(self.rvfi.order + 1),
                 self.rvfi.insn.eq(self.rdata.insn),
-                self.rvfi.trap.eq(0),
+                self.rvfi.trap.eq(self.rdata.trap),
                 self.rvfi.halt.eq(0),
                 self.rvfi.intr.eq(0),
                 self.rvfi.mode.eq(3),

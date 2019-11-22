@@ -1,6 +1,7 @@
 from nmigen import *
 
 from icicle.alu import ASel, BSel, ResultSel
+from icicle.branch import BranchTargetSel, BranchOp
 from icicle.logic import LogicOp
 from icicle.riscv import Format, Opcode, Funct3
 
@@ -23,6 +24,8 @@ class Control(Elaboratable):
         self.shift_right = Signal()
         self.shift_arithmetic = Signal()
         self.result_sel = Signal(ResultSel)
+        self.branch_target_sel = Signal(BranchTargetSel)
+        self.branch_op = Signal(BranchOp)
         self.illegal = Signal()
 
     def elaborate(self, platform):
@@ -82,6 +85,24 @@ class Control(Elaboratable):
                     self.a_sel.eq(ASel.PC),
                     self.b_sel.eq(BSel.IMM),
                     self.result_sel.eq(ResultSel.ADDER)
+                ]
+
+            with m.Case(Opcode.JAL):
+                m.d.comb += [
+                    self.a_sel.eq(ASel.PC),
+                    self.b_sel.eq(BSel.FOUR),
+                    self.result_sel.eq(ResultSel.ADDER),
+                    self.branch_target_sel.eq(BranchTargetSel.PC),
+                    self.branch_op.eq(BranchOp.ALWAYS)
+                ]
+
+            with m.Case(Opcode.JALR):
+                m.d.comb += [
+                    self.a_sel.eq(ASel.PC),
+                    self.b_sel.eq(BSel.FOUR),
+                    self.result_sel.eq(ResultSel.ADDER),
+                    self.branch_target_sel.eq(BranchTargetSel.RS1),
+                    self.branch_op.eq(BranchOp.ALWAYS)
                 ]
 
             with m.Case(Opcode.OP_IMM, Opcode.OP):

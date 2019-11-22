@@ -24,11 +24,26 @@ class CPU(Elaboratable):
 
         regs = m.submodules.regs = BlackBoxRegisterFile() if self.rvfi_blackbox_regs else RegisterFile()
 
+        pcgen = PCGen(self.reset_vector)
+
+        fetch = Fetch()
+
         decode = Decode()
         m.d.comb += [
             decode.rs1_port.connect(regs.rs1_port),
             decode.rs2_port.connect(regs.rs2_port)
         ]
+
+        execute = Execute(self.rvfi_blackbox_alu)
+
+        mem = MemoryAccess(self.rvfi_blackbox_alu)
+        m.d.comb += [
+            pcgen.branch_taken.eq(mem.branch_taken),
+            pcgen.branch_target.eq(mem.branch_target)
+        ]
+        fetch.flush_on(mem.branch_taken)
+        decode.flush_on(mem.branch_taken)
+        execute.flush_on(mem.branch_taken)
 
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)
@@ -37,11 +52,11 @@ class CPU(Elaboratable):
             m.d.comb += writeback.rvfi.connect(self.rvfi)
 
         m.submodules.pipeline = Pipeline(
-            pcgen=PCGen(self.reset_vector),
-            fetch=Fetch(),
+            pcgen=pcgen,
+            fetch=fetch,
             decode=decode,
-            execute=Execute(self.rvfi_blackbox_alu),
-            mem=MemoryAccess(self.rvfi_blackbox_alu),
+            execute=execute,
+            mem=mem,
             writeback=writeback
         )
 

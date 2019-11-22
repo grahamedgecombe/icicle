@@ -1,5 +1,6 @@
 from icicle.adder import Adder, BlackBoxAdder
 from icicle.alu import OperandMux
+from icicle.branch import BranchTargetMux
 from icicle.logic import Logic
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import DX_LAYOUT, XM_LAYOUT
@@ -47,12 +48,22 @@ class Execute(Stage):
             shift.shamt.eq(operand_mux.b)
         ]
 
+        branch_target_mux = m.submodules.branch_target_mux = BranchTargetMux()
+        m.d.comb += [
+            branch_target_mux.sel.eq(self.rdata.branch_target_sel),
+            branch_target_mux.pc_rdata.eq(self.rdata.pc_rdata),
+            branch_target_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
+            branch_target_mux.imm.eq(self.rdata.imm)
+        ]
+
         with m.If(~self.stall):
             m.d.sync += [
                 self.wdata.add_result.eq(add.result),
                 self.wdata.add_carry.eq(add.carry),
                 self.wdata.logic_result.eq(logic.result),
-                self.wdata.shift_result.eq(shift.result)
+                self.wdata.shift_result.eq(shift.result),
+                self.wdata.branch_target.eq(branch_target_mux.target),
+                self.wdata.branch_misaligned.eq(branch_target_mux.misaligned)
             ]
 
         return m
