@@ -1,6 +1,8 @@
 *.egg-info
+*.o
 *~
 .*
 !.gitignore
 /checks
+/disasm.s
 __pycache__
