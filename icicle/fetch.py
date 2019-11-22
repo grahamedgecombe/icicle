@@ -12,9 +12,6 @@ class Fetch(Stage):
         m = super().elaborate(platform)
 
         with m.If(~self.stall):
-            m.d.sync += [
-                self.wdata.pc.eq(self.rdata.pc),
-                self.wdata.insn.eq(AnySeq(32))
-            ]
+            m.d.sync += self.wdata.insn.eq(AnySeq(32))
 
         return m
