@@ -5,7 +5,7 @@ from nmigen.test.utils import FHDLTestCase
 from icicle.alu import OperandMux, ASel, BSel, ResultMux, ResultSel
 
 
-class SrcMuxTestCase(FHDLTestCase):
+class OperandMuxTestCase(FHDLTestCase):
     def test_a(self):
         m = OperandMux()
         with Simulator(m) as sim:
