@@ -2,7 +2,7 @@ from nmigen.back.pysim import Simulator
 from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
-from icicle.branch import BranchTarget, BranchTargetSel
+from icicle.branch import BranchTarget, BranchTargetSel, Branch, BranchOp
 
 
 class BranchTargetTestCase(FHDLTestCase):
@@ -51,5 +51,63 @@ class BranchTargetTestCase(FHDLTestCase):
                 yield Delay()
                 self.assertEqual((yield m.target), 0x20000006)
                 self.assertEqual((yield m.misaligned), 1)
+            sim.add_process(process)
+            sim.run()
+
+
+class BranchTestCase(FHDLTestCase):
+    def test_basic(self):
+        m = Branch()
+        with Simulator(m) as sim:
+            def process():
+                # never
+                yield m.op.eq(BranchOp.NEVER)
+                yield Delay()
+                self.assertEqual((yield m.taken), 0)
+
+                # always
+                yield m.op.eq(BranchOp.ALWAYS)
+                yield Delay()
+                self.assertEqual((yield m.taken), 1)
+
+                # equal
+                yield m.op.eq(BranchOp.EQ)
+                yield m.add_result.eq(0)
+                yield Delay()
+                self.assertEqual((yield m.taken), 1)
+
+                yield m.add_result.eq(1)
+                yield Delay()
+                self.assertEqual((yield m.taken), 0)
+
+                # not equal
+                yield m.op.eq(BranchOp.NE)
+                yield m.add_result.eq(0)
+                yield Delay()
+                self.assertEqual((yield m.taken), 0)
+
+                yield m.add_result.eq(1)
+                yield Delay()
+                self.assertEqual((yield m.taken), 1)
+
+                # less than
+                yield m.op.eq(BranchOp.LT)
+                yield m.add_carry.eq(0)
+                yield Delay()
+                self.assertEqual((yield m.taken), 0)
+
+                yield m.add_carry.eq(1)
+                yield Delay()
+                self.assertEqual((yield m.taken), 1)
+
+                # greater or equal
+                yield m.op.eq(BranchOp.GE)
+                yield m.add_carry.eq(0)
+                yield Delay()
+                self.assertEqual((yield m.taken), 1)
+
+                yield m.add_carry.eq(1)
+                yield Delay()
+                self.assertEqual((yield m.taken), 0)
             sim.add_process(process)
             sim.run()

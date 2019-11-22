@@ -29,3 +29,42 @@ class BranchTarget(Elaboratable):
         ]
 
         return m
+
+
+class BranchOp(Enum):
+    NEVER  = 0
+    ALWAYS = 1
+    EQ     = 2
+    NE     = 3
+    LT     = 4
+    GE     = 5
+
+
+class Branch(Elaboratable):
+    def __init__(self):
+        self.op = Signal(BranchOp)
+        self.add_result = Signal(32)
+        self.add_carry = Signal()
+        self.taken = Signal()
+
+    def elaborate(self, platform):
+        m = Module()
+
+        zero = Signal()
+        m.d.comb += zero.eq(self.add_result == 0)
+
+        with m.Switch(self.op):
+            with m.Case(BranchOp.NEVER):
+                m.d.comb += self.taken.eq(0)
+            with m.Case(BranchOp.ALWAYS):
+                m.d.comb += self.taken.eq(1)
+            with m.Case(BranchOp.EQ):
+                m.d.comb += self.taken.eq(zero)
+            with m.Case(BranchOp.NE):
+                m.d.comb += self.taken.eq(~zero)
+            with m.Case(BranchOp.LT):
+                m.d.comb += self.taken.eq(self.add_carry)
+            with m.Case(BranchOp.GE):
+                m.d.comb += self.taken.eq(~self.add_carry)
+
+        return m
