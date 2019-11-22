@@ -11,7 +11,7 @@ class SrcMuxTestCase(FHDLTestCase):
         with Simulator(m) as sim:
             def process():
                 yield m.rs1_rdata.eq(1)
-                yield m.pc.eq(2)
+                yield m.pc_rdata.eq(2)
 
                 yield m.a_sel.eq(ASel.RS1)
                 yield Delay()

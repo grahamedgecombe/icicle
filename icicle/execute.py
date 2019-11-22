@@ -18,7 +18,7 @@ class Execute(Stage):
         m.d.comb += [
             operand_mux.a_sel.eq(self.rdata.a_sel),
             operand_mux.b_sel.eq(self.rdata.b_sel),
-            operand_mux.pc.eq(self.rdata.pc),
+            operand_mux.pc_rdata.eq(self.rdata.pc_rdata),
             operand_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
             operand_mux.rs2_rdata.eq(self.rdata.rs2_rdata),
             operand_mux.imm.eq(self.rdata.imm)

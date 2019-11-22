@@ -2,16 +2,19 @@ from icicle.alu import ASel, BSel, ResultSel
 from icicle.logic import LogicOp
 
 PF_LAYOUT = [
-    ("pc", 32)
+    ("pc_rdata", 32),
+    ("pc_wdata", 32)
 ]
 
 FD_LAYOUT = [
-    ("pc",   32),
-    ("insn", 32)
+    ("pc_rdata", 32),
+    ("pc_wdata", 32),
+    ("insn",     32)
 ]
 
 DX_LAYOUT = [
-    ("pc",                32),
+    ("pc_rdata",          32),
+    ("pc_wdata",          32),
     ("insn",              32),
     ("rd",                 5),
     ("rd_wen",             1),
@@ -33,7 +36,8 @@ DX_LAYOUT = [
 ]
 
 XM_LAYOUT = [
-    ("pc",                32),
+    ("pc_rdata",          32),
+    ("pc_wdata",          32),
     ("insn",              32),
     ("rd",                 5),
     ("rd_wen",             1),
@@ -51,7 +55,8 @@ XM_LAYOUT = [
 ]
 
 MW_LAYOUT = [
-    ("pc",        32),
+    ("pc_rdata",  32),
+    ("pc_wdata",  32),
     ("insn",      32),
     ("rd",         5),
     ("rd_wen",     1),

@@ -20,7 +20,7 @@ class OperandMux(Elaboratable):
     def __init__(self):
         self.a_sel = Signal(ASel)
         self.b_sel = Signal(BSel)
-        self.pc = Signal(32)
+        self.pc_rdata = Signal(32)
         self.rs1_rdata = Signal(32)
         self.rs2_rdata = Signal(32)
         self.imm = Signal(32)
@@ -34,7 +34,7 @@ class OperandMux(Elaboratable):
             with m.Case(ASel.RS1):
                 m.d.comb += self.a.eq(self.rs1_rdata)
             with m.Case(ASel.PC):
-                m.d.comb += self.a.eq(self.pc)
+                m.d.comb += self.a.eq(self.pc_rdata)
             with m.Case(ASel.ZERO):
                 m.d.comb += self.a.eq(0)
 

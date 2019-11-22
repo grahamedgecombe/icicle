@@ -12,13 +12,13 @@ class PCGenTestCase(FHDLTestCase):
                 self.assertEqual((yield m.wdata.valid), 0)
                 yield
                 self.assertEqual((yield m.wdata.valid), 1)
-                self.assertEqual((yield m.wdata.pc), 0x00100000)
+                self.assertEqual((yield m.wdata.pc_rdata), 0x00100000)
                 yield
                 self.assertEqual((yield m.wdata.valid), 1)
-                self.assertEqual((yield m.wdata.pc), 0x00100004)
+                self.assertEqual((yield m.wdata.pc_rdata), 0x00100004)
                 yield
                 self.assertEqual((yield m.wdata.valid), 1)
-                self.assertEqual((yield m.wdata.pc), 0x00100008)
+                self.assertEqual((yield m.wdata.pc_rdata), 0x00100008)
             sim.add_clock(period=1e-6)
             sim.add_sync_process(process)
             sim.run()
