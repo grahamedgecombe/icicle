@@ -8,7 +8,7 @@ class BranchTargetSel(Enum):
     RS1 = 1
 
 
-class BranchTarget(Elaboratable):
+class BranchTargetMux(Elaboratable):
     def __init__(self):
         self.sel = Signal(BranchTargetSel)
         self.pc = Signal(32)

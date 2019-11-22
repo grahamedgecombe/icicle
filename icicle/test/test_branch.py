@@ -2,12 +2,12 @@ from nmigen.back.pysim import Simulator
 from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
-from icicle.branch import BranchTarget, BranchTargetSel, Branch, BranchOp
+from icicle.branch import BranchTargetMux, BranchTargetSel, Branch, BranchOp
 
 
-class BranchTargetTestCase(FHDLTestCase):
+class BranchTargetMuxTestCase(FHDLTestCase):
     def test_basic(self):
-        m = BranchTarget()
+        m = BranchTargetMux()
         with Simulator(m) as sim:
             def process():
                 yield m.pc.eq(0x10000000)
