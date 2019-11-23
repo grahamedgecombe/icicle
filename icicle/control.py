@@ -110,6 +110,9 @@ class Control(Elaboratable):
                     self.branch_op.eq(BranchOp.ALWAYS)
                 ]
 
+                with m.If(funct3 != Funct3.ZERO):
+                    m.d.comb += self.illegal.eq(1)
+
             with m.Case(Opcode.BRANCH):
                 m.d.comb += [
                     self.a_sel.eq(ASel.RS1),
