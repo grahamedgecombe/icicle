@@ -1,34 +1,34 @@
-from nmigen.hdl.rec import *
+from nmigen import *
 
 RVFI_LAYOUT = [
     # instruction metadata
-    ("valid",      1, DIR_FANOUT),
-    ("order",     64, DIR_FANOUT),
-    ("insn",      32, DIR_FANOUT),
-    ("trap",       1, DIR_FANOUT),
-    ("halt",       1, DIR_FANOUT),
-    ("intr",       1, DIR_FANOUT),
-    ("mode",       2, DIR_FANOUT),
-    ("ixl",        2, DIR_FANOUT),
+    ("valid",      1),
+    ("order",     64),
+    ("insn",      32),
+    ("trap",       1),
+    ("halt",       1),
+    ("intr",       1),
+    ("mode",       2),
+    ("ixl",        2),
 
     # integer register read/write
-    ("rs1_addr",   5, DIR_FANOUT),
-    ("rs2_addr",   5, DIR_FANOUT),
-    ("rs1_rdata", 32, DIR_FANOUT),
-    ("rs2_rdata", 32, DIR_FANOUT),
-    ("rd_addr",    5, DIR_FANOUT),
-    ("rd_wdata",  32, DIR_FANOUT),
+    ("rs1_addr",   5),
+    ("rs2_addr",   5),
+    ("rs1_rdata", 32),
+    ("rs2_rdata", 32),
+    ("rd_addr",    5),
+    ("rd_wdata",  32),
 
     # program counter
-    ("pc_rdata",  32, DIR_FANOUT),
-    ("pc_wdata",  32, DIR_FANOUT),
+    ("pc_rdata",  32),
+    ("pc_wdata",  32),
 
     # memory access
-    ("mem_addr",  32, DIR_FANOUT),
-    ("mem_rmask",  4, DIR_FANOUT),
-    ("mem_wmask",  4, DIR_FANOUT),
-    ("mem_rdata", 32, DIR_FANOUT),
-    ("mem_wdata", 32, DIR_FANOUT)
+    ("mem_addr",  32),
+    ("mem_rmask",  4),
+    ("mem_wmask",  4),
+    ("mem_rdata", 32),
+    ("mem_wdata", 32)
 ]
 
 
