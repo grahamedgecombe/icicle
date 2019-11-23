@@ -24,7 +24,7 @@ class BranchTargetMux(Elaboratable):
         m.d.comb += target.eq(Mux(self.sel == BranchTargetSel.PC, self.pc_rdata, self.rs1_rdata) + self.imm)
 
         m.d.comb += [
-            self.target.eq(Cat(C(0, 1), target[1:32])),
+            self.target.eq(Cat(C(0, 2), target[2:32])),
             self.misaligned.eq(target[1])
         ]
 

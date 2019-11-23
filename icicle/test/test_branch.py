@@ -43,13 +43,11 @@ class BranchTargetMuxTestCase(FHDLTestCase):
                 yield m.sel.eq(BranchTargetSel.PC)
                 yield m.imm.eq(6)
                 yield Delay()
-                self.assertEqual((yield m.target), 0x10000006)
                 self.assertEqual((yield m.misaligned), 1)
 
                 yield m.sel.eq(BranchTargetSel.RS1)
                 yield m.imm.eq(6)
                 yield Delay()
-                self.assertEqual((yield m.target), 0x20000006)
                 self.assertEqual((yield m.misaligned), 1)
             sim.add_process(process)
             sim.run()
