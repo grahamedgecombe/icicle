@@ -63,12 +63,15 @@ class Control(Elaboratable):
             with m.Case(Opcode.SYSTEM):
                 m.d.comb += self.fmt.eq(Format.I)
 
+        fence = Signal()
+        m.d.comb += fence.eq((opcode == Opcode.MISC_MEM) & funct3.matches(Funct3.FENCE, Funct3.FENCE_I))
+
         zimm = Signal()
         m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
 
         m.d.comb += [
-            self.rd_wen.eq((self.rd != 0) & self.fmt.matches(Format.R, Format.I, Format.U, Format.J)),
-            self.rs1_ren.eq((self.rs1 != 0) & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~zimm),
+            self.rd_wen.eq((self.rd != 0) & self.fmt.matches(Format.R, Format.I, Format.U, Format.J) & ~fence),
+            self.rs1_ren.eq((self.rs1 != 0) & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~(fence | zimm)),
             self.rs2_ren.eq((self.rs2 != 0) & self.fmt.matches(Format.R, Format.S, Format.B))
         ]
 
