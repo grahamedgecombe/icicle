@@ -105,6 +105,28 @@ class Control(Elaboratable):
                     self.branch_op.eq(BranchOp.ALWAYS)
                 ]
 
+            with m.Case(Opcode.BRANCH):
+                m.d.comb += [
+                    self.a_sel.eq(ASel.RS1),
+                    self.b_sel.eq(BSel.RS2),
+                    self.result_sel.eq(ResultSel.ADDER),
+                    self.add_sub.eq(1),
+                    self.add_signed_compare.eq(~funct3[1]),
+                    self.branch_target_sel.eq(BranchTargetSel.PC)
+                ]
+
+                with m.Switch(funct3):
+                    with m.Case(Funct3.BEQ):
+                        m.d.comb += self.branch_op.eq(BranchOp.EQ)
+                    with m.Case(Funct3.BNE):
+                        m.d.comb += self.branch_op.eq(BranchOp.NE)
+                    with m.Case(Funct3.BLT, Funct3.BLTU):
+                        m.d.comb += self.branch_op.eq(BranchOp.LT)
+                    with m.Case(Funct3.BGE, Funct3.BGEU):
+                        m.d.comb += self.branch_op.eq(BranchOp.GE)
+                    with m.Default():
+                        m.d.comb += self.illegal.eq(1)
+
             with m.Case(Opcode.OP_IMM, Opcode.OP):
                 m.d.comb += [
                     self.a_sel.eq(ASel.RS1),
