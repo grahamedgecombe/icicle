@@ -48,6 +48,15 @@ class CPU(Elaboratable):
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)
 
+        def data_hazard(stage):
+            rs1_matches = decode.rs1_ren & (decode.rs1_port.addr == stage.rdata.rd)
+            rs2_matches = decode.rs2_ren & (decode.rs2_port.addr == stage.rdata.rd)
+            return stage.rdata.rd_wen & (rs1_matches | rs2_matches)
+
+        decode.stall_on(data_hazard(execute))
+        decode.stall_on(data_hazard(mem))
+        decode.stall_on(data_hazard(writeback))
+
         if hasattr(self, 'rvfi'):
             m.d.comb += writeback.rvfi.connect(self.rvfi)
 

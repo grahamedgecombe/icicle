@@ -12,6 +12,8 @@ class Decode(Stage):
         super().__init__(rdata_layout=FD_LAYOUT, wdata_layout=DX_LAYOUT)
         self.rs1_port = Record(RS_PORT_LAYOUT)
         self.rs2_port = Record(RS_PORT_LAYOUT)
+        self.rs1_ren = Signal()
+        self.rs2_ren = Signal()
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
@@ -32,7 +34,10 @@ class Decode(Stage):
 
             self.rs2_port.en.eq(~self.stall),
             self.rs2_port.addr.eq(control.rs2),
-            self.wdata.rs2_rdata.eq(self.rs2_port.data)
+            self.wdata.rs2_rdata.eq(self.rs2_port.data),
+
+            self.rs1_ren.eq(control.rs1_ren),
+            self.rs2_ren.eq(control.rs2_ren)
         ]
 
         with m.If(~self.stall):
