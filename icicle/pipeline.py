@@ -31,8 +31,10 @@ class Pipeline(Elaboratable):
 
 class Stage(Elaboratable):
     def __init__(self, rdata_layout=None, wdata_layout=None):
-        self.rdata = Record(rdata_layout + VALID_LAYOUT) if rdata_layout is not None else None
-        self.wdata = Record(wdata_layout + VALID_LAYOUT) if wdata_layout is not None else None
+        if rdata_layout:
+            self.rdata = Record(rdata_layout + VALID_LAYOUT)
+        if wdata_layout:
+            self.wdata = Record(wdata_layout + VALID_LAYOUT)
         self.stall = Signal()
         self.flush = Signal()
         self.valid = Signal()
@@ -53,18 +55,18 @@ class Stage(Elaboratable):
             self.flush.eq(reduce(or_, self._flush_sources, 0))
         ]
 
-        if self.rdata is not None:
+        if hasattr(self, 'rdata'):
             m.d.comb += self.valid.eq(self.rdata.valid)
         else:
             m.d.comb += self.valid.eq(1)
 
-        if self.wdata is not None:
+        if hasattr(self, 'wdata'):
             with m.If(~self.stall):
                 m.d.sync += self.wdata.valid.eq(self.valid)
             with m.If(self.flush):
                 m.d.sync += self.wdata.valid.eq(0)
 
-        if self.rdata is not None and self.wdata is not None:
+        if hasattr(self, 'rdata') and hasattr(self, 'wdata'):
             with m.If(~self.stall):
                 for (name, shape, dir) in self.wdata.layout:
                     if name != "valid" and name in self.rdata.layout.fields:
