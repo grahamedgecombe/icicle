@@ -3,7 +3,7 @@ from nmigen import *
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
 from icicle.logic import LogicOp
-from icicle.riscv import Format, Opcode, Funct3
+from icicle.riscv import Format, Opcode, Funct3, Funct7
 
 
 class Control(Elaboratable):
@@ -137,22 +137,30 @@ class Control(Elaboratable):
                     with m.Case(Funct3.ADD_SUB):
                         m.d.comb += [
                             self.result_sel.eq(ResultSel.ADDER),
-                            self.add_sub.eq(Mux(opcode == Opcode.OP, funct7[5], 0))
+                            self.add_sub.eq(Mux(opcode == Opcode.OP, funct7[5], 0)),
+                            self.illegal.eq((opcode == Opcode.OP) & ~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
                         ]
                     with m.Case(Funct3.SLT, Funct3.SLTU):
                         m.d.comb += [
                             self.result_sel.eq(ResultSel.SLT),
                             self.add_sub.eq(1),
-                            self.add_signed_compare.eq(funct3 == Funct3.SLT)
+                            self.add_signed_compare.eq(funct3 == Funct3.SLT),
+                            self.illegal.eq((opcode == Opcode.OP) & (funct7 != Funct7.ZERO))
                         ]
                     with m.Case(Funct3.XOR, Funct3.OR, Funct3.AND):
-                        m.d.comb += self.result_sel.eq(ResultSel.LOGIC)
+                        m.d.comb += [
+                            self.result_sel.eq(ResultSel.LOGIC),
+                            self.illegal.eq((opcode == Opcode.OP) & (funct7 != Funct7.ZERO))
+                        ]
                         # XXX(gpe): we set logic_op unconditionally below, as
                         # its encoding was chosen to always match funct3[0:2].
                         # If nMigen adds support for "don't care" bits we could
                         # tidy this up.
                     with m.Case(Funct3.SLL, Funct3.SRL_SRA):
-                        m.d.comb += self.result_sel.eq(ResultSel.SHIFT)
+                        m.d.comb += [
+                            self.result_sel.eq(ResultSel.SHIFT),
+                            self.illegal.eq(~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
+                        ]
                         # XXX(gpe): we set shift_right and shift_arithmetic
                         # below as they always occupy the same bits in funct3
                         # and funct7. As above, this could be tidied up with
