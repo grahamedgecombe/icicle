@@ -40,7 +40,7 @@ class MemoryAccess(Stage):
         with m.If(~self.stall):
             m.d.sync += self.wdata.rd_wdata.eq(result_mux.result)
 
-            with m.If(branch.taken):
+            with m.If(self.valid & branch.taken):
                 m.d.sync += [
                     self.wdata.trap.eq(self.rdata.trap | self.rdata.branch_misaligned),
                     self.wdata.pc_wdata.eq(self.rdata.branch_target)
