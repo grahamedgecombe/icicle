@@ -42,12 +42,12 @@ class MemoryAccess(Stage):
 
             with m.If(branch.taken):
                 m.d.sync += [
-                    self.wdata.trap.eq(self.rdata.branch_misaligned),
+                    self.wdata.trap.eq(self.rdata.trap | self.rdata.branch_misaligned),
                     self.wdata.pc_wdata.eq(self.rdata.branch_target)
                 ]
             with m.Else():
                 m.d.sync += [
-                    self.wdata.trap.eq(0),
+                    self.wdata.trap.eq(self.rdata.trap),
                     self.wdata.pc_wdata.eq(self.rdata.pc_wdata)
                 ]
 
