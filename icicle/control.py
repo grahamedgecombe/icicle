@@ -63,8 +63,10 @@ class Control(Elaboratable):
             with m.Case(Opcode.SYSTEM):
                 m.d.comb += self.fmt.eq(Format.I)
 
+        # XXX(gpe): if more MISC-MEM functions are added in the future,
+        # might need to restrict this to only FENCE and FENCE_I.
         fence = Signal()
-        m.d.comb += fence.eq((opcode == Opcode.MISC_MEM) & funct3.matches(Funct3.FENCE, Funct3.FENCE_I))
+        m.d.comb += fence.eq(opcode == Opcode.MISC_MEM)
 
         zimm = Signal()
         m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
