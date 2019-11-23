@@ -23,7 +23,7 @@ class Pipeline(Elaboratable):
         next(it2)
         for s1, s2 in zip(it1, it2):
             s1.stall_on(s2.stall)
-            s2.flush_on(s1.stall)
+            s2.flush_on(s1.stall & ~s2.stall)
             m.d.comb += s2.rdata.eq(s1.wdata)
 
         return m
