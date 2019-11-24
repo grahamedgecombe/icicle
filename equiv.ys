@@ -1,0 +1,21 @@
+connect_rpc -exec nmigen-rpc yosys icicle.cpu.CPU
+chparam -set rvfi 0 \icicle.cpu.CPU
+prep -flatten -top \icicle.cpu.CPU
+design -stash gold
+
+connect_rpc -exec nmigen-rpc yosys icicle.cpu.CPU
+chparam -set rvfi 1 \icicle.cpu.CPU
+prep -flatten -top \icicle.cpu.CPU
+delete -port \icicle.cpu.CPU/rvfi_*
+design -stash gate
+
+design -copy-from gold -as gold \icicle.cpu.CPU
+design -copy-from gate -as gate \icicle.cpu.CPU
+memory_map; opt -fast
+equiv_make gold gate equiv
+hierarchy -top equiv
+
+opt -fast
+equiv_simple
+equiv_induct
+equiv_status -assert
