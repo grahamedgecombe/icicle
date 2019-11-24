@@ -57,7 +57,7 @@ class CPU(Elaboratable):
         decode.stall_on(data_hazard(mem))
         decode.stall_on(data_hazard(writeback))
 
-        if hasattr(self, 'rvfi'):
+        if hasattr(self, "rvfi"):
             m.d.comb += self.rvfi.eq(writeback.rvfi)
 
         m.submodules.pipeline = Pipeline(

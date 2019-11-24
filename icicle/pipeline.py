@@ -55,18 +55,18 @@ class Stage(Elaboratable):
             self.flush.eq(reduce(or_, self._flush_sources, 0))
         ]
 
-        if hasattr(self, 'rdata'):
+        if hasattr(self, "rdata"):
             m.d.comb += self.valid.eq(self.rdata.valid)
         else:
             m.d.comb += self.valid.eq(1)
 
-        if hasattr(self, 'wdata'):
+        if hasattr(self, "wdata"):
             with m.If(~self.stall):
                 m.d.sync += self.wdata.valid.eq(self.valid)
             with m.If(self.flush):
                 m.d.sync += self.wdata.valid.eq(0)
 
-        if hasattr(self, 'rdata') and hasattr(self, 'wdata'):
+        if hasattr(self, "rdata") and hasattr(self, "wdata"):
             with m.If(~self.stall):
                 for (name, shape, dir) in self.wdata.layout:
                     if name != "valid" and name in self.rdata.layout.fields:
