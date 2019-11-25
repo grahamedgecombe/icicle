@@ -39,7 +39,7 @@ class PCGenTestCase(FHDLTestCase):
                 self.assertEqual((yield m.wdata.pc_rdata), 0x00100000)
                 yield stall.eq(0)
                 yield
-                self.assertEqual((yield m.wdata.valid), 1)
+                self.assertEqual((yield m.wdata.valid), 0)
                 self.assertEqual((yield m.wdata.pc_rdata), 0x00100000)
                 yield
                 self.assertEqual((yield m.wdata.valid), 1)
@@ -87,7 +87,7 @@ class PCGenTestCase(FHDLTestCase):
                 yield stall.eq(0)
                 yield m.branch_taken.eq(0)
                 yield
-                self.assertEqual((yield m.wdata.valid), 1)
+                self.assertEqual((yield m.wdata.valid), 0)
                 self.assertEqual((yield m.wdata.pc_rdata), 0x00100000)
                 yield
                 self.assertEqual((yield m.wdata.valid), 1)
