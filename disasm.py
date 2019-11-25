@@ -10,7 +10,6 @@ rvfi_insn = None
 
 for netinfo in parse_vcd(argv[1]).values():
     for net in netinfo['nets']:
-        # print(net["hier"], net["name"])
         if net["hier"] == "rvfi_testbench.wrapper" and net["name"] == "rvfi_valid":
             rvfi_valid = netinfo['tv']
         if net["hier"] == "rvfi_testbench.wrapper" and net["name"] == "rvfi_order":
