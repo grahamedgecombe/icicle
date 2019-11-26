@@ -34,7 +34,7 @@ RVFI_LAYOUT = [
 
 class RVFI(Record):
     def __init__(self):
-        super().__init__(RVFI_LAYOUT, name="rvfi")
+        super().__init__(RVFI_LAYOUT, src_loc_at=1)
 
         # adjust the flattened field names for RVFI compliance
         for (name, field) in self.fields.items():
