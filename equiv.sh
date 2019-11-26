@@ -1,2 +1,3 @@
 #!/bin/sh -e
-exec yosys equiv.ys
+export PYTHONPATH=`dirname $0`
+exec yosys "$PYTHONPATH/equiv.ys"
