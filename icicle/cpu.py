@@ -17,6 +17,7 @@ class CPU(Elaboratable):
         self.reset_vector = reset_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
+        self.ibus = Record(WISHBONE_LAYOUT)
         self.dbus = Record(WISHBONE_LAYOUT)
         if rvfi:
             self.rvfi = RVFI()
@@ -29,6 +30,8 @@ class CPU(Elaboratable):
         pcgen = PCGen(self.reset_vector)
 
         fetch = Fetch()
+        m.d.comb += fetch.ibus.connect(self.ibus)
+        fetch.stall_on(fetch.valid & fetch.busy)
 
         decode = Decode()
         m.d.comb += [

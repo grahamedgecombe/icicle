@@ -44,6 +44,9 @@ def main():
 
     ports = []
 
+    for (name, shape, dir) in cpu.ibus.layout:
+        ports.append(cpu.ibus[name])
+
     for (name, shape, dir) in cpu.dbus.layout:
         ports.append(cpu.dbus[name])
 

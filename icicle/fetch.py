@@ -1,17 +1,31 @@
-from nmigen.hdl.ast import AnySeq
+from nmigen import *
 
+from icicle.loadstore import LoadStore, MemWidth
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import PF_LAYOUT, FD_LAYOUT
+from icicle.wishbone import WISHBONE_LAYOUT
 
 
 class Fetch(Stage):
     def __init__(self):
         super().__init__(rdata_layout=PF_LAYOUT, wdata_layout=FD_LAYOUT)
+        self.ibus = Record(WISHBONE_LAYOUT)
+        self.busy = Signal()
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
+        load_store = m.submodules.load_store = LoadStore()
+        m.d.comb += [
+            load_store.bus.connect(self.ibus),
+            load_store.valid.eq(self.valid),
+            self.busy.eq(load_store.busy),
+            load_store.load.eq(1),
+            load_store.width.eq(MemWidth.WORD),
+            load_store.addr.eq(self.rdata.pc_rdata)
+        ]
+
         with m.If(~self.stall):
-            m.d.sync += self.wdata.insn.eq(AnySeq(32))
+            m.d.sync += self.wdata.insn.eq(load_store.rdata)
 
         return m
