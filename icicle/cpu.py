@@ -8,6 +8,7 @@ from icicle.pcgen import PCGen
 from icicle.pipeline import Pipeline
 from icicle.regs import RegisterFile, BlackBoxRegisterFile
 from icicle.rvfi import RVFI
+from icicle.wishbone import WISHBONE_LAYOUT
 from icicle.writeback import Writeback
 
 
@@ -16,6 +17,7 @@ class CPU(Elaboratable):
         self.reset_vector = reset_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
+        self.dbus = Record(WISHBONE_LAYOUT)
         if rvfi:
             self.rvfi = RVFI()
 
@@ -38,12 +40,14 @@ class CPU(Elaboratable):
 
         mem = MemoryAccess(self.rvfi_blackbox_alu)
         m.d.comb += [
+            mem.dbus.connect(self.dbus),
             pcgen.branch_taken.eq(mem.branch_taken),
             pcgen.branch_target.eq(mem.branch_target)
         ]
         fetch.flush_on(mem.branch_taken)
         decode.flush_on(mem.branch_taken)
         execute.flush_on(mem.branch_taken)
+        mem.stall_on(mem.valid & mem.busy)
 
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)

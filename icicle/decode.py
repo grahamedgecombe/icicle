@@ -59,7 +59,12 @@ class Decode(Stage):
                 self.wdata.shift_arithmetic.eq(control.shift_arithmetic),
                 self.wdata.result_sel.eq(control.result_sel),
                 self.wdata.branch_target_sel.eq(control.branch_target_sel),
-                self.wdata.branch_op.eq(control.branch_op)
+                self.wdata.branch_op.eq(control.branch_op),
+                self.wdata.mem_load.eq(control.mem_load),
+                self.wdata.mem_store.eq(control.mem_store),
+                self.wdata.mem_width.eq(control.mem_width),
+                self.wdata.mem_unsigned.eq(control.mem_unsigned),
+                self.wdata.wdata_sel.eq(control.wdata_sel)
             ]
 
         return m

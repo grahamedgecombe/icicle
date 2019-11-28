@@ -1,6 +1,8 @@
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
+from icicle.loadstore import Width
 from icicle.logic import LogicOp
+from icicle.wdata import WDataSel
 
 PF_LAYOUT = [
     ("pc_rdata", 32),
@@ -36,7 +38,12 @@ DX_LAYOUT = [
     ("shift_arithmetic",                1),
     ("result_sel",              ResultSel),
     ("branch_target_sel", BranchTargetSel),
-    ("branch_op",                BranchOp)
+    ("branch_op",                BranchOp),
+    ("mem_load",                        1),
+    ("mem_store",                       1),
+    ("mem_width",                   Width),
+    ("mem_unsigned",                    1),
+    ("wdata_sel",                WDataSel)
 ]
 
 XM_LAYOUT = [
@@ -59,21 +66,34 @@ XM_LAYOUT = [
     ("result_sel", ResultSel),
     ("branch_target",     32),
     ("branch_misaligned",  1),
-    ("branch_op",   BranchOp)
+    ("branch_op",   BranchOp),
+    ("mem_load",           1),
+    ("mem_store",          1),
+    ("mem_width",      Width),
+    ("mem_unsigned",       1),
+    ("wdata_sel",   WDataSel)
 ]
 
 MW_LAYOUT = [
-    ("trap",       1),
-    ("pc_rdata",  32),
-    ("pc_wdata",  32),
-    ("insn",      32),
-    ("rd",         5),
-    ("rd_wen",     1),
-    ("rd_wdata",  32),
-    ("rs1",        5),
-    ("rs1_ren",    1),
-    ("rs1_rdata", 32),
-    ("rs2",        5),
-    ("rs2_ren",    1),
-    ("rs2_rdata", 32)
+    ("trap",               1),
+    ("pc_rdata",          32),
+    ("pc_wdata",          32),
+    ("insn",              32),
+    ("rd",                 5),
+    ("rd_wen",             1),
+    ("rs1",                5),
+    ("rs1_ren",            1),
+    ("rs1_rdata",         32),
+    ("rs2",                5),
+    ("rs2_ren",            1),
+    ("rs2_rdata",         32),
+    ("result",            32),
+    ("mem_load",           1),
+    ("mem_store",          1),
+    ("mem_rdata",         32),
+    ("mem_addr_aligned",  32),
+    ("mem_mask",           4),
+    ("mem_rdata_aligned", 32),
+    ("mem_wdata_aligned", 32),
+    ("wdata_sel",   WDataSel)
 ]

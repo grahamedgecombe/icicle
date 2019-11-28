@@ -2,8 +2,10 @@ from nmigen import *
 
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
+from icicle.loadstore import Width
 from icicle.logic import LogicOp
 from icicle.riscv import Format, Opcode, Funct3, Funct7
+from icicle.wdata import WDataSel
 
 
 class Control(Elaboratable):
@@ -26,6 +28,11 @@ class Control(Elaboratable):
         self.result_sel = Signal(ResultSel)
         self.branch_target_sel = Signal(BranchTargetSel)
         self.branch_op = Signal(BranchOp)
+        self.mem_load = Signal()
+        self.mem_store = Signal()
+        self.mem_width = Signal(Width)
+        self.mem_unsigned = Signal()
+        self.wdata_sel = Signal(WDataSel)
         self.illegal = Signal()
 
     def elaborate(self, platform):
@@ -135,6 +142,31 @@ class Control(Elaboratable):
                     with m.Default():
                         m.d.comb += self.illegal.eq(1)
 
+            with m.Case(Opcode.LOAD):
+                m.d.comb += [
+                    self.a_sel.eq(ASel.RS1),
+                    self.b_sel.eq(BSel.IMM),
+                    self.mem_load.eq(1),
+                    self.wdata_sel.eq(WDataSel.MEM_RDATA)
+                ]
+                # XXX(gpe): we set mem_width and mem_unsigned below as their
+                # encoding was chosen to match funct3 exactly.
+
+                with m.If(~funct3.matches(Funct3.LB, Funct3.LH, Funct3.LW, Funct3.LBU, Funct3.LHU)):
+                    m.d.comb += self.illegal.eq(1)
+
+            with m.Case(Opcode.STORE):
+                m.d.comb += [
+                    self.a_sel.eq(ASel.RS1),
+                    self.b_sel.eq(BSel.IMM),
+                    self.mem_store.eq(1)
+                ]
+                # XXX(gpe): we set mem_width and mem_unsigned below as its
+                # encoding was chosen to match funct3 exactly.
+
+                with m.If(~funct3.matches(Funct3.SB, Funct3.SH, Funct3.SW)):
+                    m.d.comb += self.illegal.eq(1)
+
             with m.Case(Opcode.OP_IMM, Opcode.OP):
                 m.d.comb += [
                     self.a_sel.eq(ASel.RS1),
@@ -180,7 +212,9 @@ class Control(Elaboratable):
         m.d.comb += [
             self.logic_op.eq(funct3[0:2]),
             self.shift_right.eq(funct3[2]),
-            self.shift_arithmetic.eq(funct7[5])
+            self.shift_arithmetic.eq(funct7[5]),
+            self.mem_width.eq(funct3[0:2]),
+            self.mem_unsigned.eq(funct3[2])
         ]
 
         return m

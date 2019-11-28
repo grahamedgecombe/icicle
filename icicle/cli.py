@@ -43,6 +43,10 @@ def main():
     )
 
     ports = []
+
+    for (name, shape, dir) in cpu.dbus.layout:
+        ports.append(cpu.dbus[name])
+
     if args.rvfi:
         for (name, shape, dir) in cpu.rvfi.layout:
             ports.append(cpu.rvfi[name])

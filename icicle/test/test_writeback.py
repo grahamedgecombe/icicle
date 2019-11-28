@@ -28,7 +28,7 @@ class WritebackTestCase(FHDLTestCase):
                 yield writeback.rdata.valid.eq(1)
                 yield writeback.rdata.rd.eq(1)
                 yield writeback.rdata.rd_wen.eq(1)
-                yield writeback.rdata.rd_wdata.eq(0xDEADBEEF)
+                yield writeback.rdata.result.eq(0xDEADBEEF)
                 yield
                 yield
                 self.assertEqual((yield regs[1]), 0xDEADBEEF)
@@ -48,7 +48,7 @@ class WritebackTestCase(FHDLTestCase):
                 yield writeback.rdata.valid.eq(1)
                 yield writeback.rdata.rd.eq(1)
                 yield writeback.rdata.rd_wen.eq(1)
-                yield writeback.rdata.rd_wdata.eq(0xDEADBEEF)
+                yield writeback.rdata.result.eq(0xDEADBEEF)
                 yield
                 yield
                 self.assertEqual((yield regs[1]), 0)
@@ -63,7 +63,7 @@ class WritebackTestCase(FHDLTestCase):
                 yield writeback.rdata.valid.eq(0)
                 yield writeback.rdata.rd.eq(1)
                 yield writeback.rdata.rd_wen.eq(1)
-                yield writeback.rdata.rd_wdata.eq(0xDEADBEEF)
+                yield writeback.rdata.result.eq(0xDEADBEEF)
                 yield
                 yield
                 self.assertEqual((yield regs[1]), 0)
@@ -78,7 +78,7 @@ class WritebackTestCase(FHDLTestCase):
                 yield writeback.rdata.valid.eq(1)
                 yield writeback.rdata.rd.eq(1)
                 yield writeback.rdata.rd_wen.eq(0)
-                yield writeback.rdata.rd_wdata.eq(0xDEADBEEF)
+                yield writeback.rdata.result.eq(0xDEADBEEF)
                 yield
                 yield
                 self.assertEqual((yield regs[1]), 0)

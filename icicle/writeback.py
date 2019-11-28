@@ -4,6 +4,7 @@ from icicle.pipeline import Stage
 from icicle.pipeline_regs import MW_LAYOUT
 from icicle.regs import RD_PORT_LAYOUT
 from icicle.rvfi import RVFI_LAYOUT
+from icicle.wdata import WDataMux
 
 
 class Writeback(Stage):
@@ -15,10 +16,17 @@ class Writeback(Stage):
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
+        wdata_mux = m.submodules.wdata_mux = WDataMux()
+        m.d.comb += [
+            wdata_mux.sel.eq(self.rdata.wdata_sel),
+            wdata_mux.result.eq(self.rdata.result),
+            wdata_mux.mem_rdata.eq(self.rdata.mem_rdata)
+        ]
+
         m.d.comb += [
             self.rd_port.en.eq(~self.stall & self.valid & self.rdata.rd_wen),
             self.rd_port.addr.eq(self.rdata.rd),
-            self.rd_port.data.eq(self.rdata.rd_wdata)
+            self.rd_port.data.eq(wdata_mux.rd_wdata)
         ]
 
         with m.If(~self.stall & self.valid):
@@ -36,14 +44,14 @@ class Writeback(Stage):
                 self.rvfi.rs1_rdata.eq(Mux(self.rdata.rs1_ren, self.rdata.rs1_rdata, 0)),
                 self.rvfi.rs2_rdata.eq(Mux(self.rdata.rs2_ren, self.rdata.rs2_rdata, 0)),
                 self.rvfi.rd_addr.eq(Mux(self.rdata.rd_wen, self.rdata.rd, 0)),
-                self.rvfi.rd_wdata.eq(Mux(self.rdata.rd_wen, self.rdata.rd_wdata, 0)),
+                self.rvfi.rd_wdata.eq(Mux(self.rdata.rd_wen, wdata_mux.rd_wdata, 0)),
                 self.rvfi.pc_rdata.eq(self.rdata.pc_rdata),
                 self.rvfi.pc_wdata.eq(self.rdata.pc_wdata),
-                self.rvfi.mem_addr.eq(0),
-                self.rvfi.mem_rmask.eq(0),
-                self.rvfi.mem_wmask.eq(0),
-                self.rvfi.mem_rdata.eq(0),
-                self.rvfi.mem_wdata.eq(0)
+                self.rvfi.mem_addr.eq(Mux(self.rdata.mem_load | self.rdata.mem_store, self.rdata.mem_addr_aligned, 0)),
+                self.rvfi.mem_rmask.eq(Mux(self.rdata.mem_load, self.rdata.mem_mask, 0)),
+                self.rvfi.mem_wmask.eq(Mux(self.rdata.mem_store, self.rdata.mem_mask, 0)),
+                self.rvfi.mem_rdata.eq(Mux(self.rdata.mem_load, self.rdata.mem_rdata_aligned, 0)),
+                self.rvfi.mem_wdata.eq(Mux(self.rdata.mem_store, self.rdata.mem_wdata_aligned, 0))
             ]
         with m.Else():
             m.d.sync += self.rvfi.valid.eq(0)
