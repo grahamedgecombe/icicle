@@ -2,7 +2,7 @@ from nmigen.back.pysim import Simulator
 from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
-from icicle.loadstore import WordAlign, Width
+from icicle.loadstore import WordAlign, Width, LoadStore
 
 
 class WordAlignTestCase(FHDLTestCase):
@@ -232,5 +232,91 @@ class WordAlignTestCase(FHDLTestCase):
                 self.assertEqual((yield m.rdata), 0xAA)
                 self.assertEqual((yield m.addr_aligned), 0x80000000)
                 self.assertEqual((yield m.wdata_aligned) & 0xFF000000, 0x44000000)
+            sim.add_process(process)
+            sim.run()
+
+
+class LoadStoreTestCase(FHDLTestCase):
+    def test_load(self):
+        m = LoadStore()
+        with Simulator(m) as sim:
+            def process():
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 0)
+
+                yield m.valid.eq(1)
+                yield m.load.eq(1)
+                yield m.width.eq(Width.WORD)
+                yield m.addr.eq(0x11223344)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 1)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 1)
+                self.assertEqual((yield m.bus.stb), 1)
+                self.assertEqual((yield m.bus.we), 0)
+                self.assertEqual((yield m.bus.adr), 0x11223344 >> 2)
+
+                yield m.bus.ack.eq(1)
+                yield m.bus.dat_r.eq(0xAABBCCDD)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.rdata), 0xAABBCCDD)
+
+                yield m.valid.eq(0)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 0)
+            sim.add_process(process)
+            sim.run()
+
+    def test_store(self):
+        m = LoadStore()
+        with Simulator(m) as sim:
+            def process():
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 0)
+
+                yield m.valid.eq(1)
+                yield m.store.eq(1)
+                yield m.width.eq(Width.WORD)
+                yield m.addr.eq(0x11223344)
+                yield m.wdata.eq(0xAABBCCDD)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 1)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 1)
+                self.assertEqual((yield m.bus.stb), 1)
+                self.assertEqual((yield m.bus.we), 1)
+                self.assertEqual((yield m.bus.adr), 0x11223344 >> 2)
+                self.assertEqual((yield m.bus.dat_w), 0xAABBCCDD)
+
+                yield m.bus.ack.eq(1)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+
+                yield m.valid.eq(0)
+                yield Delay()
+
+                self.assertEqual((yield m.busy), 0)
+                self.assertEqual((yield m.misaligned), 0)
+                self.assertEqual((yield m.fault), 0)
+                self.assertEqual((yield m.bus.cyc), 0)
             sim.add_process(process)
             sim.run()

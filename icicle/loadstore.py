@@ -2,6 +2,8 @@ from enum import Enum
 
 from nmigen import *
 
+from icicle.wishbone import WISHBONE_LAYOUT
+
 
 class Width(Enum):
     BYTE = 0
@@ -59,5 +61,66 @@ class WordAlign(Elaboratable):
                     self.wdata_aligned.eq(self.wdata),
                     self.rdata.eq(self.rdata_aligned)
                 ]
+
+        return m
+
+
+class LoadStore(Elaboratable):
+    def __init__(self):
+        self.bus = Record(WISHBONE_LAYOUT)
+        self.valid = Signal()
+        self.busy = Signal()
+        self.load = Signal()
+        self.store = Signal()
+        self.width = Signal(Width)
+        self.unsigned = Signal()
+        self.addr = Signal(32)
+        self.rdata = Signal(32)
+        self.wdata = Signal(32)
+        self.addr_aligned = Signal(32)
+        self.rdata_aligned = Signal(32)
+        self.wdata_aligned = Signal(32)
+        self.mask = Signal(4)
+        self.misaligned = Signal()
+        self.fault = Signal()
+
+    def elaborate(self, platform):
+        m = Module()
+
+        # mask, shift and optionally sign-extend bytes and half-words, as the
+        # wishbone bus is only capable of loading or storing a single word at a
+        # time
+        word_align = m.submodules.word_align = WordAlign()
+        m.d.comb += [
+            word_align.width.eq(self.width),
+            word_align.unsigned.eq(self.unsigned),
+            word_align.addr.eq(self.addr),
+            self.rdata.eq(word_align.rdata),
+            word_align.wdata.eq(self.wdata),
+            self.misaligned.eq(word_align.misaligned),
+
+            # RVFI expects the word-aligned address and data
+            self.addr_aligned.eq(word_align.addr_aligned),
+            self.rdata_aligned.eq(word_align.rdata_aligned),
+            self.wdata_aligned.eq(word_align.wdata_aligned),
+            self.mask.eq(word_align.mask)
+        ]
+
+        # wishbone outputs
+        m.d.comb += [
+            self.bus.adr.eq(word_align.addr_aligned[2:32]),
+            self.bus.dat_w.eq(word_align.wdata_aligned),
+            self.bus.sel.eq(word_align.mask),
+            self.bus.cyc.eq(self.valid & (self.load | self.store) & ~self.misaligned),
+            self.bus.stb.eq(self.bus.cyc),
+            self.bus.we.eq(self.store)
+        ]
+
+        # wishbone inputs
+        m.d.comb += [
+            self.busy.eq(self.bus.cyc & self.bus.stb & ~(self.bus.ack | self.bus.err)),
+            self.fault.eq(self.bus.cyc & self.bus.stb & self.bus.err),
+            word_align.rdata_aligned.eq(self.bus.dat_r)
+        ]
 
         return m
