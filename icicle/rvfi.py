@@ -38,4 +38,4 @@ class RVFI(Record):
 
         # adjust the flattened field names for RVFI compliance
         for (name, field) in self.fields.items():
-            field.name = "rvfi_{}".format(name)
+            field.name = "{}_{}".format(self.name, name)
