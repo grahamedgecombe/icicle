@@ -2,7 +2,7 @@ from nmigen import *
 
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
-from icicle.loadstore import Width
+from icicle.loadstore import MemWidth
 from icicle.logic import LogicOp
 from icicle.riscv import Format, Opcode, Funct3, Funct7
 from icicle.wdata import WDataSel
@@ -30,7 +30,7 @@ class Control(Elaboratable):
         self.branch_op = Signal(BranchOp)
         self.mem_load = Signal()
         self.mem_store = Signal()
-        self.mem_width = Signal(Width)
+        self.mem_width = Signal(MemWidth)
         self.mem_unsigned = Signal()
         self.wdata_sel = Signal(WDataSel)
         self.illegal = Signal()

@@ -5,7 +5,7 @@ from nmigen import *
 from icicle.wishbone import WISHBONE_LAYOUT
 
 
-class Width(Enum):
+class MemWidth(Enum):
     BYTE = 0
     HALF = 1
     WORD = 2
@@ -13,7 +13,7 @@ class Width(Enum):
 
 class WordAlign(Elaboratable):
     def __init__(self):
-        self.width = Signal(Width)
+        self.width = Signal(MemWidth)
         self.unsigned = Signal()
         self.addr = Signal(32)
         self.rdata = Signal(32)
@@ -41,20 +41,20 @@ class WordAlign(Elaboratable):
         ]
 
         with m.Switch(self.width):
-            with m.Case(Width.BYTE):
+            with m.Case(MemWidth.BYTE):
                 m.d.comb += [
                     self.mask.eq(0b1 << offset),
                     self.wdata_aligned.eq(self.wdata << (offset * 8)),
                     self.rdata.eq(Cat(byte, Repl(Mux(self.unsigned, 0, byte[7]), 24)))
                 ]
-            with m.Case(Width.HALF):
+            with m.Case(MemWidth.HALF):
                 m.d.comb += [
                     self.misaligned.eq(offset[0]),
                     self.mask.eq(0b11 << offset),
                     self.wdata_aligned.eq(self.wdata << (offset[1] * 16)),
                     self.rdata.eq(Cat(half, Repl(Mux(self.unsigned, 0, half[15]), 16)))
                 ]
-            with m.Case(Width.WORD):
+            with m.Case(MemWidth.WORD):
                 m.d.comb += [
                     self.misaligned.eq(offset != 0),
                     self.mask.eq(0b1111),
@@ -72,7 +72,7 @@ class LoadStore(Elaboratable):
         self.busy = Signal()
         self.load = Signal()
         self.store = Signal()
-        self.width = Signal(Width)
+        self.width = Signal(MemWidth)
         self.unsigned = Signal()
         self.addr = Signal(32)
         self.rdata = Signal(32)

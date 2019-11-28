@@ -1,6 +1,6 @@
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
-from icicle.loadstore import Width
+from icicle.loadstore import MemWidth
 from icicle.logic import LogicOp
 from icicle.wdata import WDataSel
 
@@ -41,7 +41,7 @@ DX_LAYOUT = [
     ("branch_op",                BranchOp),
     ("mem_load",                        1),
     ("mem_store",                       1),
-    ("mem_width",                   Width),
+    ("mem_width",                MemWidth),
     ("mem_unsigned",                    1),
     ("wdata_sel",                WDataSel)
 ]
@@ -69,7 +69,7 @@ XM_LAYOUT = [
     ("branch_op",   BranchOp),
     ("mem_load",           1),
     ("mem_store",          1),
-    ("mem_width",      Width),
+    ("mem_width",   MemWidth),
     ("mem_unsigned",       1),
     ("wdata_sel",   WDataSel)
 ]

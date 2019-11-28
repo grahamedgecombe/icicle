@@ -2,7 +2,7 @@ from nmigen.back.pysim import Simulator
 from nmigen.hdl.ast import Delay
 from nmigen.test.utils import FHDLTestCase
 
-from icicle.loadstore import WordAlign, Width, LoadStore
+from icicle.loadstore import WordAlign, MemWidth, LoadStore
 
 
 class WordAlignTestCase(FHDLTestCase):
@@ -10,7 +10,7 @@ class WordAlignTestCase(FHDLTestCase):
         m = WordAlign()
         with Simulator(m) as sim:
             def process():
-                yield m.width.eq(Width.WORD)
+                yield m.width.eq(MemWidth.WORD)
                 yield m.unsigned.eq(0)
                 yield m.addr.eq(0x80000000)
                 yield m.rdata_aligned.eq(0xAABBCCDD)
@@ -57,7 +57,7 @@ class WordAlignTestCase(FHDLTestCase):
         m = WordAlign()
         with Simulator(m) as sim:
             def process():
-                yield m.width.eq(Width.HALF)
+                yield m.width.eq(MemWidth.HALF)
                 yield m.unsigned.eq(0)
                 yield m.addr.eq(0x80000000)
                 yield m.rdata_aligned.eq(0xAABBCCDD)
@@ -126,7 +126,7 @@ class WordAlignTestCase(FHDLTestCase):
         m = WordAlign()
         with Simulator(m) as sim:
             def process():
-                yield m.width.eq(Width.BYTE)
+                yield m.width.eq(MemWidth.BYTE)
                 yield m.unsigned.eq(0)
                 yield m.addr.eq(0x80000000)
                 yield m.rdata_aligned.eq(0xAABBCCDD)
@@ -248,7 +248,7 @@ class LoadStoreTestCase(FHDLTestCase):
 
                 yield m.valid.eq(1)
                 yield m.load.eq(1)
-                yield m.width.eq(Width.WORD)
+                yield m.width.eq(MemWidth.WORD)
                 yield m.addr.eq(0x11223344)
                 yield Delay()
 
@@ -290,7 +290,7 @@ class LoadStoreTestCase(FHDLTestCase):
 
                 yield m.valid.eq(1)
                 yield m.store.eq(1)
-                yield m.width.eq(Width.WORD)
+                yield m.width.eq(MemWidth.WORD)
                 yield m.addr.eq(0x11223344)
                 yield m.wdata.eq(0xAABBCCDD)
                 yield Delay()
