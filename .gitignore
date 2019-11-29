@@ -5,4 +5,5 @@
 !.gitignore
 /checks
 /disasm.s
+/dmemcheck
 __pycache__
