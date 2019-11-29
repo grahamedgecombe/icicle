@@ -63,7 +63,7 @@ module rvfi_wrapper (
     always_ff @(posedge clock) begin
         ibus_wait <= {ibus_wait, ibus_cyc && ibus_stb && ~ibus_ack};
         dbus_wait <= {dbus_wait, dbus_cyc && dbus_stb && ~dbus_ack};
-        assume (!ibus_wait && !dbus_wait);
+        assume (~&ibus_wait && ~&dbus_wait);
     end
 `endif
 endmodule
