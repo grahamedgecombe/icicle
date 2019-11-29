@@ -57,12 +57,18 @@ module rvfi_wrapper (
     );
 
 `ifdef RISCV_FORMAL_FAIRNESS
-    logic [7:0] ibus_wait = 0;
-    logic [7:0] dbus_wait = 0;
+    logic [7:0] ibus_wait;
+    logic [7:0] dbus_wait;
 
     always_ff @(posedge clock) begin
-        ibus_wait <= {ibus_wait, ibus_cyc && ibus_stb && ~ibus_ack};
-        dbus_wait <= {dbus_wait, dbus_cyc && dbus_stb && ~dbus_ack};
+        if (reset) begin
+            ibus_wait <= 0;
+            dbus_wait <= 0;
+        end else begin
+            ibus_wait <= {ibus_wait, ibus_cyc && ibus_stb && ~ibus_ack};
+            dbus_wait <= {dbus_wait, dbus_cyc && dbus_stb && ~dbus_ack};
+        end
+
         assume (~&ibus_wait && ~&dbus_wait);
     end
 `endif
