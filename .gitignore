@@ -6,4 +6,5 @@
 /checks
 /disasm.s
 /dmemcheck
+/imemcheck
 __pycache__
