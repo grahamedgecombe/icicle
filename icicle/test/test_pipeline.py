@@ -47,32 +47,32 @@ class PipelineTestCase(FHDLTestCase):
         s2 = MiddleStage()
         s3 = LastStage()
         m = Pipeline(s1=s1, s2=s2, s3=s3)
-        with Simulator(m) as sim:
-            def process():
-                self.assertEqual((yield s1.wdata.valid), 0)
-                self.assertEqual((yield s2.wdata.valid), 0)
-                self.assertEqual((yield s3.counter_valid), 0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 1)
-                self.assertEqual((yield s2.wdata.valid), 0)
-                self.assertEqual((yield s3.counter_valid), 0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 2)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 1)
-                self.assertEqual((yield s3.counter_valid), 0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 3)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 2)
-                self.assertEqual((yield s3.counter_valid), 1)
-                self.assertEqual((yield s3.counter), 1)
-            sim.add_clock(period=1e-6)
-            sim.add_sync_process(process)
-            sim.run()
+        sim = Simulator(m)
+        def process():
+            self.assertEqual((yield s1.wdata.valid), 0)
+            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 1)
+            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 2)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 1)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 3)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 2)
+            self.assertEqual((yield s3.counter_valid), 1)
+            self.assertEqual((yield s3.counter), 1)
+        sim.add_clock(period=1e-6)
+        sim.add_sync_process(process)
+        sim.run()
 
     def test_stall(self):
         s1 = FirstStage()
@@ -83,35 +83,35 @@ class PipelineTestCase(FHDLTestCase):
         s2.stall_on(s2_stall)
 
         m = Pipeline(s1=s1, s2=s2, s3=s3)
-        with Simulator(m) as sim:
-            def process():
-                yield
-                yield
-                yield s2_stall.eq(1)
-                yield
-                yield s2_stall.eq(0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 3)
-                self.assertEqual((yield s2.wdata.valid), 0)
-                self.assertEqual((yield s3.counter_valid), 1)
-                self.assertEqual((yield s3.counter), 2)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 4)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 3)
-                self.assertEqual((yield s3.counter_valid), 0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 5)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 4)
-                self.assertEqual((yield s3.counter_valid), 1)
-                self.assertEqual((yield s3.counter), 3)
-            sim.add_clock(period=1e-6)
-            sim.add_sync_process(process)
-            sim.run()
+        sim = Simulator(m)
+        def process():
+            yield
+            yield
+            yield s2_stall.eq(1)
+            yield
+            yield s2_stall.eq(0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 3)
+            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s3.counter_valid), 1)
+            self.assertEqual((yield s3.counter), 2)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 4)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 3)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 5)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 4)
+            self.assertEqual((yield s3.counter_valid), 1)
+            self.assertEqual((yield s3.counter), 3)
+        sim.add_clock(period=1e-6)
+        sim.add_sync_process(process)
+        sim.run()
 
     def test_flush(self):
         s1 = FirstStage()
@@ -122,32 +122,32 @@ class PipelineTestCase(FHDLTestCase):
         s2.flush_on(s2_flush)
 
         m = Pipeline(s1=s1, s2=s2, s3=s3)
-        with Simulator(m) as sim:
-            def process():
-                yield
-                yield
-                yield s2_flush.eq(1)
-                yield
-                yield s2_flush.eq(0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 4)
-                self.assertEqual((yield s2.wdata.valid), 0)
-                self.assertEqual((yield s3.counter_valid), 1)
-                self.assertEqual((yield s3.counter), 2)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 5)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 4)
-                self.assertEqual((yield s3.counter_valid), 0)
-                yield
-                self.assertEqual((yield s1.wdata.valid), 1)
-                self.assertEqual((yield s1.wdata.counter), 6)
-                self.assertEqual((yield s2.wdata.valid), 1)
-                self.assertEqual((yield s2.wdata.counter), 5)
-                self.assertEqual((yield s3.counter_valid), 1)
-                self.assertEqual((yield s3.counter), 4)
-            sim.add_clock(period=1e-6)
-            sim.add_sync_process(process)
-            sim.run()
+        sim = Simulator(m)
+        def process():
+            yield
+            yield
+            yield s2_flush.eq(1)
+            yield
+            yield s2_flush.eq(0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 4)
+            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s3.counter_valid), 1)
+            self.assertEqual((yield s3.counter), 2)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 5)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 4)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            self.assertEqual((yield s1.wdata.valid), 1)
+            self.assertEqual((yield s1.wdata.counter), 6)
+            self.assertEqual((yield s2.wdata.valid), 1)
+            self.assertEqual((yield s2.wdata.counter), 5)
+            self.assertEqual((yield s3.counter_valid), 1)
+            self.assertEqual((yield s3.counter), 4)
+        sim.add_clock(period=1e-6)
+        sim.add_sync_process(process)
+        sim.run()
