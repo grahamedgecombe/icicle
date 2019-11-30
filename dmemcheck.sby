@@ -15,7 +15,6 @@ chformal -early
 [files]
 dmemcheck.sv
 ../../checks/rvfi_macros.vh
-../../checks/rvfi_channel.sv
 ../../checks/rvfi_dmem_check.sv
 
 [file defines.sv]
@@ -27,5 +26,4 @@ dmemcheck.sv
 `define RISCV_FORMAL_BLACKBOX_REGS
 `define RISCV_FORMAL_ALIGNED_MEM
 `include "rvfi_macros.vh"
-`include "rvfi_channel.sv"
 `include "rvfi_dmem_check.sv"

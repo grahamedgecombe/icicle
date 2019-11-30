@@ -22,7 +22,6 @@ chformal -early
 [files]
 complete.sv
 ../../checks/rvfi_macros.vh
-../../checks/rvfi_channel.sv
 ../../insns/isa_rv32i.v
 
 --pycode-begin--
@@ -40,5 +39,4 @@ with open("../../insns/isa_rv32i.txt") as f:
 `define RISCV_FORMAL_BLACKBOX_REGS
 `define RISCV_FORMAL_ALIGNED_MEM
 `include "rvfi_macros.vh"
-`include "rvfi_channel.sv"
 `include "isa_rv32i.v"
