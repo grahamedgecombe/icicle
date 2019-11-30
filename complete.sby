@@ -1,0 +1,44 @@
+[options]
+mode bmc
+depth 31
+skip 30
+
+[engines]
+smtbmc boolector
+
+[script]
+read_verilog -noautowire -sv complete.sv
+connect_rpc -exec env PYTHONPATH=. nmigen-rpc yosys icicle.cpu.CPU
+
+--pycode-begin--
+with open("../../insns/isa_rv32i.txt") as f:
+    for line in f:
+        output("read_verilog -noautowire -sv insn_%s.v" % line.strip())
+--pycode-end--
+
+prep -flatten -nordff -top testbench
+chformal -early
+
+[files]
+complete.sv
+../../checks/rvfi_macros.vh
+../../checks/rvfi_channel.sv
+../../insns/isa_rv32i.v
+
+--pycode-begin--
+with open("../../insns/isa_rv32i.txt") as f:
+    for line in f:
+        output("../../insns/insn_%s.v" % line.strip())
+--pycode-end--
+
+[file defines.sv]
+`define RISCV_FORMAL
+`define RISCV_FORMAL_NRET 1
+`define RISCV_FORMAL_XLEN 32
+`define RISCV_FORMAL_ILEN 32
+`define RISCV_FORMAL_BLACKBOX_ALU
+`define RISCV_FORMAL_BLACKBOX_REGS
+`define RISCV_FORMAL_ALIGNED_MEM
+`include "rvfi_macros.vh"
+`include "rvfi_channel.sv"
+`include "isa_rv32i.v"

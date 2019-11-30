@@ -4,6 +4,7 @@
 .*
 !.gitignore
 /checks
+/complete
 /disasm.s
 /dmemcheck
 /imemcheck
