@@ -79,9 +79,9 @@ class Control(Elaboratable):
         m.d.comb += zimm.eq((opcode == Opcode.SYSTEM) & funct3.matches(Funct3.CSRRWI, Funct3.CSRRSI, Funct3.CSRRCI))
 
         m.d.comb += [
-            self.rd_wen.eq((self.rd != 0) & self.fmt.matches(Format.R, Format.I, Format.U, Format.J) & ~fence),
-            self.rs1_ren.eq((self.rs1 != 0) & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~(fence | zimm)),
-            self.rs2_ren.eq((self.rs2 != 0) & self.fmt.matches(Format.R, Format.S, Format.B))
+            self.rd_wen.eq(self.rd.bool() & self.fmt.matches(Format.R, Format.I, Format.U, Format.J) & ~fence),
+            self.rs1_ren.eq(self.rs1.bool() & self.fmt.matches(Format.R, Format.I, Format.S, Format.B) & ~(fence | zimm)),
+            self.rs2_ren.eq(self.rs2.bool() & self.fmt.matches(Format.R, Format.S, Format.B))
         ]
 
         with m.Switch(opcode):

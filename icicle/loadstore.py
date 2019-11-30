@@ -56,7 +56,7 @@ class WordAlign(Elaboratable):
                 ]
             with m.Case(MemWidth.WORD):
                 m.d.comb += [
-                    self.misaligned.eq(offset != 0),
+                    self.misaligned.eq(offset.bool()),
                     self.mask.eq(0b1111),
                     self.wdata_aligned.eq(self.wdata),
                     self.rdata.eq(self.rdata_aligned)
