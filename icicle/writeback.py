@@ -13,9 +13,7 @@ class Writeback(Stage):
         self.rd_port = Record(RD_PORT_LAYOUT)
         self.rvfi = Record(RVFI_LAYOUT)
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         wdata_mux = m.submodules.wdata_mux = WDataMux()
         m.d.comb += [
             wdata_mux.sel.eq(self.rdata.wdata_sel),
@@ -55,5 +53,3 @@ class Writeback(Stage):
             ]
         with m.Else():
             m.d.sync += self.rvfi.valid.eq(0)
-
-        return m

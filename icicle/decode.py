@@ -15,9 +15,7 @@ class Decode(Stage):
         self.rs1_ren = Signal()
         self.rs2_ren = Signal()
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         control = m.submodules.control = Control()
         m.d.comb += control.insn.eq(self.rdata.insn)
 
@@ -66,5 +64,3 @@ class Decode(Stage):
                 self.wdata.mem_unsigned.eq(control.mem_unsigned),
                 self.wdata.wdata_sel.eq(control.wdata_sel)
             ]
-
-        return m

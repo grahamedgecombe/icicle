@@ -13,11 +13,9 @@ class FirstStage(Stage):
     def __init__(self):
         super().__init__(wdata_layout=LAYOUT)
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
+    def elaborate_stage(self, m, platform):
         with m.If(~self.stall):
             m.d.sync += self.wdata.counter.eq(self.wdata.counter + 1)
-        return m
 
 
 class MiddleStage(Stage):
@@ -31,14 +29,12 @@ class LastStage(Stage):
         self.counter_valid = Signal()
         self.counter = Signal(32)
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
+    def elaborate_stage(self, m, platform):
         with m.If(~self.stall):
             m.d.sync += [
                 self.counter_valid.eq(self.valid),
                 self.counter.eq(self.rdata.counter)
             ]
-        return m
 
 
 class PipelineTestCase(FHDLTestCase):

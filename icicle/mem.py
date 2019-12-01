@@ -17,9 +17,7 @@ class MemoryAccess(Stage):
         self.dbus = Record(WISHBONE_LAYOUT)
         self.busy = Signal()
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()
         m.d.comb += [
             result_mux.sel.eq(self.rdata.result_sel),
@@ -75,5 +73,3 @@ class MemoryAccess(Stage):
                 m.d.sync += self.wdata.pc_wdata.eq(self.rdata.branch_target)
             with m.Else():
                 m.d.sync += self.wdata.pc_wdata.eq(self.rdata.pc_wdata)
-
-        return m

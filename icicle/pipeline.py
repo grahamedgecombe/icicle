@@ -52,11 +52,6 @@ class Stage(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        m.d.comb += [
-            self.stall.eq((reduce(or_, self._stall_sources, 0) | self.next_stall) & ~self.flush),
-            self.flush.eq(reduce(or_, self._flush_sources, 0))
-        ]
-
         rdata_valid = self.rdata.valid if hasattr(self, "rdata") else 1
         m.d.comb += self.valid.eq(rdata_valid & ~self.flush)
 
@@ -72,4 +67,14 @@ class Stage(Elaboratable):
                     if name != "valid" and name in self.rdata.layout.fields:
                         m.d.sync += self.wdata[name].eq(self.rdata[name])
 
+        self.elaborate_stage(m, platform)
+
+        m.d.comb += [
+            self.stall.eq((reduce(or_, self._stall_sources, 0) | self.next_stall) & ~self.flush),
+            self.flush.eq(reduce(or_, self._flush_sources, 0))
+        ]
+
         return m
+
+    def elaborate_stage(self, m: Module, platform):
+        pass

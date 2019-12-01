@@ -11,9 +11,7 @@ class PCGen(Stage):
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         pc = Signal(32, reset=self.reset_vector)
 
         pc_rdata = Signal(32)
@@ -31,5 +29,3 @@ class PCGen(Stage):
                 self.wdata.pc_rdata.eq(pc_rdata),
                 self.wdata.pc_wdata.eq(pc_wdata)
             ]
-
-        return m

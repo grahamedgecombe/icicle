@@ -12,9 +12,7 @@ class Execute(Stage):
         super().__init__(rdata_layout=DX_LAYOUT, wdata_layout=XM_LAYOUT)
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         operand_mux = m.submodules.operand_mux = OperandMux()
         m.d.comb += [
             operand_mux.a_sel.eq(self.rdata.a_sel),
@@ -65,5 +63,3 @@ class Execute(Stage):
                 self.wdata.branch_target.eq(branch_target_mux.target),
                 self.wdata.branch_misaligned.eq(branch_target_mux.misaligned)
             ]
-
-        return m

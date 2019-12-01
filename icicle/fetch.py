@@ -12,9 +12,7 @@ class Fetch(Stage):
         self.ibus = Record(WISHBONE_LAYOUT)
         self.busy = Signal()
 
-    def elaborate(self, platform):
-        m = super().elaborate(platform)
-
+    def elaborate_stage(self, m, platform):
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
             load_store.bus.connect(self.ibus),
@@ -27,5 +25,3 @@ class Fetch(Stage):
 
         with m.If(~self.stall):
             m.d.sync += self.wdata.insn.eq(load_store.rdata)
-
-        return m
