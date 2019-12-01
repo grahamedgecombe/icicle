@@ -31,7 +31,6 @@ class CPU(Elaboratable):
 
         fetch = Fetch()
         m.d.comb += fetch.ibus.connect(self.ibus)
-        fetch.stall_on(fetch.valid & fetch.busy)
 
         decode = Decode()
         m.d.comb += [
@@ -50,7 +49,6 @@ class CPU(Elaboratable):
         fetch.flush_on(mem.branch_taken)
         decode.flush_on(mem.branch_taken)
         execute.flush_on(mem.branch_taken)
-        mem.stall_on(mem.valid & mem.busy)
 
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)

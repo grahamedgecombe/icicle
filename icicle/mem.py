@@ -15,7 +15,6 @@ class MemoryAccess(Stage):
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
         self.dbus = Record(WISHBONE_LAYOUT)
-        self.busy = Signal()
 
     def elaborate_stage(self, m, platform):
         result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()
@@ -43,7 +42,6 @@ class MemoryAccess(Stage):
         m.d.comb += [
             load_store.bus.connect(self.dbus),
             load_store.valid.eq(self.valid),
-            self.busy.eq(load_store.busy),
             load_store.load.eq(self.rdata.mem_load),
             load_store.store.eq(self.rdata.mem_store),
             load_store.width.eq(self.rdata.mem_width),
@@ -51,6 +49,7 @@ class MemoryAccess(Stage):
             load_store.addr.eq(self.rdata.add_result),
             load_store.wdata.eq(self.rdata.rs2_rdata)
         ]
+        self.stall_on(self.valid & load_store.busy)
 
         with m.If(~self.stall):
             m.d.sync += [
