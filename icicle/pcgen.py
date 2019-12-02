@@ -5,7 +5,7 @@ from icicle.pipeline_regs import PF_LAYOUT
 
 
 class PCGen(Stage):
-    def __init__(self, reset_vector):
+    def __init__(self, reset_vector=0):
         super().__init__(wdata_layout=PF_LAYOUT)
         self.reset_vector = reset_vector
         self.branch_taken = Signal()
