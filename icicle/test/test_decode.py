@@ -36,6 +36,7 @@ class DecodeTestCase(FHDLTestCase):
         ])
         sim = Simulator(m)
         def process():
+            yield decode.rdata.valid.eq(1)
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
@@ -67,6 +68,7 @@ class DecodeTestCase(FHDLTestCase):
 
         sim = Simulator(m)
         def process():
+            yield decode.rdata.valid.eq(1)
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
