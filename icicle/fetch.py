@@ -20,7 +20,7 @@ class Fetch(Stage):
             load_store.width.eq(MemWidth.WORD),
             load_store.addr.eq(self.rdata.pc_rdata)
         ]
-        self.stall_on(self.valid & load_store.busy)
+        self.stall_on(load_store.busy)
 
         with m.If(~self.stall):
             m.d.sync += self.wdata.insn.eq(load_store.rdata)

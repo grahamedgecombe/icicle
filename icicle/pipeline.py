@@ -70,7 +70,7 @@ class Stage(Elaboratable):
         self.elaborate_stage(m, platform)
 
         m.d.comb += [
-            self.stall.eq((reduce(or_, self._stall_sources, 0) | self.next_stall) & ~self.flush),
+            self.stall.eq(((self.valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
             self.flush.eq(reduce(or_, self._flush_sources, 0))
         ]
 

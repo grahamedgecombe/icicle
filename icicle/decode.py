@@ -34,8 +34,8 @@ class Decode(Stage):
             self.rs2_port.addr.eq(control.rs2),
             self.wdata.rs2_rdata.eq(self.rs2_port.data),
 
-            self.rs1_ren.eq(self.valid & control.rs1_ren),
-            self.rs2_ren.eq(self.valid & control.rs2_ren)
+            self.rs1_ren.eq(control.rs1_ren),
+            self.rs2_ren.eq(control.rs2_ren)
         ]
 
         with m.If(~self.stall):

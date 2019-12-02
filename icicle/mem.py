@@ -49,7 +49,7 @@ class MemoryAccess(Stage):
             load_store.addr.eq(self.rdata.add_result),
             load_store.wdata.eq(self.rdata.rs2_rdata)
         ]
-        self.stall_on(self.valid & load_store.busy)
+        self.stall_on(load_store.busy)
 
         with m.If(~self.stall):
             m.d.sync += [
