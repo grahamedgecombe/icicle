@@ -37,6 +37,7 @@ class MemoryAccess(Stage):
             self.branch_taken.eq(~self.stall & self.valid & branch.taken),
             self.branch_target.eq(self.rdata.branch_target)
         ]
+        self.trap_on(branch.taken & self.rdata.branch_misaligned)
 
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
@@ -50,6 +51,7 @@ class MemoryAccess(Stage):
             load_store.wdata.eq(self.rdata.rs2_rdata)
         ]
         self.stall_on(load_store.busy)
+        self.trap_on((load_store.load | load_store.store) & (load_store.misaligned | load_store.fault))
 
         with m.If(~self.stall):
             m.d.sync += [
@@ -60,13 +62,6 @@ class MemoryAccess(Stage):
                 self.wdata.mem_rdata_aligned.eq(load_store.rdata_aligned),
                 self.wdata.mem_wdata_aligned.eq(load_store.wdata_aligned)
             ]
-
-            with m.If(self.valid & branch.taken):
-                m.d.sync += self.wdata.trap.eq(self.rdata.trap | self.rdata.branch_misaligned)
-            with m.Elif(self.valid & (load_store.load | load_store.store)):
-                m.d.sync += self.wdata.trap.eq(self.rdata.trap | load_store.misaligned | load_store.fault)
-            with m.Else():
-                m.d.sync += self.wdata.trap.eq(self.rdata.trap)
 
             with m.If(self.valid & branch.taken):
                 m.d.sync += self.wdata.pc_wdata.eq(self.rdata.branch_target)

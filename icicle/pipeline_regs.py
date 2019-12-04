@@ -16,7 +16,6 @@ FD_LAYOUT = [
 ]
 
 DX_LAYOUT = [
-    ("trap",                            1),
     ("pc_rdata",                       32),
     ("pc_wdata",                       32),
     ("insn",                           32),
@@ -47,7 +46,6 @@ DX_LAYOUT = [
 ]
 
 XM_LAYOUT = [
-    ("trap",               1),
     ("pc_rdata",          32),
     ("pc_wdata",          32),
     ("insn",              32),
@@ -75,7 +73,6 @@ XM_LAYOUT = [
 ]
 
 MW_LAYOUT = [
-    ("trap",               1),
     ("pc_rdata",          32),
     ("pc_wdata",          32),
     ("insn",              32),

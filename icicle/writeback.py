@@ -27,12 +27,12 @@ class Writeback(Stage):
             self.rd_port.data.eq(wdata_mux.rd_wdata)
         ]
 
-        with m.If(~self.stall & self.valid):
+        with m.If(~self.stall & (self.valid | self.rdata.trapped)):
             m.d.sync += [
                 self.rvfi.valid.eq(1),
                 self.rvfi.order.eq(self.rvfi.order + 1),
                 self.rvfi.insn.eq(self.rdata.insn),
-                self.rvfi.trap.eq(self.rdata.trap),
+                self.rvfi.trap.eq(self.rdata.trapped),
                 self.rvfi.halt.eq(0),
                 self.rvfi.intr.eq(0),
                 self.rvfi.mode.eq(3),
@@ -41,15 +41,15 @@ class Writeback(Stage):
                 self.rvfi.rs2_addr.eq(Mux(self.rdata.rs2_ren, self.rdata.rs2, 0)),
                 self.rvfi.rs1_rdata.eq(Mux(self.rdata.rs1_ren, self.rdata.rs1_rdata, 0)),
                 self.rvfi.rs2_rdata.eq(Mux(self.rdata.rs2_ren, self.rdata.rs2_rdata, 0)),
-                self.rvfi.rd_addr.eq(Mux(self.rdata.rd_wen, self.rdata.rd, 0)),
-                self.rvfi.rd_wdata.eq(Mux(self.rdata.rd_wen, wdata_mux.rd_wdata, 0)),
+                self.rvfi.rd_addr.eq(Mux(self.valid & self.rdata.rd_wen, self.rdata.rd, 0)),
+                self.rvfi.rd_wdata.eq(Mux(self.valid & self.rdata.rd_wen, wdata_mux.rd_wdata, 0)),
                 self.rvfi.pc_rdata.eq(self.rdata.pc_rdata),
                 self.rvfi.pc_wdata.eq(self.rdata.pc_wdata),
-                self.rvfi.mem_addr.eq(Mux(self.rdata.mem_load | self.rdata.mem_store, self.rdata.mem_addr_aligned, 0)),
-                self.rvfi.mem_rmask.eq(Mux(self.rdata.mem_load, self.rdata.mem_mask, 0)),
-                self.rvfi.mem_wmask.eq(Mux(self.rdata.mem_store, self.rdata.mem_mask, 0)),
-                self.rvfi.mem_rdata.eq(Mux(self.rdata.mem_load, self.rdata.mem_rdata_aligned, 0)),
-                self.rvfi.mem_wdata.eq(Mux(self.rdata.mem_store, self.rdata.mem_wdata_aligned, 0))
+                self.rvfi.mem_addr.eq(Mux(self.valid & (self.rdata.mem_load | self.rdata.mem_store), self.rdata.mem_addr_aligned, 0)),
+                self.rvfi.mem_rmask.eq(Mux(self.valid & self.rdata.mem_load, self.rdata.mem_mask, 0)),
+                self.rvfi.mem_wmask.eq(Mux(self.valid & self.rdata.mem_store, self.rdata.mem_mask, 0)),
+                self.rvfi.mem_rdata.eq(Mux(self.valid & self.rdata.mem_load, self.rdata.mem_rdata_aligned, 0)),
+                self.rvfi.mem_wdata.eq(Mux(self.valid & self.rdata.mem_store, self.rdata.mem_wdata_aligned, 0))
             ]
         with m.Else():
             m.d.sync += self.rvfi.valid.eq(0)

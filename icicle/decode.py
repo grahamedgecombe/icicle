@@ -18,6 +18,7 @@ class Decode(Stage):
     def elaborate_stage(self, m, platform):
         control = m.submodules.control = Control()
         m.d.comb += control.insn.eq(self.rdata.insn)
+        self.trap_on(control.illegal)
 
         imm_decoder = m.submodules.imm_decoder = ImmediateDecoder()
         m.d.comb += [
@@ -40,7 +41,6 @@ class Decode(Stage):
 
         with m.If(~self.stall):
             m.d.sync += [
-                self.wdata.trap.eq(control.illegal),
                 self.wdata.rd.eq(control.rd),
                 self.wdata.rd_wen.eq(control.rd_wen),
                 self.wdata.rs1.eq(control.rs1),

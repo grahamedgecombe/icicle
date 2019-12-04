@@ -5,7 +5,8 @@ from operator import or_
 from nmigen import *
 
 VALID_LAYOUT = [
-    ("valid", 1)
+    ("valid",   1),
+    ("trapped", 1)
 ]
 
 
@@ -40,8 +41,11 @@ class Stage(Elaboratable):
         self.next_stall = Signal()
         self.flush = Signal()
         self.valid = Signal()
+        self.trap = Signal()
+        self.trapped = Signal()
         self._stall_sources = []
         self._flush_sources = []
+        self._trap_sources = []
 
     def stall_on(self, source):
         self._stall_sources.append(source)
@@ -49,29 +53,42 @@ class Stage(Elaboratable):
     def flush_on(self, source):
         self._flush_sources.append(source)
 
+    def trap_on(self, source):
+        self._trap_sources.append(source)
+
     def elaborate(self, platform):
         m = Module()
 
         rdata_valid = self.rdata.valid if hasattr(self, "rdata") else 1
-        m.d.comb += self.valid.eq(rdata_valid & ~self.flush)
+        m.d.comb += self.valid.eq(rdata_valid & ~(self.flush | self.trap))
+
+        rdata_trapped = self.rdata.trapped if hasattr(self, "rdata") else 0
+        m.d.comb += self.trapped.eq((rdata_trapped | self.trap) & ~self.flush)
 
         if hasattr(self, "wdata"):
             with m.If(~self.stall):
-                m.d.sync += self.wdata.valid.eq(self.valid)
+                m.d.sync += [
+                    self.wdata.valid.eq(self.valid),
+                    self.wdata.trapped.eq(self.trapped)
+                ]
             with m.Elif(~self.next_stall):
-                m.d.sync += self.wdata.valid.eq(0)
+                m.d.sync += [
+                    self.wdata.valid.eq(0),
+                    self.wdata.trapped.eq(0)
+                ]
 
         if hasattr(self, "rdata") and hasattr(self, "wdata"):
             with m.If(~self.stall):
                 for (name, shape, dir) in self.wdata.layout:
-                    if name != "valid" and name in self.rdata.layout.fields:
+                    if name not in ("valid", "trapped") and name in self.rdata.layout.fields:
                         m.d.sync += self.wdata[name].eq(self.rdata[name])
 
         self.elaborate_stage(m, platform)
 
         m.d.comb += [
-            self.stall.eq(((self.valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
-            self.flush.eq(reduce(or_, self._flush_sources, 0))
+            self.stall.eq(((rdata_valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
+            self.flush.eq(reduce(or_, self._flush_sources, 0)),
+            self.trap.eq(rdata_valid & reduce(or_, self._trap_sources, 0))
         ]
 
         return m
