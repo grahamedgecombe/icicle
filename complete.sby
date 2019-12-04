@@ -35,7 +35,6 @@ with open("../../insns/isa_rv32i.txt") as f:
 `define RISCV_FORMAL_NRET 1
 `define RISCV_FORMAL_XLEN 32
 `define RISCV_FORMAL_ILEN 32
-`define RISCV_FORMAL_BLACKBOX_ALU
 `define RISCV_FORMAL_BLACKBOX_REGS
 `define RISCV_FORMAL_ALIGNED_MEM
 `include "rvfi_macros.vh"
