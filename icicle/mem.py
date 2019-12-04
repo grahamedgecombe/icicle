@@ -30,14 +30,15 @@ class MemoryAccess(Stage):
         m.d.comb += [
             branch.op.eq(self.rdata.branch_op),
             branch.add_result.eq(self.rdata.add_result),
-            branch.add_carry.eq(self.rdata.add_carry)
+            branch.add_carry.eq(self.rdata.add_carry),
+            branch.misaligned.eq(self.rdata.branch_misaligned)
         ]
+        self.trap_on(branch.trap)
 
         m.d.comb += [
             self.branch_taken.eq(~self.stall & self.valid & branch.taken),
             self.branch_target.eq(self.rdata.branch_target)
         ]
-        self.trap_on(branch.taken & self.rdata.branch_misaligned)
 
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [

@@ -46,6 +46,8 @@ class Branch(Elaboratable):
         self.add_result = Signal(32)
         self.add_carry = Signal()
         self.taken = Signal()
+        self.misaligned = Signal()
+        self.trap = Signal()
 
     def elaborate(self, platform):
         m = Module()
@@ -66,5 +68,7 @@ class Branch(Elaboratable):
                 m.d.comb += self.taken.eq(self.add_carry)
             with m.Case(BranchOp.GE):
                 m.d.comb += self.taken.eq(~self.add_carry)
+
+        m.d.comb += self.trap.eq(self.taken & self.misaligned)
 
         return m

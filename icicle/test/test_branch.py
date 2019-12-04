@@ -108,3 +108,33 @@ class BranchTestCase(FHDLTestCase):
             self.assertEqual((yield m.taken), 0)
         sim.add_process(process)
         sim.run()
+
+    def test_trap(self):
+        m = Branch()
+        sim = Simulator(m)
+        def process():
+            # not taken, aligned
+            yield m.op.eq(BranchOp.NEVER)
+            yield m.misaligned.eq(0)
+            yield Delay()
+            self.assertEqual((yield m.trap), 0)
+
+            # taken, aligned
+            yield m.op.eq(BranchOp.ALWAYS)
+            yield m.misaligned.eq(0)
+            yield Delay()
+            self.assertEqual((yield m.trap), 0)
+
+            # not taken, misaligned
+            yield m.op.eq(BranchOp.NEVER)
+            yield m.misaligned.eq(1)
+            yield Delay()
+            self.assertEqual((yield m.trap), 0)
+
+            # taken, misaligned
+            yield m.op.eq(BranchOp.ALWAYS)
+            yield m.misaligned.eq(1)
+            yield Delay()
+            self.assertEqual((yield m.trap), 1)
+        sim.add_process(process)
+        sim.run()
