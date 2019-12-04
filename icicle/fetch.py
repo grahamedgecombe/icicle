@@ -21,7 +21,7 @@ class Fetch(Stage):
             load_store.addr.eq(self.rdata.pc_rdata)
         ]
         self.stall_on(load_store.busy)
-        self.trap_on((load_store.load | load_store.store) & (load_store.misaligned | load_store.fault))
+        self.trap_on(load_store.trap)
 
         with m.If(~self.stall):
             m.d.sync += self.wdata.insn.eq(load_store.rdata)

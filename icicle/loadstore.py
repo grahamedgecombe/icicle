@@ -70,6 +70,7 @@ class LoadStore(Elaboratable):
         self.bus = Record(WISHBONE_LAYOUT)
         self.valid = Signal()
         self.busy = Signal()
+        self.trap = Signal()
         self.load = Signal()
         self.store = Signal()
         self.width = Signal(MemWidth)
@@ -122,5 +123,7 @@ class LoadStore(Elaboratable):
             self.fault.eq(self.bus.cyc & self.bus.stb & self.bus.err),
             word_align.rdata_aligned.eq(self.bus.dat_r)
         ]
+
+        m.d.comb += self.trap.eq((self.load | self.store) & (self.misaligned | self.fault))
 
         return m

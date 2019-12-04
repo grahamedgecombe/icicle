@@ -51,7 +51,7 @@ class MemoryAccess(Stage):
             load_store.wdata.eq(self.rdata.rs2_rdata)
         ]
         self.stall_on(load_store.busy)
-        self.trap_on((load_store.load | load_store.store) & (load_store.misaligned | load_store.fault))
+        self.trap_on(load_store.trap)
 
         with m.If(~self.stall):
             m.d.sync += [
