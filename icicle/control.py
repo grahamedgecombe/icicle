@@ -149,8 +149,6 @@ class Control(Elaboratable):
                     self.mem_load.eq(1),
                     self.wdata_sel.eq(WDataSel.MEM_RDATA)
                 ]
-                # XXX(gpe): we set mem_width and mem_unsigned below as their
-                # encoding was chosen to match funct3 exactly.
 
                 with m.If(~funct3.matches(Funct3.LB, Funct3.LH, Funct3.LW, Funct3.LBU, Funct3.LHU)):
                     m.d.comb += self.illegal.eq(1)
@@ -161,8 +159,6 @@ class Control(Elaboratable):
                     self.b_sel.eq(BSel.IMM),
                     self.mem_store.eq(1)
                 ]
-                # XXX(gpe): we set mem_width and mem_unsigned below as its
-                # encoding was chosen to match funct3 exactly.
 
                 with m.If(~funct3.matches(Funct3.SB, Funct3.SH, Funct3.SW)):
                     m.d.comb += self.illegal.eq(1)
@@ -192,10 +188,6 @@ class Control(Elaboratable):
                             self.result_sel.eq(ResultSel.LOGIC),
                             self.illegal.eq((opcode == Opcode.OP) & (funct7 != Funct7.ZERO))
                         ]
-                        # XXX(gpe): we set logic_op unconditionally below, as
-                        # its encoding was chosen to always match funct3[0:2].
-                        # If nMigen adds support for "don't care" bits we could
-                        # tidy this up.
                     with m.Case(Funct3.SLL, Funct3.SRL_SRA):
                         m.d.comb += self.result_sel.eq(ResultSel.SHIFT)
 
@@ -203,14 +195,18 @@ class Control(Elaboratable):
                             m.d.comb += self.illegal.eq(funct7 != Funct7.ZERO)
                         with m.Else():
                             m.d.comb += self.illegal.eq(~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
-                        # XXX(gpe): we set shift_right and shift_arithmetic
-                        # below as they always occupy the same bits in funct3
-                        # and funct7. As above, this could be tidied up with
-                        # "don't care" bits.
 
             with m.Default():
                 m.d.comb += self.illegal.eq(1)
 
+        # XXX(gpe): we set these bits outside of the switch statements as they
+        # always occupy the same bits in funct3 and/or funct7. The encoding of
+        # the control signals is deliberately chosen to match the bit patterns
+        # in the instruction.
+        #
+        # If nMigen adds support for "don't care" bits we might be able to tidy
+        # these up and move them into the case statements for readability while
+        # still producing logic that is equally optimal.
         m.d.comb += [
             self.logic_op.eq(funct3[0:2]),
             self.shift_right.eq(funct3[2]),
