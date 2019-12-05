@@ -188,13 +188,16 @@ class Control(Elaboratable):
                             self.result_sel.eq(ResultSel.LOGIC),
                             self.illegal.eq((opcode == Opcode.OP) & (funct7 != Funct7.ZERO))
                         ]
-                    with m.Case(Funct3.SLL, Funct3.SRL_SRA):
-                        m.d.comb += self.result_sel.eq(ResultSel.SHIFT)
-
-                        with m.If(funct3 == Funct3.SLL):
-                            m.d.comb += self.illegal.eq(funct7 != Funct7.ZERO)
-                        with m.Else():
-                            m.d.comb += self.illegal.eq(~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
+                    with m.Case(Funct3.SLL):
+                        m.d.comb += [
+                            self.result_sel.eq(ResultSel.SHIFT),
+                            self.illegal.eq(funct7 != Funct7.ZERO)
+                        ]
+                    with m.Case(Funct3.SRL_SRA):
+                        m.d.comb += [
+                            self.result_sel.eq(ResultSel.SHIFT),
+                            self.illegal.eq(~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
+                        ]
 
             with m.Default():
                 m.d.comb += self.illegal.eq(1)
