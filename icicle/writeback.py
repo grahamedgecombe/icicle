@@ -27,12 +27,12 @@ class Writeback(Stage):
             self.rd_port.data.eq(wdata_mux.rd_wdata)
         ]
 
-        with m.If(~self.stall & (self.valid | self.rdata.trapped)):
+        with m.If(~self.stall & (self.valid | self.trapped)):
             m.d.sync += [
                 self.rvfi.valid.eq(1),
                 self.rvfi.order.eq(self.rvfi.order + 1),
                 self.rvfi.insn.eq(self.rdata.insn),
-                self.rvfi.trap.eq(self.rdata.trapped),
+                self.rvfi.trap.eq(self.trapped),
                 self.rvfi.halt.eq(0),
                 self.rvfi.intr.eq(self.rdata.intr),
                 self.rvfi.mode.eq(3),
