@@ -16,6 +16,13 @@ def main():
         default="0x00000000",
         help="set program counter to ADDRESS at reset (default: %(default)s)"
     )
+    parser.add_argument(
+        "--trap-vector",
+        type=lambda s: int(s, 16),
+        metavar="ADDRESS",
+        default="0x00000000",
+        help="set program counter to ADDRESS on trap (default : %(default)s)"
+    )
     parser.add_argument("--rvfi",
         default=False,
         action="store_true",
@@ -37,6 +44,7 @@ def main():
 
     cpu = CPU(
         reset_vector=args.reset_vector,
+        trap_vector=args.trap_vector,
         rvfi=args.rvfi,
         rvfi_blackbox_alu=args.rvfi_blackbox_alu,
         rvfi_blackbox_regs=args.rvfi_blackbox_regs

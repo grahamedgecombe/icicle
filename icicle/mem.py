@@ -9,11 +9,13 @@ from icicle.wishbone import WISHBONE_LAYOUT
 
 
 class MemoryAccess(Stage):
-    def __init__(self, rvfi_blackbox_alu=False):
+    def __init__(self, trap_vector=0, rvfi_blackbox_alu=False):
         super().__init__(rdata_layout=XM_LAYOUT, wdata_layout=MW_LAYOUT)
+        self.trap_vector = trap_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
+        self.trap_raised = Signal()
         self.dbus = Record(WISHBONE_LAYOUT)
 
     def elaborate_stage(self, m, platform):
@@ -54,6 +56,8 @@ class MemoryAccess(Stage):
         self.stall_on(load_store.busy)
         self.trap_on(load_store.trap)
 
+        m.d.comb += self.trap_raised.eq(~self.stall & self.trapped)
+
         with m.If(~self.stall):
             m.d.sync += [
                 self.wdata.result.eq(result_mux.result),
@@ -66,5 +70,7 @@ class MemoryAccess(Stage):
 
             with m.If(self.valid & branch.taken):
                 m.d.sync += self.wdata.pc_wdata.eq(self.rdata.branch_target)
+            with m.Elif(self.trapped):
+                m.d.sync += self.wdata.pc_wdata.eq(self.trap_vector)
             with m.Else():
                 m.d.sync += self.wdata.pc_wdata.eq(self.rdata.pc_wdata)

@@ -13,8 +13,9 @@ from icicle.writeback import Writeback
 
 
 class CPU(Elaboratable):
-    def __init__(self, reset_vector=0, rvfi=False, rvfi_blackbox_alu=False, rvfi_blackbox_regs=False):
+    def __init__(self, reset_vector=0, trap_vector=0, rvfi=False, rvfi_blackbox_alu=False, rvfi_blackbox_regs=False):
         self.reset_vector = reset_vector
+        self.trap_vector = trap_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
         self.ibus = Record(WISHBONE_LAYOUT)
@@ -27,7 +28,7 @@ class CPU(Elaboratable):
 
         regs = m.submodules.regs = BlackBoxRegisterFile() if self.rvfi_blackbox_regs else RegisterFile()
 
-        pcgen = PCGen(self.reset_vector)
+        pcgen = PCGen(self.reset_vector, self.trap_vector)
 
         fetch = Fetch()
         m.d.comb += fetch.ibus.connect(self.ibus)
@@ -40,15 +41,16 @@ class CPU(Elaboratable):
 
         execute = Execute(self.rvfi_blackbox_alu)
 
-        mem = MemoryAccess(self.rvfi_blackbox_alu)
+        mem = MemoryAccess(self.trap_vector, self.rvfi_blackbox_alu)
         m.d.comb += [
             mem.dbus.connect(self.dbus),
             pcgen.branch_taken.eq(mem.branch_taken),
-            pcgen.branch_target.eq(mem.branch_target)
+            pcgen.branch_target.eq(mem.branch_target),
+            pcgen.trap_raised.eq(mem.trap_raised)
         ]
-        fetch.flush_on(mem.branch_taken)
-        decode.flush_on(mem.branch_taken)
-        execute.flush_on(mem.branch_taken)
+        fetch.flush_on(mem.branch_taken | mem.trap_raised)
+        decode.flush_on(mem.branch_taken | mem.trap_raised)
+        execute.flush_on(mem.branch_taken | mem.trap_raised)
 
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)
