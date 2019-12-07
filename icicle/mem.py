@@ -73,4 +73,4 @@ class MemoryAccess(Stage):
             with m.Elif(self.trapped):
                 m.d.sync += self.wdata.pc_wdata.eq(self.trap_vector)
             with m.Else():
-                m.d.sync += self.wdata.pc_wdata.eq(self.rdata.pc_wdata)
+                m.d.sync += self.wdata.pc_wdata.eq(self.rdata.pc_rdata + 4)

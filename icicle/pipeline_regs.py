@@ -6,20 +6,17 @@ from icicle.wdata import WDataSel
 
 PF_LAYOUT = [
     ("pc_rdata", 32),
-    ("pc_wdata", 32),
     ("intr",      1)
 ]
 
 FD_LAYOUT = [
     ("pc_rdata", 32),
-    ("pc_wdata", 32),
     ("intr",      1),
     ("insn",     32)
 ]
 
 DX_LAYOUT = [
     ("pc_rdata",                       32),
-    ("pc_wdata",                       32),
     ("intr",                            1),
     ("insn",                           32),
     ("rd",                              5),
@@ -50,7 +47,6 @@ DX_LAYOUT = [
 
 XM_LAYOUT = [
     ("pc_rdata",          32),
-    ("pc_wdata",          32),
     ("intr",               1),
     ("insn",              32),
     ("rd",                 5),

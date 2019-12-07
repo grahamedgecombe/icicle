@@ -27,18 +27,15 @@ class PCGen(Stage):
         with m.If(self.branch_taken):
             m.d.sync += [
                 self.wdata.pc_rdata.eq(self.branch_target),
-                self.wdata.pc_wdata.eq(self.branch_target + 4),
                 self.wdata.intr.eq(0)
             ]
         with m.Elif(self.trap_raised):
             m.d.sync += [
                 self.wdata.pc_rdata.eq(self.trap_vector),
-                self.wdata.pc_wdata.eq(self.trap_vector + 4),
                 self.wdata.intr.eq(1)
             ]
         with m.Elif(~self.stall):
             m.d.sync += [
                 self.wdata.pc_rdata.eq(self.wdata.pc_rdata + 4),
-                self.wdata.pc_wdata.eq(self.wdata.pc_rdata + 8),
                 self.wdata.intr.eq(0)
             ]
