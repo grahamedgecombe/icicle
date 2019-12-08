@@ -34,7 +34,7 @@ class Writeback(Stage):
                 self.rvfi.insn.eq(self.rdata.insn),
                 self.rvfi.trap.eq(self.trapped),
                 self.rvfi.halt.eq(0),
-                self.rvfi.intr.eq(self.rdata.intr),
+                self.rvfi.intr.eq(0),
                 self.rvfi.mode.eq(3),
                 self.rvfi.ixl.eq(1),
                 self.rvfi.rs1_addr.eq(Mux(self.rdata.rs1_ren, self.rdata.rs1, 0)),

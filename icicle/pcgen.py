@@ -25,17 +25,8 @@ class PCGen(Stage):
         # directly to wdata.pc_rdata, instead of writing to a separate register
         # and then copying to wdata.pc_rdata in the ~self.stall case.
         with m.If(self.branch_taken):
-            m.d.sync += [
-                self.wdata.pc_rdata.eq(self.branch_target),
-                self.wdata.intr.eq(0)
-            ]
+            m.d.sync += self.wdata.pc_rdata.eq(self.branch_target)
         with m.Elif(self.trap_raised):
-            m.d.sync += [
-                self.wdata.pc_rdata.eq(self.trap_vector),
-                self.wdata.intr.eq(1)
-            ]
+            m.d.sync += self.wdata.pc_rdata.eq(self.trap_vector)
         with m.Elif(~self.stall):
-            m.d.sync += [
-                self.wdata.pc_rdata.eq(self.wdata.pc_rdata + 4),
-                self.wdata.intr.eq(0)
-            ]
+            m.d.sync += self.wdata.pc_rdata.eq(self.wdata.pc_rdata + 4)
