@@ -83,7 +83,7 @@ The `icicle` command is a thin wrapper around `nmigen.cli`. Run the following
 command to compile the Icicle processor core to Verilog:
 
     icicle generate -t v > icicle.v
-    
+
 The `icicle` command has some flags for customizing the generated core. Run
 `icicle --help` for full usage information.
 
@@ -131,7 +131,7 @@ verified with [riscv-formal][riscv-formal]:
 Clone the riscv-formal repository:
 
     git clone https://github.com/SymbioticEDA/riscv-formal.git
-    
+
 Clone Icicle in the `cores` subdirectory:
 
     cd riscv-formal/cores && git clone https://github.com/grahamedgecombe/icicle2.git
