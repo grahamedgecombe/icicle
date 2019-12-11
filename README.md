@@ -161,8 +161,8 @@ configuration only. The rest of the system-on-chip is not included.
 ## License
 
 This project is available under the terms of the ISC license, which is similar
-to the 2-clause BSD license. See the LICENSE file for the copyright information
-and licensing terms.
+to the 2-clause BSD license. See the `LICENSE` file for the copyright
+information and licensing terms.
 
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [ice40-hx8k-b-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
