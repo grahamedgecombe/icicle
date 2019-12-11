@@ -126,7 +126,7 @@ after a change is completed is still strongly recommended.
 ## Formal verification
 
 Icicle supports the RISC-V Formal Interface (RVFI), allowing it to be formally
-verified with [riscv-formal][riscv-formal]:
+verified with [riscv-formal][riscv-formal].
 
 Clone the riscv-formal repository:
 
