@@ -40,6 +40,7 @@ class Stage(Elaboratable):
         self.stall = Signal()
         self.next_stall = Signal()
         self.flush = Signal()
+        self.valid_before = Signal()
         self.valid = Signal()
         self.trap = Signal()
         self.trapped = Signal()
@@ -60,7 +61,10 @@ class Stage(Elaboratable):
         m = Module()
 
         rdata_valid = self.rdata.valid if hasattr(self, "rdata") else 1
-        m.d.comb += self.valid.eq(rdata_valid & ~(self.flush | self.trap))
+        m.d.comb += [
+            self.valid_before.eq(rdata_valid & ~self.flush),
+            self.valid.eq(self.valid_before & ~self.trap)
+        ]
 
         rdata_trapped = self.rdata.trapped if hasattr(self, "rdata") else 0
         m.d.comb += self.trapped.eq((rdata_trapped | self.trap) & ~self.flush)

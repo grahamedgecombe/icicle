@@ -45,7 +45,7 @@ class MemoryAccess(Stage):
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
             load_store.bus.connect(self.dbus),
-            load_store.valid.eq(self.valid),
+            load_store.valid.eq(self.valid_before),
             load_store.load.eq(self.rdata.mem_load),
             load_store.store.eq(self.rdata.mem_store),
             load_store.width.eq(self.rdata.mem_width),
