@@ -61,7 +61,9 @@ of issuing one instruction every two cycles, as:
 * Only a single memory bus transaction may be in flight at once.
 
 This could be improved with negative-edge block RAMs, which nMigen does not yet
-support.
+support. Alternatively, Icicle could be changed to use a pipelined memory bus
+that makes requests during one cycle and does not expect the response until the
+following cycle.
 
 ## Dependencies
 
