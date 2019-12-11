@@ -90,12 +90,17 @@ The `icicle` command has some flags for customizing the generated core. Run
 Icicle ships with example system-on-chip designs for several development
 boards. A single command will build and flash the system-on-chip to your FPGA.
 Simply connect the development board to your computer and run the appropriate
-command from the table below:
+command from the table below, appending the `--flash` flag:
 
 | Board                                         | Command                   | Notes                                   |
 |-----------------------------------------------|---------------------------|-----------------------------------------|
 | [iCEBreaker][icebreaker]                      | `icicle-icebreaker`       |                                         |
 | [iCE40-HX8K Breakout Board][ice40-hx8k-b-evn] | `icicle-ice40-hx8k-b-evn` | Configure jumpers for SRAM programming. |
+
+For example, run the following command to build and flash to the iCEBreaker
+board:
+
+    icicle-icebreaker --flash
 
 The [iCEBreaker][icebreaker] board is Icicle's primary target. It is
 inexpensive, beginner-friendly and fully compatible with the open-source
