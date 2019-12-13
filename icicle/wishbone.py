@@ -26,7 +26,8 @@ class AddrDecoder(Elaboratable):
         m.d.comb += self.master.err.eq(1)
 
         for (addr, slave) in self.slaves:
-            select = self.master.adr.matches(addr)
+            select = Signal()
+            m.d.comb += select.eq(self.master.adr.matches(addr))
 
             # fan-in
             with m.If(select):
