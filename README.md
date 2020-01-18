@@ -98,6 +98,7 @@ command from the table below, appending the `--flash` flag:
 |-----------------------------------------------|---------------------------|-----------------------------------------|
 | [iCEBreaker][icebreaker]                      | `icicle-icebreaker`       |                                         |
 | [iCE40-HX8K Breakout Board][ice40-hx8k-b-evn] | `icicle-ice40-hx8k-b-evn` | Configure jumpers for SRAM programming. |
+| [ECP5 Evaluation Board][ecp5-5g-evn]          | `icicle-ecp5-5g-evn`      |                                         |
 
 For example, run the following command to build and flash to the iCEBreaker
 board:
@@ -154,6 +155,7 @@ RVFI port enabled does not yet work.
 |-------------|-------------|-----------|
 | iCE40 HX    | ~1,000      | ~75 MHz   |
 | iCE40 UP    | ~1,000      | ~30 MHz   |
+| ECP5 8_5G   | ~900        | ~140 MHz  |
 
 The numbers in the table above refer to the processor core in its default
 configuration only. The rest of the system-on-chip is not included.
@@ -165,6 +167,7 @@ to the 2-clause BSD license. See the `LICENSE` file for the copyright
 information and licensing terms.
 
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
+[ecp5-5g-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/ECP5EvaluationBoard
 [ice40-hx8k-b-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
 [ice40]: https://www.latticesemi.com/en/Products/FPGAandCPLD/iCE40.aspx
 [ice40up]: https://www.latticesemi.com/en/Products/FPGAandCPLD/iCE40UltraPlus.aspx
