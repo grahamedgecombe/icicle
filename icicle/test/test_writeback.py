@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen.back.pysim import Simulator
+from nmigen.back.pysim import Simulator, Settle
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.writeback import Writeback
@@ -30,7 +30,7 @@ class WritebackTestCase(FHDLTestCase):
             yield writeback.rdata.rd_wen.eq(1)
             yield writeback.rdata.result.eq(0xDEADBEEF)
             yield
-            yield
+            yield Settle()
             self.assertEqual((yield regs[1]), 0xDEADBEEF)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)
@@ -50,7 +50,7 @@ class WritebackTestCase(FHDLTestCase):
             yield writeback.rdata.rd_wen.eq(1)
             yield writeback.rdata.result.eq(0xDEADBEEF)
             yield
-            yield
+            yield Settle()
             self.assertEqual((yield regs[1]), 0)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)
@@ -65,7 +65,7 @@ class WritebackTestCase(FHDLTestCase):
             yield writeback.rdata.rd_wen.eq(1)
             yield writeback.rdata.result.eq(0xDEADBEEF)
             yield
-            yield
+            yield Settle()
             self.assertEqual((yield regs[1]), 0)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)
@@ -80,7 +80,7 @@ class WritebackTestCase(FHDLTestCase):
             yield writeback.rdata.rd_wen.eq(0)
             yield writeback.rdata.result.eq(0xDEADBEEF)
             yield
-            yield
+            yield Settle()
             self.assertEqual((yield regs[1]), 0)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)

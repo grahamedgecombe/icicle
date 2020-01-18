@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen.back.pysim import Simulator
+from nmigen.back.pysim import Simulator, Settle
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.decode import Decode
@@ -39,13 +39,14 @@ class DecodeTestCase(FHDLTestCase):
             yield decode.rdata.valid.eq(1)
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
-            yield
+            yield Settle()
             self.assertEqual((yield decode.wdata.rs1), 1)
             self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
             self.assertEqual((yield decode.wdata.rs2), 2)
             self.assertEqual((yield decode.wdata.rs2_rdata), 0x44556677)
+            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
             yield
+            yield Settle()
             self.assertEqual((yield decode.wdata.rs1), 3)
             self.assertEqual((yield decode.wdata.rs1_rdata), 0x8899AABB)
             self.assertEqual((yield decode.wdata.rs2), 4)
@@ -71,14 +72,15 @@ class DecodeTestCase(FHDLTestCase):
             yield decode.rdata.valid.eq(1)
             yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
-            yield stall.eq(1)
-            yield
+            yield Settle()
             self.assertEqual((yield decode.wdata.rs1), 1)
             self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
             self.assertEqual((yield decode.wdata.rs2), 2)
             self.assertEqual((yield decode.wdata.rs2_rdata), 0x44556677)
+            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
+            yield stall.eq(1)
             yield
+            yield Settle()
             self.assertEqual((yield decode.wdata.rs1), 1)
             self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
             self.assertEqual((yield decode.wdata.rs2), 2)

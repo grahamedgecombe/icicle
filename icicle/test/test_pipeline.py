@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen.back.pysim import Simulator
+from nmigen.back.pysim import Simulator, Settle
 from nmigen.test.utils import FHDLTestCase
 
 from icicle.pipeline import Pipeline, Stage
@@ -48,18 +48,20 @@ class PipelineTestCase(FHDLTestCase):
             self.assertEqual((yield s1.wdata.valid), 0)
             self.assertEqual((yield s2.wdata.valid), 0)
             self.assertEqual((yield s3.counter_valid), 0)
-            yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 1)
             self.assertEqual((yield s2.wdata.valid), 0)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 2)
             self.assertEqual((yield s2.wdata.valid), 1)
             self.assertEqual((yield s2.wdata.counter), 1)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 3)
             self.assertEqual((yield s2.wdata.valid), 1)
@@ -85,20 +87,22 @@ class PipelineTestCase(FHDLTestCase):
             yield
             yield s2_stall.eq(1)
             yield
-            yield s2_stall.eq(0)
-            yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 3)
             self.assertEqual((yield s2.wdata.valid), 0)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
+            yield s2_stall.eq(0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 4)
             self.assertEqual((yield s2.wdata.valid), 1)
             self.assertEqual((yield s2.wdata.counter), 3)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 5)
             self.assertEqual((yield s2.wdata.valid), 1)
@@ -124,20 +128,22 @@ class PipelineTestCase(FHDLTestCase):
             yield
             yield s2_flush.eq(1)
             yield
-            yield s2_flush.eq(0)
-            yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 4)
             self.assertEqual((yield s2.wdata.valid), 0)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
+            yield s2_flush.eq(0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 5)
             self.assertEqual((yield s2.wdata.valid), 1)
             self.assertEqual((yield s2.wdata.counter), 4)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
+            yield Settle()
             self.assertEqual((yield s1.wdata.valid), 1)
             self.assertEqual((yield s1.wdata.counter), 6)
             self.assertEqual((yield s2.wdata.valid), 1)
