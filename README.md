@@ -155,7 +155,7 @@ RVFI port enabled does not yet work.
 |-------------|-------------|-----------|
 | iCE40 HX    | ~1,000      | ~75 MHz   |
 | iCE40 UP    | ~1,000      | ~30 MHz   |
-| ECP5 8_5G   | ~900        | ~140 MHz  |
+| ECP5 8\_5G  | ~900        | ~140 MHz  |
 
 The numbers in the table above refer to the processor core in its default
 configuration only. The rest of the system-on-chip is not included.
