@@ -176,7 +176,7 @@ information and licensing terms.
 [icicle1]: https://github.com/grahamedgecombe/icicle
 [minerva]: https://github.com/lambdaconcept/minerva
 [nextpnr]: https://github.com/YosysHQ/nextpnr
-[nmigen]: https://github.com/m-labs/nmigen
+[nmigen]: https://github.com/nmigen/nmigen
 [riscv-formal]: https://github.com/SymbioticEDA/riscv-formal
 [riscv]: https://riscv.org/
 [symbiflow]: https://symbiflow.github.io/
