@@ -1,0 +1,15 @@
+set_io clk       94
+set_io flash_clk 70
+set_io flash_csn 71
+set_io flash_io0 67
+set_io flash_io1 68
+set_io leds[0]   1
+set_io leds[1]   2
+set_io leds[2]   3
+set_io leds[3]   4
+set_io leds[4]   104
+set_io leds[5]   105
+set_io leds[6]   106
+set_io leds[7]   107
+set_io uart_rx   55
+set_io uart_tx   56
