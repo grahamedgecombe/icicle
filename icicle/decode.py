@@ -53,7 +53,7 @@ class Decode(Stage):
                 self.wdata.add_sub.eq(control.add_sub),
                 self.wdata.add_signed_compare.eq(control.add_signed_compare),
                 self.wdata.logic_op.eq(control.logic_op),
-                self.wdata.shift_right.eq(control.shift_right),
+                self.wdata.shift_direction.eq(control.shift_right),
                 self.wdata.shift_arithmetic.eq(control.shift_arithmetic),
                 self.wdata.result_sel.eq(control.result_sel),
                 self.wdata.branch_target_sel.eq(control.branch_target_sel),

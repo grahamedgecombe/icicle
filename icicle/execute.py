@@ -40,7 +40,7 @@ class Execute(Stage):
 
         shift = m.submodules.shift = BarrelShifter()
         m.d.comb += [
-            shift.right.eq(self.rdata.shift_right),
+            shift.right.eq(self.rdata.shift_direction),
             shift.arithmetic.eq(self.rdata.shift_arithmetic),
             shift.a.eq(self.rdata.rs1_rdata),
             shift.shamt.eq(operand_mux.b)

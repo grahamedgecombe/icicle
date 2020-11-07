@@ -30,7 +30,7 @@ DX_LAYOUT = [
     ("add_sub",                         1),
     ("add_signed_compare",              1),
     ("logic_op",                  LogicOp),
-    ("shift_right",                     1),
+    ("shift_direction",                 1),
     ("shift_arithmetic",                1),
     ("result_sel",              ResultSel),
     ("branch_target_sel", BranchTargetSel),
