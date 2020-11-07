@@ -8,7 +8,7 @@ smtbmc boolector
 
 [script]
 read_verilog -noautowire -sv complete.sv
-connect_rpc -exec env PYTHONPATH=. nmigen-rpc yosys icicle.cpu.CPU
+connect_rpc -exec env PYTHONPATH=../.. nmigen-rpc yosys icicle.cpu.CPU
 
 --pycode-begin--
 with open("../../insns/isa_rv32i.txt") as f:
