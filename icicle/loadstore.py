@@ -1,8 +1,7 @@
 from enum import Enum
 
 from nmigen import *
-
-from icicle.wishbone import WISHBONE_LAYOUT
+from nmigen_soc import wishbone
 
 
 class MemWidth(Enum):
@@ -67,7 +66,7 @@ class WordAlign(Elaboratable):
 
 class LoadStore(Elaboratable):
     def __init__(self):
-        self.bus = Record(WISHBONE_LAYOUT)
+        self.bus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
         self.valid = Signal()
         self.busy = Signal()
         self.trap = Signal()

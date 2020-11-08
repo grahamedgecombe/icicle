@@ -1,13 +1,12 @@
 from nmigen import *
-
-from icicle.wishbone import WISHBONE_LAYOUT
+from nmigen_soc import wishbone
 
 
 class BlockRAM(Elaboratable):
     def __init__(self, depth, init=None):
         self.depth = depth
         self.init = init
-        self.bus = Record(WISHBONE_LAYOUT)
+        self.bus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate(self, platform):
         m = Module()

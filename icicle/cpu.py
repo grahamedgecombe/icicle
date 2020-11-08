@@ -1,4 +1,5 @@
 from nmigen import *
+from nmigen_soc import wishbone
 
 from icicle.decode import Decode
 from icicle.execute import Execute
@@ -8,7 +9,6 @@ from icicle.pcgen import PCGen
 from icicle.pipeline import Pipeline
 from icicle.regs import RegisterFile, BlackBoxRegisterFile
 from icicle.rvfi import RVFI
-from icicle.wishbone import WISHBONE_LAYOUT
 from icicle.writeback import Writeback
 
 
@@ -18,8 +18,8 @@ class CPU(Elaboratable):
         self.trap_vector = trap_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
-        self.ibus = Record(WISHBONE_LAYOUT)
-        self.dbus = Record(WISHBONE_LAYOUT)
+        self.ibus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.dbus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
         if rvfi:
             self.rvfi = RVFI()
 

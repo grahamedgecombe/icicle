@@ -1,15 +1,15 @@
 from nmigen import *
+from nmigen_soc import wishbone
 
 from icicle.loadstore import LoadStore, MemWidth
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import PF_LAYOUT, FD_LAYOUT
-from icicle.wishbone import WISHBONE_LAYOUT
 
 
 class Fetch(Stage):
     def __init__(self):
         super().__init__(rdata_layout=PF_LAYOUT, wdata_layout=FD_LAYOUT)
-        self.ibus = Record(WISHBONE_LAYOUT)
+        self.ibus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate_stage(self, m, platform):
         load_store = m.submodules.load_store = LoadStore()

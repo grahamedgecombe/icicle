@@ -1,11 +1,10 @@
 from nmigen import *
-
-from icicle.wishbone import WISHBONE_LAYOUT
+from nmigen_soc import wishbone
 
 
 class GPIO(Elaboratable):
     def __init__(self):
-        self.bus = Record(WISHBONE_LAYOUT)
+        self.bus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate(self, platform):
         m = Module()

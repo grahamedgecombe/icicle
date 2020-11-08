@@ -1,11 +1,11 @@
 from nmigen import *
+from nmigen_soc import wishbone
 
 from icicle.alu import ResultMux, BlackBoxResultMux
 from icicle.branch import Branch
 from icicle.loadstore import LoadStore
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import XM_LAYOUT, MW_LAYOUT
-from icicle.wishbone import WISHBONE_LAYOUT
 
 
 class MemoryAccess(Stage):
@@ -16,7 +16,7 @@ class MemoryAccess(Stage):
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
         self.trap_raised = Signal()
-        self.dbus = Record(WISHBONE_LAYOUT)
+        self.dbus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate_stage(self, m, platform):
         result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()
