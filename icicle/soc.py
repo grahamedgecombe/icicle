@@ -11,7 +11,7 @@ class SystemOnChip(Elaboratable):
 
         cpu = m.submodules.cpu = CPU()
 
-        bram = m.submodules.bram = BlockRAM(depth=256, init=[
+        bram = m.submodules.bram = BlockRAM(addr_width=8, init=[
             # start:
             #   li t0, 1000000
             0x000f42b7,

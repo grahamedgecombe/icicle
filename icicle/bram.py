@@ -3,10 +3,10 @@ from nmigen_soc import wishbone
 
 
 class BlockRAM(Elaboratable):
-    def __init__(self, depth, init=None):
-        self.depth = depth
+    def __init__(self, addr_width, init=None):
+        self.depth = 2**addr_width
         self.init = init
-        self.bus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.bus = wishbone.Interface(addr_width=addr_width, data_width=32, granularity=8, features=["err"])
 
     def elaborate(self, platform):
         m = Module()
