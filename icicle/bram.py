@@ -1,5 +1,6 @@
 from nmigen import *
 from nmigen_soc import wishbone
+from nmigen_soc.memory import MemoryMap
 
 
 class BlockRAM(Elaboratable):
@@ -7,6 +8,7 @@ class BlockRAM(Elaboratable):
         self.depth = 2**addr_width
         self.init = init
         self.bus = wishbone.Interface(addr_width=addr_width, data_width=32, granularity=8, features=["err"])
+        self.bus.memory_map = MemoryMap(addr_width=addr_width + 2, data_width=8)
 
     def elaborate(self, platform):
         m = Module()
