@@ -41,7 +41,7 @@ module rvfi_wrapper (
         .ibus__stb(ibus_stb),
         .ibus__we(ibus_we),
         .ibus__ack(ibus_ack),
-        .ibus__err(0),
+        .ibus__err(1'b0),
 
         .dbus__adr(dbus_adr),
         .dbus__dat_w(dbus_dat_w),
@@ -51,7 +51,7 @@ module rvfi_wrapper (
         .dbus__stb(dbus_stb),
         .dbus__we(dbus_we),
         .dbus__ack(dbus_ack),
-        .dbus__err(0),
+        .dbus__err(1'b0),
 
         `RVFI_CONN
     );
