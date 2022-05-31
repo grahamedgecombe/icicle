@@ -1,5 +1,5 @@
-from nmigen.back.pysim import Simulator, Settle
-from nmigen.test.utils import FHDLTestCase
+from amaranth.back.pysim import Simulator, Settle
+from amaranth.test.utils import FHDLTestCase
 
 from icicle.regs import RegisterFile
 

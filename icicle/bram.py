@@ -1,6 +1,6 @@
-from nmigen import *
-from nmigen_soc import wishbone
-from nmigen_soc.memory import MemoryMap
+from amaranth import *
+from amaranth_soc import wishbone
+from amaranth_soc.memory import MemoryMap
 
 
 class BlockRAM(Elaboratable):

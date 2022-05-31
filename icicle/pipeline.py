@@ -2,7 +2,7 @@ from functools import reduce
 from itertools import tee
 from operator import or_
 
-from nmigen import *
+from amaranth import *
 
 VALID_LAYOUT = [
     ("valid",   1),

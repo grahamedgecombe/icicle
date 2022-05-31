@@ -1,4 +1,4 @@
-from nmigen import *
+from amaranth import *
 
 from icicle.alu import ASel, BSel, ResultSel
 from icicle.branch import BranchTargetSel, BranchOp
@@ -207,9 +207,9 @@ class Control(Elaboratable):
         # the control signals is deliberately chosen to match the bit patterns
         # in the instruction.
         #
-        # If nMigen adds support for "don't care" bits we might be able to tidy
-        # these up and move them into the case statements for readability while
-        # still producing logic that is equally optimal.
+        # If Amaranth adds support for "don't care" bits we might be able to
+        # tidy these up and move them into the case statements for readability
+        # while still producing logic that is equally optimal.
         m.d.comb += [
             self.logic_op.eq(funct3[0:2]),
             self.shift_right.eq(funct3[2]),

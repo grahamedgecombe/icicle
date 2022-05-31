@@ -1,5 +1,5 @@
-from nmigen import *
-from nmigen_soc import wishbone
+from amaranth import *
+from amaranth_soc import wishbone
 
 from icicle.alu import ResultMux, BlackBoxResultMux
 from icicle.branch import Branch

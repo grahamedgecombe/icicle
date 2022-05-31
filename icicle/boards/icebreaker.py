@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-from nmigen_boards.icebreaker import ICEBreakerPlatform
+from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 from icicle.soc import SystemOnChip
 

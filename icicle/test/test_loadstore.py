@@ -1,5 +1,5 @@
-from nmigen.back.pysim import Simulator, Delay
-from nmigen.test.utils import FHDLTestCase
+from amaranth.back.pysim import Simulator, Delay
+from amaranth.test.utils import FHDLTestCase
 
 from icicle.loadstore import WordAlign, MemWidth, LoadStore
 

@@ -1,6 +1,6 @@
-from nmigen import *
-from nmigen.back.pysim import Simulator, Delay
-from nmigen.test.utils import FHDLTestCase
+from amaranth import *
+from amaranth.back.pysim import Simulator, Delay
+from amaranth.test.utils import FHDLTestCase
 
 from icicle.control import Control
 from icicle.riscv import Format, Opcode, Funct3

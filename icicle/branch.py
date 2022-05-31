@@ -1,6 +1,6 @@
 from enum import Enum
 
-from nmigen import *
+from amaranth import *
 
 
 class BranchTargetSel(Enum):

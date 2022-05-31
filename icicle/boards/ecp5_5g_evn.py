@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-from nmigen_boards.ecp5_5g_evn import ECP55GEVNPlatform
+from amaranth_boards.ecp5_5g_evn import ECP55GEVNPlatform
 
 from icicle.soc import SystemOnChip
 

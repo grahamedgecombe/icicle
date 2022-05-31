@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-from nmigen.cli import main_parser, main_runner
+from amaranth.cli import main_parser, main_runner
 
 from icicle.cpu import CPU
 

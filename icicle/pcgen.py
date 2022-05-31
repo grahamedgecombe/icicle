@@ -1,4 +1,4 @@
-from nmigen import *
+from amaranth import *
 
 from icicle.pipeline import Stage
 from icicle.pipeline_regs import PF_LAYOUT

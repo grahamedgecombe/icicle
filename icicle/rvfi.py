@@ -1,4 +1,4 @@
-from nmigen import *
+from amaranth import *
 
 RVFI_LAYOUT = [
     # instruction metadata

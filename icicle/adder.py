@@ -1,5 +1,5 @@
-from nmigen import *
-from nmigen.hdl.ast import AnySeq
+from amaranth import *
+from amaranth.hdl.ast import AnySeq
 
 
 class Adder(Elaboratable):

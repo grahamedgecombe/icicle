@@ -1,5 +1,5 @@
-from nmigen import *
-from nmigen_soc import wishbone
+from amaranth import *
+from amaranth_soc import wishbone
 
 from icicle.decode import Decode
 from icicle.execute import Execute

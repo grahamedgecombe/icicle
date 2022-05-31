@@ -4,10 +4,10 @@
 
 Icicle is a 32-bit [RISC-V][riscv] soft processor and system-on-chip, primarily
 designed for [iCE40][ice40] (including the [UltraPlus][ice40up] series) FPGAs.
-It can be built with the open-source [SymbiFlow][symbiflow] toolchain.
+It can be built with open-source tools.
 
 The [original version of Icicle][icicle1] was written in SystemVerilog. This
-version is written in [nMigen][nmigen], making the code cleaner and more
+version is written in [Amaranth][amaranth], making the code cleaner and more
 flexible. Changes to the microarchitecture have made the core significantly
 smaller and faster.
 
@@ -60,14 +60,14 @@ of issuing one instruction every two cycles, as:
 * Additional multiplexing logic needs to be added after the read port.
 * Only a single memory bus transaction may be in flight at once.
 
-This could be improved with negative-edge block RAMs, which nMigen does not yet
-support. Alternatively, Icicle could be changed to use a pipelined memory bus
-that makes requests during one cycle and does not expect the response until the
-following cycle.
+This could be improved with negative-edge block RAMs, which Amaranth does not
+yet support. Alternatively, Icicle could be changed to use a pipelined memory
+bus that makes requests during one cycle and does not expect the response until
+the following cycle.
 
 ## Dependencies
 
-* [nMigen][nmigen]
+* [Amaranth][amaranth]
 * [Yosys][yosys]
 * [nextpnr][nextpnr]
 * [Project IceStorm][icestorm]
@@ -79,7 +79,7 @@ Run the following command to install Icicle locally, including its dependencies:
 
     pip install -e .
 
-The `icicle` command is a thin wrapper around `nmigen.cli`. Run the following
+The `icicle` command is a thin wrapper around `amaranth.cli`. Run the following
 command to compile the Icicle processor core to Verilog:
 
     icicle generate -t v > icicle.v
@@ -166,6 +166,7 @@ This project is available under the terms of the ISC license, which is similar
 to the 2-clause BSD license. See the `LICENSE` file for the copyright
 information and licensing terms.
 
+[amaranth]: https://github.com/amaranth-lang/amaranth
 [classic-risc]: https://en.wikipedia.org/wiki/Classic_RISC_pipeline
 [ecp5-5g-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/ECP5EvaluationBoard
 [ice40-hx8k-b-evn]: https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx
@@ -176,10 +177,8 @@ information and licensing terms.
 [icicle1]: https://github.com/grahamedgecombe/icicle
 [minerva]: https://github.com/lambdaconcept/minerva
 [nextpnr]: https://github.com/YosysHQ/nextpnr
-[nmigen]: https://github.com/nmigen/nmigen
-[riscv-formal]: https://github.com/SymbioticEDA/riscv-formal
+[riscv-formal]: https://github.com/YosysHQ/riscv-formal
 [riscv]: https://riscv.org/
-[symbiflow]: https://symbiflow.github.io/
 [symbiyosys]: https://symbiyosys.readthedocs.io/en/latest/
 [wishbone]: https://wishbone-interconnect.readthedocs.io/en/latest/
-[yosys]: http://www.clifford.at/yosys/
+[yosys]: https://yosyshq.net/yosys/
