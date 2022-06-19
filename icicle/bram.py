@@ -7,7 +7,7 @@ class BlockRAM(Elaboratable):
     def __init__(self, addr_width, init=None):
         self.depth = 2**addr_width
         self.init = init
-        self.bus = wishbone.Interface(addr_width=addr_width, data_width=32, granularity=8)
+        self.bus = wishbone.Interface(addr_width=addr_width, data_width=32, granularity=8, features=["err"])
         self.bus.memory_map = MemoryMap(addr_width=addr_width + 2, data_width=8)
 
     def elaborate(self, platform):
