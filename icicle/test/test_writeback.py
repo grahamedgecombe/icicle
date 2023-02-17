@@ -14,7 +14,7 @@ class WritebackTestCase(FHDLTestCase):
 
         writeback = m.submodules.writeback = Writeback()
         m.d.comb += [
-            rd_port.en.eq(writeback.rd_port.en),
+            rd_port.insn_valid.eq(writeback.rd_port.insn_valid),
             rd_port.addr.eq(writeback.rd_port.addr),
             rd_port.data.eq(writeback.rd_port.data)
         ]
@@ -25,10 +25,10 @@ class WritebackTestCase(FHDLTestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.rdata.valid.eq(1)
-            yield writeback.rdata.rd.eq(1)
-            yield writeback.rdata.rd_wen.eq(1)
-            yield writeback.rdata.result.eq(0xDEADBEEF)
+            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.rd.eq(1)
+            yield writeback.i.rd_wen.eq(1)
+            yield writeback.i.result.eq(0xDEADBEEF)
             yield
             yield Settle()
             self.assertEqual((yield regs[1]), 0xDEADBEEF)
@@ -45,10 +45,10 @@ class WritebackTestCase(FHDLTestCase):
         sim = Simulator(m)
         def process():
             yield stall.eq(1)
-            yield writeback.rdata.valid.eq(1)
-            yield writeback.rdata.rd.eq(1)
-            yield writeback.rdata.rd_wen.eq(1)
-            yield writeback.rdata.result.eq(0xDEADBEEF)
+            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.rd.eq(1)
+            yield writeback.i.rd_wen.eq(1)
+            yield writeback.i.result.eq(0xDEADBEEF)
             yield
             yield Settle()
             self.assertEqual((yield regs[1]), 0)
@@ -60,10 +60,10 @@ class WritebackTestCase(FHDLTestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.rdata.valid.eq(0)
-            yield writeback.rdata.rd.eq(1)
-            yield writeback.rdata.rd_wen.eq(1)
-            yield writeback.rdata.result.eq(0xDEADBEEF)
+            yield writeback.i.insn_valid.eq(0)
+            yield writeback.i.rd.eq(1)
+            yield writeback.i.rd_wen.eq(1)
+            yield writeback.i.result.eq(0xDEADBEEF)
             yield
             yield Settle()
             self.assertEqual((yield regs[1]), 0)
@@ -75,10 +75,10 @@ class WritebackTestCase(FHDLTestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.rdata.valid.eq(1)
-            yield writeback.rdata.rd.eq(1)
-            yield writeback.rdata.rd_wen.eq(0)
-            yield writeback.rdata.result.eq(0xDEADBEEF)
+            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.rd.eq(1)
+            yield writeback.i.rd_wen.eq(0)
+            yield writeback.i.result.eq(0xDEADBEEF)
             yield
             yield Settle()
             self.assertEqual((yield regs[1]), 0)

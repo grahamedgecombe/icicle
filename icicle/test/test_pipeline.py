@@ -11,29 +11,29 @@ LAYOUT = [
 
 class FirstStage(Stage):
     def __init__(self):
-        super().__init__(wdata_layout=LAYOUT)
+        super().__init__(o_layout=LAYOUT)
 
     def elaborate_stage(self, m, platform):
         with m.If(~self.stall):
-            m.d.sync += self.wdata.counter.eq(self.wdata.counter + 1)
+            m.d.sync += self.o.counter.eq(self.o.counter + 1)
 
 
 class MiddleStage(Stage):
     def __init__(self):
-        super().__init__(rdata_layout=LAYOUT, wdata_layout=LAYOUT)
+        super().__init__(i_layout=LAYOUT, o_layout=LAYOUT)
 
 
 class LastStage(Stage):
     def __init__(self):
-        super().__init__(rdata_layout=LAYOUT)
+        super().__init__(i_layout=LAYOUT)
         self.counter_valid = Signal()
         self.counter = Signal(32)
 
     def elaborate_stage(self, m, platform):
         with m.If(~self.stall):
             m.d.sync += [
-                self.counter_valid.eq(self.valid),
-                self.counter.eq(self.rdata.counter)
+                self.counter_valid.eq(self.insn_valid),
+                self.counter.eq(self.i.counter)
             ]
 
 
@@ -45,27 +45,27 @@ class PipelineTestCase(FHDLTestCase):
         m = Pipeline(s1=s1, s2=s2, s3=s3)
         sim = Simulator(m)
         def process():
-            self.assertEqual((yield s1.wdata.valid), 0)
-            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s1.o.insn_valid), 0)
+            self.assertEqual((yield s2.o.insn_valid), 0)
             self.assertEqual((yield s3.counter_valid), 0)
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 1)
-            self.assertEqual((yield s2.wdata.valid), 0)
-            self.assertEqual((yield s3.counter_valid), 0)
-            yield
-            yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 2)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 1)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 1)
+            self.assertEqual((yield s2.o.insn_valid), 0)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 3)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 2)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 2)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 1)
+            self.assertEqual((yield s3.counter_valid), 0)
+            yield
+            yield Settle()
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 3)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 2)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 1)
         sim.add_clock(period=1e-6)
@@ -88,25 +88,25 @@ class PipelineTestCase(FHDLTestCase):
             yield s2_stall.eq(1)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 3)
-            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 3)
+            self.assertEqual((yield s2.o.insn_valid), 0)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
             yield s2_stall.eq(0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 4)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 3)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 4)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 3)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 5)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 4)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 5)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 4)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 3)
         sim.add_clock(period=1e-6)
@@ -129,25 +129,25 @@ class PipelineTestCase(FHDLTestCase):
             yield s2_flush.eq(1)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 4)
-            self.assertEqual((yield s2.wdata.valid), 0)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 4)
+            self.assertEqual((yield s2.o.insn_valid), 0)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
             yield s2_flush.eq(0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 5)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 4)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 5)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 4)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.wdata.valid), 1)
-            self.assertEqual((yield s1.wdata.counter), 6)
-            self.assertEqual((yield s2.wdata.valid), 1)
-            self.assertEqual((yield s2.wdata.counter), 5)
+            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.counter), 6)
+            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.counter), 5)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 4)
         sim.add_clock(period=1e-6)

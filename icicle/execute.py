@@ -9,57 +9,57 @@ from icicle.shift import BarrelShifter
 
 class Execute(Stage):
     def __init__(self, rvfi_blackbox_alu=False):
-        super().__init__(rdata_layout=DX_LAYOUT, wdata_layout=XM_LAYOUT)
+        super().__init__(i_layout=DX_LAYOUT, o_layout=XM_LAYOUT)
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
 
     def elaborate_stage(self, m, platform):
         operand_mux = m.submodules.operand_mux = OperandMux()
         m.d.comb += [
-            operand_mux.a_sel.eq(self.rdata.a_sel),
-            operand_mux.b_sel.eq(self.rdata.b_sel),
-            operand_mux.pc_rdata.eq(self.rdata.pc_rdata),
-            operand_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
-            operand_mux.rs2_rdata.eq(self.rdata.rs2_rdata),
-            operand_mux.imm.eq(self.rdata.imm)
+            operand_mux.a_sel.eq(self.i.a_sel),
+            operand_mux.b_sel.eq(self.i.b_sel),
+            operand_mux.pc_rdata.eq(self.i.pc_rdata),
+            operand_mux.rs1_rdata.eq(self.i.rs1_rdata),
+            operand_mux.rs2_rdata.eq(self.i.rs2_rdata),
+            operand_mux.imm.eq(self.i.imm)
         ]
 
         add = m.submodules.add = BlackBoxAdder() if self.rvfi_blackbox_alu else Adder()
         m.d.comb += [
-            add.sub.eq(self.rdata.add_sub),
-            add.signed_compare.eq(self.rdata.add_signed_compare),
+            add.sub.eq(self.i.add_sub),
+            add.signed_compare.eq(self.i.add_signed_compare),
             add.a.eq(operand_mux.a),
             add.b.eq(operand_mux.b)
         ]
 
         logic = m.submodules.logic = Logic()
         m.d.comb += [
-            logic.op.eq(self.rdata.logic_op),
-            logic.a.eq(self.rdata.rs1_rdata),
+            logic.op.eq(self.i.logic_op),
+            logic.a.eq(self.i.rs1_rdata),
             logic.b.eq(operand_mux.b)
         ]
 
         shift = m.submodules.shift = BarrelShifter()
         m.d.comb += [
-            shift.right.eq(self.rdata.shift_direction),
-            shift.arithmetic.eq(self.rdata.shift_arithmetic),
-            shift.a.eq(self.rdata.rs1_rdata),
+            shift.right.eq(self.i.shift_direction),
+            shift.arithmetic.eq(self.i.shift_arithmetic),
+            shift.a.eq(self.i.rs1_rdata),
             shift.shamt.eq(operand_mux.b)
         ]
 
         branch_target_mux = m.submodules.branch_target_mux = BranchTargetMux()
         m.d.comb += [
-            branch_target_mux.sel.eq(self.rdata.branch_target_sel),
-            branch_target_mux.pc_rdata.eq(self.rdata.pc_rdata),
-            branch_target_mux.rs1_rdata.eq(self.rdata.rs1_rdata),
-            branch_target_mux.imm.eq(self.rdata.imm)
+            branch_target_mux.sel.eq(self.i.branch_target_sel),
+            branch_target_mux.pc_rdata.eq(self.i.pc_rdata),
+            branch_target_mux.rs1_rdata.eq(self.i.rs1_rdata),
+            branch_target_mux.imm.eq(self.i.imm)
         ]
 
         with m.If(~self.stall):
             m.d.sync += [
-                self.wdata.add_result.eq(add.result),
-                self.wdata.add_carry.eq(add.carry),
-                self.wdata.logic_result.eq(logic.result),
-                self.wdata.shift_result.eq(shift.result),
-                self.wdata.branch_target.eq(branch_target_mux.target),
-                self.wdata.branch_misaligned.eq(branch_target_mux.misaligned)
+                self.o.add_result.eq(add.result),
+                self.o.add_carry.eq(add.carry),
+                self.o.logic_result.eq(logic.result),
+                self.o.shift_result.eq(shift.result),
+                self.o.branch_target.eq(branch_target_mux.target),
+                self.o.branch_misaligned.eq(branch_target_mux.misaligned)
             ]

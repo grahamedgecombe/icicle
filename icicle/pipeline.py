@@ -5,8 +5,8 @@ from operator import or_
 from amaranth import *
 
 VALID_LAYOUT = [
-    ("valid",   1),
-    ("trapped", 1)
+    ("insn_valid", 1),
+    ("trapped",    1)
 ]
 
 
@@ -24,7 +24,7 @@ class Pipeline(Elaboratable):
         next(it2)
         for s1, s2 in zip(it1, it2):
             m.d.comb += [
-                s2.rdata.eq(s1.wdata),
+                s2.i.eq(s1.o),
                 s1.next_stall.eq(s2.stall)
             ]
 
@@ -32,16 +32,16 @@ class Pipeline(Elaboratable):
 
 
 class Stage(Elaboratable):
-    def __init__(self, rdata_layout=None, wdata_layout=None):
-        if rdata_layout:
-            self.rdata = Record(rdata_layout + VALID_LAYOUT)
-        if wdata_layout:
-            self.wdata = Record(wdata_layout + VALID_LAYOUT)
+    def __init__(self, i_layout=None, o_layout=None):
+        if i_layout:
+            self.i = Record(i_layout + VALID_LAYOUT)
+        if o_layout:
+            self.o = Record(o_layout + VALID_LAYOUT)
         self.stall = Signal()
         self.next_stall = Signal()
         self.flush = Signal()
-        self.valid_before = Signal()
-        self.valid = Signal()
+        self.insn_valid_before = Signal()
+        self.insn_valid = Signal()
         self.trap = Signal()
         self.trapped = Signal()
         self._stall_sources = []
@@ -60,39 +60,39 @@ class Stage(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        rdata_valid = self.rdata.valid if hasattr(self, "rdata") else 1
+        i_insn_valid = self.i.insn_valid if hasattr(self, "i") else 1
         m.d.comb += [
-            self.valid_before.eq(rdata_valid & ~self.flush),
-            self.valid.eq(self.valid_before & ~self.trap)
+            self.insn_valid_before.eq(i_insn_valid & ~self.flush),
+            self.insn_valid.eq(self.insn_valid_before & ~self.trap)
         ]
 
-        rdata_trapped = self.rdata.trapped if hasattr(self, "rdata") else 0
-        m.d.comb += self.trapped.eq((rdata_trapped | self.trap) & ~self.flush)
+        i_trapped = self.i.trapped if hasattr(self, "i") else 0
+        m.d.comb += self.trapped.eq((i_trapped | self.trap) & ~self.flush)
 
-        if hasattr(self, "wdata"):
+        if hasattr(self, "o"):
             with m.If(~self.stall):
                 m.d.sync += [
-                    self.wdata.valid.eq(self.valid),
-                    self.wdata.trapped.eq(self.trapped)
+                    self.o.insn_valid.eq(self.insn_valid),
+                    self.o.trapped.eq(self.trapped)
                 ]
             with m.Elif(~self.next_stall):
                 m.d.sync += [
-                    self.wdata.valid.eq(0),
-                    self.wdata.trapped.eq(0)
+                    self.o.insn_valid.eq(0),
+                    self.o.trapped.eq(0)
                 ]
 
-        if hasattr(self, "rdata") and hasattr(self, "wdata"):
+        if hasattr(self, "i") and hasattr(self, "o"):
             with m.If(~self.stall):
-                for (name, shape, dir) in self.wdata.layout:
-                    if name not in ("valid", "trapped") and name in self.rdata.layout.fields:
-                        m.d.sync += self.wdata[name].eq(self.rdata[name])
+                for (name, shape, dir) in self.o.layout:
+                    if name not in ("valid", "trapped") and name in self.i.layout.fields:
+                        m.d.sync += self.o[name].eq(self.i[name])
 
         self.elaborate_stage(m, platform)
 
         m.d.comb += [
-            self.stall.eq(((rdata_valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
+            self.stall.eq(((i_insn_valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
             self.flush.eq(reduce(or_, self._flush_sources, 0)),
-            self.trap.eq(rdata_valid & reduce(or_, self._trap_sources, 0))
+            self.trap.eq(i_insn_valid & reduce(or_, self._trap_sources, 0))
         ]
 
         return m

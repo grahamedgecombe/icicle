@@ -15,11 +15,11 @@ class DecodeTestCase(FHDLTestCase):
 
         decode = m.submodules.decode = Decode()
         m.d.comb += [
-            rs1_port.en.eq(decode.rs1_port.en),
+            rs1_port.insn_valid.eq(decode.rs1_port.insn_valid),
             rs1_port.addr.eq(decode.rs1_port.addr),
             decode.rs1_port.data.eq(rs1_port.data),
 
-            rs2_port.en.eq(decode.rs2_port.en),
+            rs2_port.insn_valid.eq(decode.rs2_port.insn_valid),
             rs2_port.addr.eq(decode.rs2_port.addr),
             decode.rs2_port.data.eq(rs2_port.data)
         ]
@@ -36,21 +36,21 @@ class DecodeTestCase(FHDLTestCase):
         ])
         sim = Simulator(m)
         def process():
-            yield decode.rdata.valid.eq(1)
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
+            yield decode.i.insn_valid.eq(1)
+            yield decode.i.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
             yield Settle()
-            self.assertEqual((yield decode.wdata.rs1), 1)
-            self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
-            self.assertEqual((yield decode.wdata.rs2), 2)
-            self.assertEqual((yield decode.wdata.rs2_rdata), 0x44556677)
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
+            self.assertEqual((yield decode.o.rs1), 1)
+            self.assertEqual((yield decode.o.rs1_rdata), 0x00112233)
+            self.assertEqual((yield decode.o.rs2), 2)
+            self.assertEqual((yield decode.o.rs2_rdata), 0x44556677)
+            yield decode.i.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
             yield
             yield Settle()
-            self.assertEqual((yield decode.wdata.rs1), 3)
-            self.assertEqual((yield decode.wdata.rs1_rdata), 0x8899AABB)
-            self.assertEqual((yield decode.wdata.rs2), 4)
-            self.assertEqual((yield decode.wdata.rs2_rdata), 0xCCDDEEFF)
+            self.assertEqual((yield decode.o.rs1), 3)
+            self.assertEqual((yield decode.o.rs1_rdata), 0x8899AABB)
+            self.assertEqual((yield decode.o.rs2), 4)
+            self.assertEqual((yield decode.o.rs2_rdata), 0xCCDDEEFF)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)
         sim.run()
@@ -69,22 +69,22 @@ class DecodeTestCase(FHDLTestCase):
 
         sim = Simulator(m)
         def process():
-            yield decode.rdata.valid.eq(1)
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
+            yield decode.i.insn_valid.eq(1)
+            yield decode.i.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(1, 5), C(2, 5), C(0, 7)))
             yield
             yield Settle()
-            self.assertEqual((yield decode.wdata.rs1), 1)
-            self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
-            self.assertEqual((yield decode.wdata.rs2), 2)
-            self.assertEqual((yield decode.wdata.rs2_rdata), 0x44556677)
-            yield decode.rdata.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
+            self.assertEqual((yield decode.o.rs1), 1)
+            self.assertEqual((yield decode.o.rs1_rdata), 0x00112233)
+            self.assertEqual((yield decode.o.rs2), 2)
+            self.assertEqual((yield decode.o.rs2_rdata), 0x44556677)
+            yield decode.i.insn.eq(Cat(C(0, 7), C(0, 5), C(0, 3), C(3, 5), C(4, 5), C(0, 7)))
             yield stall.eq(1)
             yield
             yield Settle()
-            self.assertEqual((yield decode.wdata.rs1), 1)
-            self.assertEqual((yield decode.wdata.rs1_rdata), 0x00112233)
-            self.assertEqual((yield decode.wdata.rs2), 2)
-            self.assertEqual((yield decode.wdata.rs2_rdata), 0x44556677)
+            self.assertEqual((yield decode.o.rs1), 1)
+            self.assertEqual((yield decode.o.rs1_rdata), 0x00112233)
+            self.assertEqual((yield decode.o.rs2), 2)
+            self.assertEqual((yield decode.o.rs2_rdata), 0x44556677)
         sim.add_clock(period=1e-6)
         sim.add_sync_process(process)
         sim.run()

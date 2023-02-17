@@ -6,8 +6,8 @@ from icicle.pipeline_regs import PF_LAYOUT
 
 class PCGen(Stage):
     def __init__(self, reset_vector=0, trap_vector=0):
-        super().__init__(wdata_layout=PF_LAYOUT)
-        self.wdata.pc_rdata.reset = reset_vector - 4
+        super().__init__(o_layout=PF_LAYOUT)
+        self.o.pc_rdata.reset = reset_vector - 4
         self.trap_vector = trap_vector
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
@@ -25,8 +25,8 @@ class PCGen(Stage):
         # directly to wdata.pc_rdata, instead of writing to a separate register
         # and then copying to wdata.pc_rdata in the ~self.stall case.
         with m.If(self.branch_taken):
-            m.d.sync += self.wdata.pc_rdata.eq(self.branch_target)
+            m.d.sync += self.o.pc_rdata.eq(self.branch_target)
         with m.Elif(self.trap_raised):
-            m.d.sync += self.wdata.pc_rdata.eq(self.trap_vector)
+            m.d.sync += self.o.pc_rdata.eq(self.trap_vector)
         with m.Elif(~self.stall):
-            m.d.sync += self.wdata.pc_rdata.eq(self.wdata.pc_rdata + 4)
+            m.d.sync += self.o.pc_rdata.eq(self.o.pc_rdata + 4)
