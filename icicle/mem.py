@@ -4,7 +4,7 @@ from amaranth_soc import wishbone
 from icicle.alu import ResultMux, BlackBoxResultMux
 from icicle.branch import Branch
 from icicle.loadstore import LoadStore
-from icicle.pipeline import Stage
+from icicle.pipeline import Stage, State
 from icicle.pipeline_regs import XM_LAYOUT, MW_LAYOUT
 
 
@@ -38,14 +38,14 @@ class MemoryAccess(Stage):
         self.trap_on(branch.trap)
 
         m.d.comb += [
-            self.branch_taken.eq(~self.stall & self.insn_valid & branch.taken),
+            self.branch_taken.eq(~self.stall & (self.i.state == State.VALID) & branch.taken),
             self.branch_target.eq(self.i.branch_target)
         ]
 
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
             load_store.bus.connect(self.dbus),
-            load_store.valid.eq(self.insn_valid_before),
+            load_store.valid.eq(self.i.state == State.VALID),
             load_store.load.eq(self.i.mem_load),
             load_store.store.eq(self.i.mem_store),
             load_store.width.eq(self.i.mem_width),
@@ -56,7 +56,7 @@ class MemoryAccess(Stage):
         self.stall_on(load_store.busy)
         self.trap_on(load_store.trap)
 
-        m.d.comb += self.trap_raised.eq(~self.stall & self.trapped)
+        m.d.comb += self.trap_raised.eq(~self.stall & ((self.i.state == State.TRAP) | self.trap))
 
         with m.If(~self.stall):
             m.d.sync += [
@@ -68,9 +68,9 @@ class MemoryAccess(Stage):
                 self.o.mem_wdata_aligned.eq(load_store.wdata_aligned)
             ]
 
-            with m.If(self.insn_valid & branch.taken):
+            with m.If((self.i.state == State.VALID) & branch.taken):
                 m.d.sync += self.o.pc_wdata.eq(self.i.branch_target)
-            with m.Elif(self.trapped):
+            with m.Elif((self.i.state == State.TRAP) | self.trap):
                 m.d.sync += self.o.pc_wdata.eq(self.trap_vector)
             with m.Else():
                 m.d.sync += self.o.pc_wdata.eq(self.i.pc_rdata + 4)

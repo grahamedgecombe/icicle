@@ -2,7 +2,7 @@ from amaranth import *
 from amaranth_soc import wishbone
 
 from icicle.loadstore import LoadStore, MemWidth
-from icicle.pipeline import Stage
+from icicle.pipeline import Stage, State
 from icicle.pipeline_regs import PF_LAYOUT, FD_LAYOUT
 
 
@@ -15,7 +15,7 @@ class Fetch(Stage):
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
             load_store.bus.connect(self.ibus),
-            load_store.valid.eq(self.insn_valid_before),
+            load_store.valid.eq((self.i.state == State.VALID) & ~self.flush),
             load_store.load.eq(1),
             load_store.width.eq(MemWidth.WORD),
             load_store.addr.eq(self.i.pc_rdata)
