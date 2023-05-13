@@ -1,12 +1,19 @@
+from enum import Enum
 from functools import reduce
 from itertools import tee
 from operator import or_
 
 from amaranth import *
 
-VALID_LAYOUT = [
-    ("insn_valid", 1),
-    ("trapped",    1)
+
+class State(Enum):
+    BUBBLE = 0
+    VALID  = 1
+    TRAP   = 2
+
+
+STATE_LAYOUT = [
+    ("state", State),
 ]
 
 
@@ -34,9 +41,9 @@ class Pipeline(Elaboratable):
 class Stage(Elaboratable):
     def __init__(self, i_layout=None, o_layout=None):
         if i_layout:
-            self.i = Record(i_layout + VALID_LAYOUT)
+            self.i = Record(i_layout + STATE_LAYOUT)
         if o_layout:
-            self.o = Record(o_layout + VALID_LAYOUT)
+            self.o = Record(o_layout + STATE_LAYOUT)
         self.stall = Signal()
         self.next_stall = Signal()
         self.flush = Signal()
@@ -60,31 +67,30 @@ class Stage(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        i_insn_valid = self.i.insn_valid if hasattr(self, "i") else 1
+        i_insn_valid = self.i.state == State.VALID if hasattr(self, "i") else 1
         m.d.comb += [
             self.insn_valid_before.eq(i_insn_valid & ~self.flush),
             self.insn_valid.eq(self.insn_valid_before & ~self.trap)
         ]
 
-        i_trapped = self.i.trapped if hasattr(self, "i") else 0
+        i_trapped = self.i.state == State.TRAP if hasattr(self, "i") else 0
         m.d.comb += self.trapped.eq((i_trapped | self.trap) & ~self.flush)
 
         if hasattr(self, "o"):
             with m.If(~self.stall):
-                m.d.sync += [
-                    self.o.insn_valid.eq(self.insn_valid),
-                    self.o.trapped.eq(self.trapped)
-                ]
+                with m.If(self.trapped):
+                    m.d.sync += self.o.state.eq(State.TRAP)
+                with m.Elif(self.insn_valid):
+                    m.d.sync += self.o.state.eq(State.VALID)
+                with m.Else():
+                    m.d.sync += self.o.state.eq(State.BUBBLE)
             with m.Elif(~self.next_stall):
-                m.d.sync += [
-                    self.o.insn_valid.eq(0),
-                    self.o.trapped.eq(0)
-                ]
+                m.d.sync += self.o.state.eq(State.BUBBLE)
 
         if hasattr(self, "i") and hasattr(self, "o"):
             with m.If(~self.stall):
                 for (name, shape, dir) in self.o.layout:
-                    if name not in ("valid", "trapped") and name in self.i.layout.fields:
+                    if name != "state" and name in self.i.layout.fields:
                         m.d.sync += self.o[name].eq(self.i[name])
 
         self.elaborate_stage(m, platform)
