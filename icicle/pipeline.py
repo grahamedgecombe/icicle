@@ -47,10 +47,7 @@ class Stage(Elaboratable):
         self.stall = Signal()
         self.next_stall = Signal()
         self.flush = Signal()
-        self.insn_valid_before = Signal()
-        self.insn_valid = Signal()
         self.trap = Signal()
-        self.trapped = Signal()
         self._stall_sources = []
         self._flush_sources = []
         self._trap_sources = []
@@ -67,23 +64,16 @@ class Stage(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        i_insn_valid = self.i.state == State.VALID if hasattr(self, "i") else 1
-        m.d.comb += [
-            self.insn_valid_before.eq(i_insn_valid & ~self.flush),
-            self.insn_valid.eq(self.insn_valid_before & ~self.trap)
-        ]
-
-        i_trapped = self.i.state == State.TRAP if hasattr(self, "i") else 0
-        m.d.comb += self.trapped.eq((i_trapped | self.trap) & ~self.flush)
+        i_state = self.i.state if hasattr(self, "i") else State.VALID
 
         if hasattr(self, "o"):
             with m.If(~self.stall):
-                with m.If(self.trapped):
-                    m.d.sync += self.o.state.eq(State.TRAP)
-                with m.Elif(self.insn_valid):
-                    m.d.sync += self.o.state.eq(State.VALID)
-                with m.Else():
+                with m.If(self.flush):
                     m.d.sync += self.o.state.eq(State.BUBBLE)
+                with m.Elif(self.trap):
+                    m.d.sync += self.o.state.eq(State.TRAP)
+                with m.Else():
+                    m.d.sync += self.o.state.eq(i_state)
             with m.Elif(~self.next_stall):
                 m.d.sync += self.o.state.eq(State.BUBBLE)
 
@@ -96,9 +86,9 @@ class Stage(Elaboratable):
         self.elaborate_stage(m, platform)
 
         m.d.comb += [
-            self.stall.eq(((i_insn_valid & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
+            self.stall.eq((((i_state == State.VALID) & reduce(or_, self._stall_sources, 0)) | self.next_stall) & ~self.flush),
             self.flush.eq(reduce(or_, self._flush_sources, 0)),
-            self.trap.eq(i_insn_valid & reduce(or_, self._trap_sources, 0))
+            self.trap.eq((i_state == State.TRAP) | ((i_state == State.VALID) & reduce(or_, self._trap_sources, 0)))
         ]
 
         return m

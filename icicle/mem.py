@@ -56,7 +56,7 @@ class MemoryAccess(Stage):
         self.stall_on(load_store.busy)
         self.trap_on(load_store.trap)
 
-        m.d.comb += self.trap_raised.eq(~self.stall & ((self.i.state == State.TRAP) | self.trap))
+        m.d.comb += self.trap_raised.eq(~self.stall & self.trap)
 
         with m.If(~self.stall):
             m.d.sync += [
@@ -70,7 +70,7 @@ class MemoryAccess(Stage):
 
             with m.If((self.i.state == State.VALID) & branch.taken):
                 m.d.sync += self.o.pc_wdata.eq(self.i.branch_target)
-            with m.Elif((self.i.state == State.TRAP) | self.trap):
+            with m.Elif(self.trap):
                 m.d.sync += self.o.pc_wdata.eq(self.trap_vector)
             with m.Else():
                 m.d.sync += self.o.pc_wdata.eq(self.i.pc_rdata + 4)
