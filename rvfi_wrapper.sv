@@ -12,6 +12,7 @@ module rvfi_wrapper (
     (* keep *) logic ibus_stb;
     (* keep *) logic ibus_we;
     (* keep *) `rvformal_rand_reg ibus_ack;
+    (* keep *) `rvformal_rand_reg ibus_err;
 
     (* keep *) logic [31:2] dbus_adr;
     (* keep *) logic [31:0] dbus_dat_w;
@@ -21,6 +22,7 @@ module rvfi_wrapper (
     (* keep *) logic dbus_stb;
     (* keep *) logic dbus_we;
     (* keep *) `rvformal_rand_reg dbus_ack;
+    (* keep *) `rvformal_rand_reg dbus_err;
 
     \icicle.cpu.CPU #(
         .rvfi(1),
@@ -42,7 +44,7 @@ module rvfi_wrapper (
         .ibus__stb(ibus_stb),
         .ibus__we(ibus_we),
         .ibus__ack(ibus_ack),
-        .ibus__err(1'b0),
+        .ibus__err(ibus_err),
 
         .dbus__adr(dbus_adr),
         .dbus__dat_w(dbus_dat_w),
@@ -52,7 +54,7 @@ module rvfi_wrapper (
         .dbus__stb(dbus_stb),
         .dbus__we(dbus_we),
         .dbus__ack(dbus_ack),
-        .dbus__err(1'b0),
+        .dbus__err(dbus_err),
 
         `RVFI_CONN
     );
@@ -61,7 +63,7 @@ module rvfi_wrapper (
     assign rvfi_bus_valid = {ibus_cyc & ibus_stb, dbus_cyc & dbus_stb};
     assign rvfi_bus_insn  = 2'b10;
     assign rvfi_bus_data  = 2'b01;
-    assign rvfi_bus_fault = 2'b00;
+    assign rvfi_bus_fault = {ibus_err, dbus_err};
     assign rvfi_bus_addr  = {ibus_adr, 2'b0, dbus_adr, 2'b0};
     assign rvfi_bus_rmask = {ibus_sel & {4{~ibus_we}}, dbus_sel & {4{~dbus_we}}};
     assign rvfi_bus_wmask = {ibus_sel & {4{ibus_we}}, dbus_sel & {4{dbus_we}}};

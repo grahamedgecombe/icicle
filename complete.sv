@@ -19,6 +19,7 @@ module testbench (
     (* keep *) logic ibus_stb;
     (* keep *) logic ibus_we;
     (* keep *) `rvformal_rand_reg ibus_ack;
+    (* keep *) `rvformal_rand_reg ibus_err;
 
     (* keep *) logic [31:2] dbus_adr;
     (* keep *) logic [31:0] dbus_dat_w;
@@ -28,6 +29,7 @@ module testbench (
     (* keep *) logic dbus_stb;
     (* keep *) logic dbus_we;
     (* keep *) `rvformal_rand_reg dbus_ack;
+    (* keep *) `rvformal_rand_reg dbus_err;
 
     \icicle.cpu.CPU #(
         .rvfi(1),
@@ -49,7 +51,7 @@ module testbench (
         .ibus__stb(ibus_stb),
         .ibus__we(ibus_we),
         .ibus__ack(ibus_ack),
-        .ibus__err(1'b0),
+        .ibus__err(ibus_err),
 
         .dbus__adr(dbus_adr),
         .dbus__dat_w(dbus_dat_w),
@@ -59,7 +61,7 @@ module testbench (
         .dbus__stb(dbus_stb),
         .dbus__we(dbus_we),
         .dbus__ack(dbus_ack),
-        .dbus__err(1'b0),
+        .dbus__err(ibus_err),
 
         `RVFI_CONN
     );

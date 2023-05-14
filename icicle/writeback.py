@@ -49,7 +49,8 @@ class Writeback(Stage):
                 self.rvfi.mem_rmask.eq(Mux((self.i.state == State.VALID) & self.i.mem_load, self.i.mem_mask, 0)),
                 self.rvfi.mem_wmask.eq(Mux((self.i.state == State.VALID) & self.i.mem_store, self.i.mem_mask, 0)),
                 self.rvfi.mem_rdata.eq(Mux((self.i.state == State.VALID) & self.i.mem_load, self.i.mem_rdata_aligned, 0)),
-                self.rvfi.mem_wdata.eq(Mux((self.i.state == State.VALID) & self.i.mem_store, self.i.mem_wdata_aligned, 0))
+                self.rvfi.mem_wdata.eq(Mux((self.i.state == State.VALID) & self.i.mem_store, self.i.mem_wdata_aligned, 0)),
+                self.rvfi.mem_fault.eq(self.i.mem_fault)
             ]
         with m.Else():
             m.d.sync += self.rvfi.valid.eq(0)

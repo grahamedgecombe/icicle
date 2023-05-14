@@ -65,7 +65,8 @@ class MemoryAccess(Stage):
                 self.o.mem_addr_aligned.eq(load_store.addr_aligned),
                 self.o.mem_mask.eq(load_store.mask),
                 self.o.mem_rdata_aligned.eq(load_store.rdata_aligned),
-                self.o.mem_wdata_aligned.eq(load_store.wdata_aligned)
+                self.o.mem_wdata_aligned.eq(load_store.wdata_aligned),
+                self.o.mem_fault.eq(self.i.mem_fault | load_store.trap)
             ]
 
             with m.If((self.i.state == State.VALID) & branch.taken):

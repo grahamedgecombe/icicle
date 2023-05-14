@@ -24,4 +24,7 @@ class Fetch(Stage):
         self.trap_on(load_store.trap)
 
         with m.If(~self.stall):
-            m.d.sync += self.o.insn.eq(load_store.rdata)
+            m.d.sync += [
+                self.o.insn.eq(Mux(load_store.trap, 0, load_store.rdata)),
+                self.o.mem_fault.eq(load_store.trap)
+            ]

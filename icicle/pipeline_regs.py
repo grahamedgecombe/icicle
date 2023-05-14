@@ -10,7 +10,8 @@ PF_LAYOUT = [
 
 FD_LAYOUT = [
     ("pc_rdata", 32),
-    ("insn",     32)
+    ("insn",     32),
+    ("mem_fault", 1)
 ]
 
 DX_LAYOUT = [
@@ -39,6 +40,7 @@ DX_LAYOUT = [
     ("mem_store",                       1),
     ("mem_width",                MemWidth),
     ("mem_unsigned",                    1),
+    ("mem_fault",                       1),
     ("wdata_sel",                WDataSel)
 ]
 
@@ -65,6 +67,7 @@ XM_LAYOUT = [
     ("mem_store",          1),
     ("mem_width",   MemWidth),
     ("mem_unsigned",       1),
+    ("mem_fault",          1),
     ("wdata_sel",   WDataSel)
 ]
 
@@ -88,5 +91,6 @@ MW_LAYOUT = [
     ("mem_mask",           4),
     ("mem_rdata_aligned", 32),
     ("mem_wdata_aligned", 32),
+    ("mem_fault",          1),
     ("wdata_sel",   WDataSel)
 ]

@@ -28,7 +28,8 @@ RVFI_LAYOUT = [
     ("mem_rmask",  4),
     ("mem_wmask",  4),
     ("mem_rdata", 32),
-    ("mem_wdata", 32)
+    ("mem_wdata", 32),
+    ("mem_fault",  1)
 ]
 
 
