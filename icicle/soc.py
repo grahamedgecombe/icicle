@@ -1,4 +1,5 @@
 from amaranth import *
+from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
 from icicle.cpu import CPU
 from icicle.bram import BlockRAM
@@ -35,6 +36,7 @@ class SystemOnChip(Elaboratable):
         m.d.comb += cpu.ibus.connect(bram.bus)
 
         gpio = m.submodules.gpio = GPIO()
-        m.d.comb += cpu.dbus.connect(gpio.bus)
+        csr_bridge = m.submodules.csr_bridge = WishboneCSRBridge(gpio.bus)
+        m.d.comb += cpu.dbus.connect(csr_bridge.wb_bus, exclude=["err"])
 
         return m
