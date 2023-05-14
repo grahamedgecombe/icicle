@@ -7,7 +7,5 @@
 /checks
 /complete
 /disasm.s
-/dmemcheck
-/imemcheck
 __pycache__
 build

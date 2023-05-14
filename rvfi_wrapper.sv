@@ -2,6 +2,7 @@ module rvfi_wrapper (
     input clock,
     input reset,
     `RVFI_OUTPUTS
+    `RVFI_BUS_OUTPUTS
 );
     (* keep *) logic [31:2] ibus_adr;
     (* keep *) logic [31:0] ibus_dat_w;
@@ -55,6 +56,18 @@ module rvfi_wrapper (
 
         `RVFI_CONN
     );
+
+`ifdef RISCV_FORMAL_BUS
+    assign rvfi_bus_valid = {ibus_cyc & ibus_stb, dbus_cyc & dbus_stb};
+    assign rvfi_bus_insn  = 2'b10;
+    assign rvfi_bus_data  = 2'b01;
+    assign rvfi_bus_fault = 2'b00;
+    assign rvfi_bus_addr  = {ibus_adr, 2'b0, dbus_adr, 2'b0};
+    assign rvfi_bus_rmask = {ibus_sel & {4{~ibus_we}}, dbus_sel & {4{~dbus_we}}};
+    assign rvfi_bus_wmask = {ibus_sel & {4{ibus_we}}, dbus_sel & {4{dbus_we}}};
+    assign rvfi_bus_rdata = {ibus_dat_r, dbus_dat_r};
+    assign rvfi_bus_wdata = {ibus_dat_w, dbus_dat_w};
+`endif
 
 `ifdef RISCV_FORMAL_FAIRNESS
     logic [7:0] ibus_wait;
