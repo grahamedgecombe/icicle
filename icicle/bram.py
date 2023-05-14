@@ -8,7 +8,9 @@ class BlockRAM(Elaboratable):
         self.depth = 2**addr_width
         self.init = init
         self.bus = Interface(addr_width=addr_width, data_width=32, granularity=8, features=["err"])
-        self.bus.memory_map = MemoryMap(addr_width=addr_width + 2, data_width=8)
+        memory_map = MemoryMap(addr_width=addr_width + 2, data_width=8)
+        memory_map.add_resource(self, name="bram", size=2 ** memory_map.addr_width)
+        self.bus.memory_map = memory_map
 
     def elaborate(self, platform):
         m = Module()
