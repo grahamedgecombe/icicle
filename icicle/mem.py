@@ -1,5 +1,5 @@
 from amaranth import *
-from amaranth_soc import wishbone
+from amaranth_soc.wishbone import Interface
 
 from icicle.alu import ResultMux, BlackBoxResultMux
 from icicle.branch import Branch
@@ -16,7 +16,7 @@ class MemoryAccess(Stage):
         self.branch_taken = Signal()
         self.branch_target = Signal(32)
         self.trap_raised = Signal()
-        self.dbus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.dbus = Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate_stage(self, m, platform):
         result_mux = m.submodules.result_mux = BlackBoxResultMux() if self.rvfi_blackbox_alu else ResultMux()

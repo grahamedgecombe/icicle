@@ -1,7 +1,7 @@
 from enum import Enum
 
 from amaranth import *
-from amaranth_soc import wishbone
+from amaranth_soc.wishbone import Interface
 
 
 class MemWidth(Enum):
@@ -66,7 +66,7 @@ class WordAlign(Elaboratable):
 
 class LoadStore(Elaboratable):
     def __init__(self):
-        self.bus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.bus = Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
         self.valid = Signal()
         self.busy = Signal()
         self.trap = Signal()

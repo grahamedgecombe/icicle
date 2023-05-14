@@ -1,5 +1,5 @@
 from amaranth import *
-from amaranth_soc import wishbone
+from amaranth_soc.wishbone import Interface
 
 from icicle.loadstore import LoadStore, MemWidth
 from icicle.pipeline import Stage, State
@@ -9,7 +9,7 @@ from icicle.pipeline_regs import PF_LAYOUT, FD_LAYOUT
 class Fetch(Stage):
     def __init__(self):
         super().__init__(i_layout=PF_LAYOUT, o_layout=FD_LAYOUT)
-        self.ibus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.ibus = Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
 
     def elaborate_stage(self, m, platform):
         load_store = m.submodules.load_store = LoadStore()

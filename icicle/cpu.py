@@ -1,5 +1,5 @@
 from amaranth import *
-from amaranth_soc import wishbone
+from amaranth_soc.wishbone import Interface
 
 from icicle.decode import Decode
 from icicle.execute import Execute
@@ -18,8 +18,8 @@ class CPU(Elaboratable):
         self.trap_vector = trap_vector
         self.rvfi_blackbox_alu = rvfi_blackbox_alu
         self.rvfi_blackbox_regs = rvfi_blackbox_regs
-        self.ibus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
-        self.dbus = wishbone.Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.ibus = Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
+        self.dbus = Interface(addr_width=30, data_width=32, granularity=8, features=["err"])
         if rvfi:
             self.rvfi = RVFI()
 
