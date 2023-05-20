@@ -15,7 +15,7 @@ class Fetch(Stage):
         load_store = m.submodules.load_store = LoadStore()
         m.d.comb += [
             load_store.bus.connect(self.ibus),
-            load_store.valid.eq((self.i.state == State.VALID) & ~self.flush),
+            load_store.valid.eq((self.i.state == State.VALID) & ~(self.next_stall | self.flush)),
             load_store.load.eq(1),
             load_store.width.eq(MemWidth.WORD),
             load_store.addr.eq(self.i.pc_rdata)
