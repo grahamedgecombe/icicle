@@ -6,6 +6,7 @@ from amaranth_soc.wishbone import Arbiter as WishboneArbiter, Decoder as Wishbon
 from icicle.cpu import CPU
 from icicle.bram import BlockRAM
 from icicle.gpio import GPIO
+from icicle.uart import UART
 
 
 class SystemOnChip(Elaboratable):
@@ -39,9 +40,11 @@ class SystemOnChip(Elaboratable):
         bram = m.submodules.bram = BlockRAM(addr_width=11, init=init)
 
         gpio = m.submodules.gpio = GPIO()
+        uart = m.submodules.uart = UART()
 
         csr_decoder = m.submodules.csr_decoder = CSRDecoder(addr_width=16, data_width=8)
         csr_decoder.add(gpio.bus)
+        csr_decoder.add(uart.bus)
         csr_bridge = m.submodules.csr_bridge = WishboneCSRBridge(csr_decoder.bus, data_width=32)
 
         decoder = m.submodules.decoder = WishboneDecoder(addr_width=30, data_width=32, granularity=8, features=["err"])
