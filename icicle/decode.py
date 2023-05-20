@@ -14,6 +14,7 @@ class Decode(Stage):
         self.rs2_port = Record(RS_PORT_LAYOUT)
         self.rs1_ren = Signal()
         self.rs2_ren = Signal()
+        self.fence_i = Signal()
 
     def elaborate_stage(self, m, platform):
         control = m.submodules.control = Control()
@@ -36,7 +37,9 @@ class Decode(Stage):
             self.o.rs2_rdata.eq(self.rs2_port.data),
 
             self.rs1_ren.eq(control.rs1_ren),
-            self.rs2_ren.eq(control.rs2_ren)
+            self.rs2_ren.eq(control.rs2_ren),
+
+            self.fence_i.eq(control.fence_i)
         ]
 
         with m.If(~self.stall):
@@ -62,5 +65,6 @@ class Decode(Stage):
                 self.o.mem_store.eq(control.mem_store),
                 self.o.mem_width.eq(control.mem_width),
                 self.o.mem_unsigned.eq(control.mem_unsigned),
+                self.o.fence_i.eq(control.fence_i),
                 self.o.wdata_sel.eq(control.wdata_sel)
             ]

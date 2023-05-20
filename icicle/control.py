@@ -32,6 +32,7 @@ class Control(Elaboratable):
         self.mem_store = Signal()
         self.mem_width = Signal(MemWidth)
         self.mem_unsigned = Signal()
+        self.fence_i = Signal()
         self.wdata_sel = Signal(WDataSel)
         self.illegal = Signal()
 
@@ -198,6 +199,15 @@ class Control(Elaboratable):
                             self.result_sel.eq(ResultSel.SHIFT),
                             self.illegal.eq(~funct7.matches(Funct7.ZERO, Funct7.SUB_SRA))
                         ]
+
+            with m.Case(Opcode.MISC_MEM):
+                with m.Switch(funct3):
+                    with m.Case(Funct3.FENCE):
+                        pass
+                    with m.Case(Funct3.FENCE_I):
+                        m.d.comb += self.fence_i.eq(1)
+                    with m.Default():
+                        m.d.comb += self.illegal.eq(1)
 
             with m.Default():
                 m.d.comb += self.illegal.eq(1)

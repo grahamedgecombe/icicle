@@ -55,6 +55,9 @@ class CPU(Elaboratable):
         writeback = Writeback()
         m.d.comb += writeback.rd_port.connect(regs.rd_port)
 
+        fetch.stall_on((decode.i.state == State.VALID) & decode.fence_i)
+        fetch.stall_on((execute.i.state == State.VALID) & execute.i.fence_i)
+
         def data_hazard(stage):
             rs1_matches = decode.rs1_ren & (decode.rs1_port.addr == stage.i.rd)
             rs2_matches = decode.rs2_ren & (decode.rs2_port.addr == stage.i.rd)

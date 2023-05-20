@@ -41,6 +41,7 @@ DX_LAYOUT = [
     ("mem_width",                MemWidth),
     ("mem_unsigned",                    1),
     ("mem_fault",                       1),
+    ("fence_i",                         1),
     ("wdata_sel",                WDataSel)
 ]
 

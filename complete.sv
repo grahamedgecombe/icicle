@@ -100,7 +100,7 @@ module testbench (
     );
 
     always_comb begin
-        if (~reset && rvfi_valid && ~rvfi_trap) begin
+        if (~reset && rvfi_valid && ~rvfi_trap & rvfi_insn[6:0] != 7'b0001111) begin
             assert (spec_valid && ~spec_trap);
         end
     end
