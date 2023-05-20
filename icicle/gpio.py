@@ -5,7 +5,7 @@ from amaranth_soc.csr import Element, Multiplexer
 class GPIO(Elaboratable):
     def __init__(self):
         self._led_csr = Element(width=1, access="rw")
-        self._mux = Multiplexer(addr_width=1, data_width=32)
+        self._mux = Multiplexer(addr_width=2, data_width=8)
         self._mux.add(self._led_csr)
         self.bus = self._mux.bus
 
