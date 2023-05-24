@@ -5,6 +5,7 @@ from amaranth_soc.wishbone import Arbiter as WishboneArbiter, Decoder as Wishbon
 
 from icicle.cpu import CPU
 from icicle.bram import BlockRAM
+from icicle.flash import Flash
 from icicle.gpio import GPIO
 from icicle.uart import UART
 
@@ -13,31 +14,10 @@ class SystemOnChip(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        cpu = m.submodules.cpu = CPU()
+        cpu = m.submodules.cpu = CPU(reset_vector=0x40100000, trap_vector=0x40100000)
 
-        init = [
-            # start:
-            #   li t0, 1000000
-            0x000f42b7,
-            0x24028293,
-            #   li t1, 0x80000000
-            0x80000337,
-            # dec:
-            #   addi t0, t0, -1
-            0xfff28293,
-            #   bnez t0, dec
-            0xfe029ee3,
-            #   lb t1, 0(t1)
-            0x00030383,
-            #   xori t2, t2, 1
-            0x0013c393,
-            #   sb t1, 0(t1)
-            0x00730023,
-            #   j start
-            0xfe1ff06f
-        ]
-
-        bram = m.submodules.bram = BlockRAM(addr_width=11, init=init)
+        bram = m.submodules.bram = BlockRAM(addr_width=11)
+        flash = m.submodules.flash = Flash(addr_width=22)
 
         gpio = m.submodules.gpio = GPIO(numbers=range(3))
         uart = m.submodules.uart = UART()
@@ -49,6 +29,7 @@ class SystemOnChip(Elaboratable):
 
         decoder = m.submodules.decoder = WishboneDecoder(addr_width=30, data_width=32, granularity=8, features=["err"])
         decoder.add(bram.bus,          addr=0x00000000)
+        decoder.add(flash.bus,         addr=0x40000000)
         decoder.add(csr_bridge.wb_bus, addr=0x80000000)
 
         arbiter = m.submodules.arbiter = WishboneArbiter(addr_width=30, data_width=32, granularity=8, features=["err"])
