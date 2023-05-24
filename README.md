@@ -60,10 +60,12 @@ of issuing one instruction every two cycles, as:
 * Additional multiplexing logic needs to be added after the read port.
 * Only a single memory bus transaction may be in flight at once.
 
-This could be improved with negative-edge block RAMs, which Amaranth does not
-yet support. Alternatively, Icicle could be changed to use a pipelined memory
-bus that makes requests during one cycle and does not expect the response until
-the following cycle.
+This could be improved with:
+
+* Negative-edge block RAMs, which Amaranth does not yet support.
+* Using a pipelined memory bus that makes requests during one cycle and does
+  not expect the response until the following cycle.
+* Adding instruction and data caches and burst support.
 
 ## Dependencies
 
