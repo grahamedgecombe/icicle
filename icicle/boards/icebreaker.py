@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from amaranth.build import Resource, Pins, Attrs
 from amaranth_boards.icebreaker import ICEBreakerPlatform
 
-from icicle.soc import SystemOnChip
+from icicle.soc.soc import SystemOnChip
 
 
 def main():

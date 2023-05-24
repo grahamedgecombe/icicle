@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 from amaranth_boards.ice40_hx8k_b_evn import ICE40HX8KBEVNPlatform
 
-from icicle.soc import SystemOnChip
+from icicle.soc.soc import SystemOnChip
 
 
 def main():

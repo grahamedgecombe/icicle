@@ -4,10 +4,10 @@ from amaranth_soc.csr.wishbone import WishboneCSRBridge
 from amaranth_soc.wishbone import Arbiter as WishboneArbiter, Decoder as WishboneDecoder
 
 from icicle.cpu import CPU
-from icicle.flash import Flash
-from icicle.gpio import GPIO
-from icicle.ice40_spram import ICE40SPRAM
-from icicle.uart import UART
+from icicle.soc.flash import Flash
+from icicle.soc.gpio import GPIO
+from icicle.soc.ice40_spram import ICE40SPRAM
+from icicle.soc.uart import UART
 
 
 class SystemOnChip(Elaboratable):

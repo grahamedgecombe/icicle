@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 from amaranth_boards.ecp5_5g_evn import ECP55GEVNPlatform
 
-from icicle.soc import SystemOnChip
+from icicle.soc.soc import SystemOnChip
 
 
 def main():
