@@ -111,6 +111,15 @@ The [iCEBreaker][icebreaker] board is Icicle's primary target. It is
 inexpensive, beginner-friendly and fully compatible with the open-source
 toolchain.
 
+### Example programs
+
+Icicle also ships with some example programs to demonstrate the system-on-chip.
+Run the following commands to build them and flash the blinky example to the
+iCEBreaker board:
+
+    make -C examples PLATFORM=icebreaker
+    iceprog -o 1M examples/blinky.bin
+
 ## Testing
 
 There are a small number of non-exhaustive tests that simulate portions of the
