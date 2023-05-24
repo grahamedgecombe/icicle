@@ -3,6 +3,7 @@ from unittest import TestCase
 from amaranth import *
 from amaranth.sim import Simulator, Settle
 
+from icicle.pipeline import State
 from icicle.writeback import Writeback
 
 
@@ -15,7 +16,7 @@ class WritebackTestCase(TestCase):
 
         writeback = m.submodules.writeback = Writeback()
         m.d.comb += [
-            rd_port.insn_valid.eq(writeback.rd_port.insn_valid),
+            rd_port.en.eq(writeback.rd_port.en),
             rd_port.addr.eq(writeback.rd_port.addr),
             rd_port.data.eq(writeback.rd_port.data)
         ]
@@ -26,7 +27,7 @@ class WritebackTestCase(TestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.state.eq(State.VALID)
             yield writeback.i.rd.eq(1)
             yield writeback.i.rd_wen.eq(1)
             yield writeback.i.result.eq(0xDEADBEEF)
@@ -46,7 +47,7 @@ class WritebackTestCase(TestCase):
         sim = Simulator(m)
         def process():
             yield stall.eq(1)
-            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.state.eq(State.VALID)
             yield writeback.i.rd.eq(1)
             yield writeback.i.rd_wen.eq(1)
             yield writeback.i.result.eq(0xDEADBEEF)
@@ -61,7 +62,7 @@ class WritebackTestCase(TestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.i.insn_valid.eq(0)
+            yield writeback.i.state.eq(State.BUBBLE)
             yield writeback.i.rd.eq(1)
             yield writeback.i.rd_wen.eq(1)
             yield writeback.i.result.eq(0xDEADBEEF)
@@ -76,7 +77,7 @@ class WritebackTestCase(TestCase):
         m, writeback, regs = self._create_writeback()
         sim = Simulator(m)
         def process():
-            yield writeback.i.insn_valid.eq(1)
+            yield writeback.i.state.eq(State.VALID)
             yield writeback.i.rd.eq(1)
             yield writeback.i.rd_wen.eq(0)
             yield writeback.i.result.eq(0xDEADBEEF)

@@ -3,7 +3,7 @@ from unittest import TestCase
 from amaranth import *
 from amaranth.sim import Simulator, Settle
 
-from icicle.pipeline import Pipeline, Stage
+from icicle.pipeline import Pipeline, Stage, State
 
 LAYOUT = [
     ("counter", 32)
@@ -33,7 +33,7 @@ class LastStage(Stage):
     def elaborate_stage(self, m, platform):
         with m.If(~self.stall):
             m.d.sync += [
-                self.counter_valid.eq(self.insn_valid),
+                self.counter_valid.eq(self.i.state == State.VALID),
                 self.counter.eq(self.i.counter)
             ]
 
@@ -46,26 +46,26 @@ class PipelineTestCase(TestCase):
         m = Pipeline(s1=s1, s2=s2, s3=s3)
         sim = Simulator(m)
         def process():
-            self.assertEqual((yield s1.o.insn_valid), 0)
-            self.assertEqual((yield s2.o.insn_valid), 0)
+            self.assertEqual((yield s1.o.state), State.BUBBLE.value)
+            self.assertEqual((yield s2.o.state), State.BUBBLE.value)
             self.assertEqual((yield s3.counter_valid), 0)
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 1)
-            self.assertEqual((yield s2.o.insn_valid), 0)
+            self.assertEqual((yield s2.o.state), State.BUBBLE.value)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 2)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 1)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 3)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 2)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 1)
@@ -89,24 +89,24 @@ class PipelineTestCase(TestCase):
             yield s2_stall.eq(1)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 3)
-            self.assertEqual((yield s2.o.insn_valid), 0)
+            self.assertEqual((yield s2.o.state), State.BUBBLE.value)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
             yield s2_stall.eq(0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 4)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 3)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 5)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 4)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 3)
@@ -130,24 +130,24 @@ class PipelineTestCase(TestCase):
             yield s2_flush.eq(1)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 4)
-            self.assertEqual((yield s2.o.insn_valid), 0)
+            self.assertEqual((yield s2.o.state), State.BUBBLE.value)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 2)
             yield s2_flush.eq(0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 5)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 4)
             self.assertEqual((yield s3.counter_valid), 0)
             yield
             yield Settle()
-            self.assertEqual((yield s1.o.insn_valid), 1)
+            self.assertEqual((yield s1.o.state), State.VALID.value)
             self.assertEqual((yield s1.o.counter), 6)
-            self.assertEqual((yield s2.o.insn_valid), 1)
+            self.assertEqual((yield s2.o.state), State.VALID.value)
             self.assertEqual((yield s2.o.counter), 5)
             self.assertEqual((yield s3.counter_valid), 1)
             self.assertEqual((yield s3.counter), 4)
