@@ -14,10 +14,10 @@ class SystemOnChip(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        cpu = m.submodules.cpu = CPU(reset_vector=0x40100000, trap_vector=0x40100000)
+        cpu = m.submodules.cpu = CPU(reset_vector=0x00100000, trap_vector=0x00100000)
 
-        ram = m.submodules.ram = ICE40SPRAM()
         flash = m.submodules.flash = Flash(addr_width=22)
+        ram = m.submodules.ram = ICE40SPRAM()
 
         gpio = m.submodules.gpio = GPIO(numbers=range(3))
         uart = m.submodules.uart = UART()
@@ -28,8 +28,8 @@ class SystemOnChip(Elaboratable):
         csr_bridge = m.submodules.csr_bridge = WishboneCSRBridge(csr_decoder.bus, data_width=32)
 
         decoder = m.submodules.decoder = WishboneDecoder(addr_width=30, data_width=32, granularity=8, features=["err"])
-        decoder.add(ram.bus,           addr=0x00000000)
-        decoder.add(flash.bus,         addr=0x40000000)
+        decoder.add(flash.bus,         addr=0x00000000)
+        decoder.add(ram.bus,           addr=0x40000000)
         decoder.add(csr_bridge.wb_bus, addr=0x80000000)
 
         arbiter = m.submodules.arbiter = WishboneArbiter(addr_width=30, data_width=32, granularity=8, features=["err"])
