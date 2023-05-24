@@ -1,11 +1,12 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Settle
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Settle
 
 from icicle.pcgen import PCGen
 
 
-class PCGenTestCase(FHDLTestCase):
+class PCGenTestCase(TestCase):
     def test_basic(self):
         m = PCGen(reset_vector=0x00100000)
         sim = Simulator(m)

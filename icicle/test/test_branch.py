@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.branch import BranchTargetMux, BranchTargetSel, Branch, BranchOp
 
 
-class BranchTargetMuxTestCase(FHDLTestCase):
+class BranchTargetMuxTestCase(TestCase):
     def test_basic(self):
         m = BranchTargetMux()
         sim = Simulator(m)
@@ -52,7 +53,7 @@ class BranchTargetMuxTestCase(FHDLTestCase):
         sim.run()
 
 
-class BranchTestCase(FHDLTestCase):
+class BranchTestCase(TestCase):
     def test_basic(self):
         m = Branch()
         sim = Simulator(m)

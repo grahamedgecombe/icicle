@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.alu import OperandMux, ASel, BSel, ResultMux, ResultSel
 
 
-class OperandMuxTestCase(FHDLTestCase):
+class OperandMuxTestCase(TestCase):
     def test_a(self):
         m = OperandMux()
         sim = Simulator(m)
@@ -48,7 +49,7 @@ class OperandMuxTestCase(FHDLTestCase):
         sim.run()
 
 
-class ResultMuxTestCase(FHDLTestCase):
+class ResultMuxTestCase(TestCase):
     def test_basic(self):
         m = ResultMux()
         sim = Simulator(m)

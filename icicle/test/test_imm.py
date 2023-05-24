@@ -1,12 +1,13 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Delay
 
 from icicle.imm import ImmediateDecoder
 from icicle.riscv import Format, Opcode
 
 
-class ImmediateDecoderTestCase(FHDLTestCase):
+class ImmediateDecoderTestCase(TestCase):
     def test_basic(self):
         m = ImmediateDecoder()
         sim = Simulator(m)

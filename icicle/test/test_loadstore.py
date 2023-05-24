@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.loadstore import WordAlign, MemWidth, LoadStore
 
 
-class WordAlignTestCase(FHDLTestCase):
+class WordAlignTestCase(TestCase):
     def test_word(self):
         m = WordAlign()
         sim = Simulator(m)
@@ -235,7 +236,7 @@ class WordAlignTestCase(FHDLTestCase):
         sim.run()
 
 
-class LoadStoreTestCase(FHDLTestCase):
+class LoadStoreTestCase(TestCase):
     def test_load(self):
         m = LoadStore()
         sim = Simulator(m)

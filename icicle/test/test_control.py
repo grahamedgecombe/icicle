@@ -1,12 +1,13 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Delay
 
 from icicle.control import Control
 from icicle.riscv import Format, Opcode, Funct3
 
 
-class ControlTestCase(FHDLTestCase):
+class ControlTestCase(TestCase):
     def test_fmt(self):
         m = Control()
         sim = Simulator(m)

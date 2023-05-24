@@ -1,6 +1,7 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Settle
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Settle
 
 from icicle.pipeline import Pipeline, Stage
 
@@ -37,7 +38,7 @@ class LastStage(Stage):
             ]
 
 
-class PipelineTestCase(FHDLTestCase):
+class PipelineTestCase(TestCase):
     def test_basic(self):
         s1 = FirstStage()
         s2 = MiddleStage()

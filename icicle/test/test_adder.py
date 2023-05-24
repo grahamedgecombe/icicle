@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.adder import Adder
 
 
-class AdderTestCase(FHDLTestCase):
+class AdderTestCase(TestCase):
     def test_add(self):
         m = Adder()
         sim = Simulator(m)

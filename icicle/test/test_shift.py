@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.shift import BarrelShifter
 
 
-class BarrelShifterTestCase(FHDLTestCase):
+class BarrelShifterTestCase(TestCase):
     def test_basic(self):
         m = BarrelShifter()
         sim = Simulator(m)

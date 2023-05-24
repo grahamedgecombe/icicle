@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Delay
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Delay
 
 from icicle.wdata import WDataMux, WDataSel
 
 
-class WDataMuxTestCase(FHDLTestCase):
+class WDataMuxTestCase(TestCase):
     def test_basic(self):
         m = WDataMux()
         sim = Simulator(m)

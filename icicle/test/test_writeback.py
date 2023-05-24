@@ -1,11 +1,12 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Settle
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Settle
 
 from icicle.writeback import Writeback
 
 
-class WritebackTestCase(FHDLTestCase):
+class WritebackTestCase(TestCase):
     def _create_writeback(self):
         m = Module()
 

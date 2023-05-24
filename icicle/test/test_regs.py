@@ -1,10 +1,11 @@
-from amaranth.back.pysim import Simulator, Settle
-from amaranth.test.utils import FHDLTestCase
+from unittest import TestCase
+
+from amaranth.sim import Simulator, Settle
 
 from icicle.regs import RegisterFile
 
 
-class RegisterFileTestCase(FHDLTestCase):
+class RegisterFileTestCase(TestCase):
     def test_basic(self):
         m = RegisterFile()
         sim = Simulator(m)

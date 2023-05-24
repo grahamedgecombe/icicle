@@ -1,11 +1,12 @@
+from unittest import TestCase
+
 from amaranth import *
-from amaranth.back.pysim import Simulator, Settle
-from amaranth.test.utils import FHDLTestCase
+from amaranth.sim import Simulator, Settle
 
 from icicle.decode import Decode
 
 
-class DecodeTestCase(FHDLTestCase):
+class DecodeTestCase(TestCase):
     def _create_decode(self, regs_init):
         m = Module()
 
