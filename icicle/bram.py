@@ -4,9 +4,10 @@ from amaranth_soc.wishbone import Interface
 
 
 class BlockRAM(Elaboratable):
-    def __init__(self, addr_width, init=None):
+    def __init__(self, addr_width, init=None, read_only=False):
         self.depth = 2**addr_width
         self.init = init
+        self.read_only = read_only
         self.bus = Interface(addr_width=addr_width, data_width=32, granularity=8, features=["err"])
         memory_map = MemoryMap(addr_width=addr_width + 2, data_width=8)
         memory_map.add_resource(self, name="bram", size=2 ** memory_map.addr_width)
@@ -24,13 +25,22 @@ class BlockRAM(Elaboratable):
             self.bus.dat_r.eq(read_port.data)
         ]
 
-        write_port = m.submodules.write_port = mem.write_port(granularity=8)
-        m.d.comb += [
-            write_port.en.eq(self.bus.sel & Repl(self.bus.cyc & self.bus.stb & ~self.bus.ack & self.bus.we, 4)),
-            write_port.addr.eq(self.bus.adr),
-            write_port.data.eq(self.bus.dat_w)
-        ]
+        valid = Signal()
+        m.d.comb += valid.eq(self.bus.cyc & self.bus.stb & ~(self.bus.ack | self.bus.err))
 
-        m.d.sync += self.bus.ack.eq(self.bus.cyc & self.bus.stb & ~self.bus.ack)
+        if self.read_only:
+            m.d.sync += [
+                self.bus.ack.eq(valid & ~self.bus.we),
+                self.bus.err.eq(valid & self.bus.we),
+            ]
+        else:
+            write_port = m.submodules.write_port = mem.write_port(granularity=8)
+            m.d.comb += [
+                write_port.en.eq(self.bus.sel & Repl(valid & self.bus.we, 4)),
+                write_port.addr.eq(self.bus.adr),
+                write_port.data.eq(self.bus.dat_w)
+            ]
+
+            m.d.sync += self.bus.ack.eq(valid)
 
         return m
