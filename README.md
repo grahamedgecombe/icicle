@@ -143,9 +143,7 @@ Run the following commands to verify the processor core:
     ../../checks/genchecks.py
     make -C checks -j $(nproc)
     sby complete.sby
-
-The `./equiv.sh` script for proving equivalence of the core with and without the
-RVFI port enabled does not yet work.
+    ./equiv.sh
 
 ## Size and performance
 

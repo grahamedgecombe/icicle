@@ -1,11 +1,11 @@
 connect_rpc -exec amaranth-rpc yosys icicle.cpu.CPU
-chparam -set rvfi 0 \icicle.cpu.CPU
-prep -flatten -top \icicle.cpu.CPU
+hierarchy -top \icicle.cpu.CPU -chparam rvfi 0
+prep -flatten
 design -stash gold
 
 connect_rpc -exec amaranth-rpc yosys icicle.cpu.CPU
-chparam -set rvfi 1 \icicle.cpu.CPU
-prep -flatten -top \icicle.cpu.CPU
+hierarchy -top \icicle.cpu.CPU -chparam rvfi 1
+prep -flatten
 delete -port \icicle.cpu.CPU/rvfi_*
 design -stash gate
 
