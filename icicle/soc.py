@@ -39,7 +39,7 @@ class SystemOnChip(Elaboratable):
 
         bram = m.submodules.bram = BlockRAM(addr_width=11, init=init)
 
-        gpio = m.submodules.gpio = GPIO()
+        gpio = m.submodules.gpio = GPIO(numbers=range(3))
         uart = m.submodules.uart = UART()
 
         csr_decoder = m.submodules.csr_decoder = CSRDecoder(addr_width=16, data_width=8)

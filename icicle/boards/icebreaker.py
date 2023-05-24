@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 
+from amaranth.build import Resource, Pins, Attrs
 from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 from icicle.soc import SystemOnChip
@@ -18,6 +19,11 @@ def main():
     args = parser.parse_args()
 
     platform = ICEBreakerPlatform()
+    platform.add_resources([
+        Resource("gpio", 0, Pins("11"), Attrs(IO_STANDARD="SB_LVCMOS")),
+        Resource("gpio", 1, Pins("37"), Attrs(IO_STANDARD="SB_LVCMOS")),
+        Resource("gpio", 2, Pins("10"), Attrs(IO_STANDARD="SB_LVCMOS")),
+    ])
     platform.build(SystemOnChip(), do_program=args.flash)
 
 
