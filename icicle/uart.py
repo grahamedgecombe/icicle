@@ -5,7 +5,7 @@ from amaranth_stdio.serial import AsyncSerial
 
 
 class UART(Elaboratable):
-    def __init__(self):
+    def __init__(self, number=0, fifo_depth=513, default_baud=9600):
         self._clk_div_csr = Element(width=16, access="rw")
         self._status_csr = Element(width=2, access="r")
         self._data_csr = Element(width=8, access="rw")
@@ -16,19 +16,22 @@ class UART(Elaboratable):
         self._mux.add(self._data_csr)
 
         self.bus = self._mux.bus
+        self.number = number
+        self.fifo_depth = fifo_depth
+        self.default_baud = default_baud
 
     def elaborate(self, platform):
         m = Module()
         m.submodules.mux = self._mux
 
         serial = m.submodules.serial = AsyncSerial(
-            divisor=int(platform.default_clk_frequency // 9600),
+            divisor=int(platform.default_clk_frequency // self.default_baud),
             divisor_bits=self._clk_div_csr.width,
             data_bits=self._data_csr.width,
-            pins=platform.request("uart"),
+            pins=platform.request("uart", self.number),
         )
-        rx_fifo = m.submodules.rx_fifo = SyncFIFOBuffered(width=self._data_csr.width, depth=513)
-        tx_fifo = m.submodules.tx_fifo = SyncFIFOBuffered(width=self._data_csr.width, depth=513)
+        rx_fifo = m.submodules.rx_fifo = SyncFIFOBuffered(width=self._data_csr.width, depth=self.fifo_depth)
+        tx_fifo = m.submodules.tx_fifo = SyncFIFOBuffered(width=self._data_csr.width, depth=self.fifo_depth)
 
         # serial <-> RX FIFO
         m.d.comb += [
