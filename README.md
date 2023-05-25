@@ -146,11 +146,11 @@ Clone the riscv-formal repository:
 
 Clone Icicle in the `cores` subdirectory:
 
-    cd riscv-formal/cores && git clone https://github.com/grahamedgecombe/icicle2.git
+    cd riscv-formal/cores && git clone https://github.com/grahamedgecombe/icicle.git
 
 Run the following commands to verify the processor core:
 
-    cd icicle2
+    cd icicle
     ../../checks/genchecks.py
     make -C checks -j $(nproc)
     sby complete.sby
@@ -181,7 +181,7 @@ information and licensing terms.
 [ice40up]: https://www.latticesemi.com/en/Products/FPGAandCPLD/iCE40UltraPlus.aspx
 [icebreaker]: https://www.crowdsupply.com/1bitsquared/icebreaker-fpga
 [icestorm]: http://www.clifford.at/icestorm/
-[icicle1]: https://github.com/grahamedgecombe/icicle
+[icicle1]: https://github.com/grahamedgecombe/icicle/tree/v1
 [minerva]: https://github.com/lambdaconcept/minerva
 [nextpnr]: https://github.com/YosysHQ/nextpnr
 [riscv-formal]: https://github.com/YosysHQ/riscv-formal
